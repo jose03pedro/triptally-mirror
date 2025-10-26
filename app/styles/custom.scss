@@ -1,0 +1,11 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+
+// Add custom font sizes: fs-7
+$custom-font-sizes: (
+  7: $font-size-base * 0.8,
+);
+$font-sizes: map-merge($font-sizes, $custom-font-sizes);
+
+// Import Bootstrap using relative path to node_modules
+@import "../../node_modules/bootstrap/scss/bootstrap";
