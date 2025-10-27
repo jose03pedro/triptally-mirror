@@ -3,10 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { Navbar } from "./navbar";
 import Link from "next/link";
 
-jest.mock("next/link", () => {
-  type LinkProps = { href: string; children: React.ReactNode };
-  return ({ href, children }: LinkProps) => <a href={href}>{children}</a>;
-});
+// Mock Link
+jest.mock("next/link", () => ({ href, children }: any) => (
+  <a href={href}>{children}</a>
+));
 
 describe("Navbar", () => {
   test('has a "Get started" button linking to /signup', () => {
