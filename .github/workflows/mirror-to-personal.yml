@@ -2,11 +2,8 @@ name: Mirror to Personal Repo
 
 on:
   push:
-    branches:
-      - main
-      - dev
-    tags:
-      - '*'
+    branches: [main, dev]
+    tags: ['*']
   workflow_dispatch: {}
 
 permissions:
@@ -31,9 +28,8 @@ jobs:
           MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
           MIRROR_URL: ${{ secrets.MIRROR_URL }}
         run: |
-          # Embed token in URL without printing it
-          MIRROR_AUTH_URL="${MIRROR_URL/https:\/\//https:\/\/x-access-token:${MIRROR_PAT}@}"
-          git remote add mirror "$MIRROR_AUTH_URL"
+          AUTH_URL="${MIRROR_URL/https:\/\//https:\/\/${MIRROR_PAT}@}"
+          git remote add mirror "$AUTH_URL"
 
       - name: Push main -> main (mirror)
         if: github.ref == 'refs/heads/main'
@@ -41,10 +37,10 @@ jobs:
           git push mirror refs/heads/main:refs/heads/main --force
           git push --tags mirror
 
-      - name: Push develop -> dev (mirror)
+      - name: Push dev -> dev (mirror)
         if: github.ref == 'refs/heads/dev'
         run: |
-          git push mirror refs/heads/develop:refs/heads/dev --force
+          git push mirror refs/heads/dev:refs/heads/dev --force
           git push --tags mirror
 
       - name: Push tags (on tag push)
