@@ -1,3 +1,5 @@
+"use client";
+
 import AuthForm from "./auth-form";
 import { ExternalAuthBtn } from "./external-auth-btn";
 

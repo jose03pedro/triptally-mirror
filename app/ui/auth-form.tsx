@@ -1,13 +1,15 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { signup } from "../actions/signup";
+import { useRouter } from "next/navigation";
 
 type AuthFormProps = {
   mode: "login" | "signup";
 };
 
 export default function AuthForm({ mode }: AuthFormProps) {
+  const router = useRouter();
   const actionFn = signup;
   const [state, action, pending] = useActionState(actionFn, undefined);
 
@@ -17,6 +19,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
     first_name: "",
     last_name: "",
   });
+
+  useEffect(() => {
+    if (state?.success && state?.token) {
+      localStorage.setItem("token", state.token);
+      router.push("/profile");
+    }
+  }, [state, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -146,7 +155,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
         )}
       </div>
 
-      <button type="submit" className="btn btn-primary w-100">
+      <button
+        type="submit"
+        className="btn btn-primary w-100"
+        disabled={pending}
+      >
         Continue
       </button>
     </form>
