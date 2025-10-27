@@ -1,3 +1,5 @@
+process.env.JWT_SECRET = "test_secret_key";
+
 import { signup } from "../actions/signup";
 import User from "../models/User";
 import { hash } from "bcrypt";
@@ -44,7 +46,7 @@ describe("signup action", () => {
   test("creates a new user with valid data", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(null);
     (hash as jest.Mock).mockResolvedValue("hashed-password");
-    (User.create as jest.Mock).mockResolvedValue(true);
+    (User.create as jest.Mock).mockResolvedValue({ _id: "123" });
 
     const res = await signup(
       {} as any,
