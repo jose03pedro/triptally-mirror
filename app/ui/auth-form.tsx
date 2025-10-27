@@ -63,7 +63,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             value={formValues.email}
             onChange={handleChange}
             className={`form-control fs-6 ${
-              state?.errors?.email ? "is-invalid" : ""
+              state?.errors?.email?.length ? "is-invalid" : ""
             }`}
           />
           {state?.errors?.email &&
@@ -91,13 +91,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
             value={formValues.password}
             onChange={handleChange}
             className={`form-control fs-6 ${
-              state?.errors?.password ? "is-invalid" : ""
+              state?.errors?.password?.length ? "is-invalid" : ""
             }`}
           />
 
           {state?.errors?.password && (
             <div className="invalid-feedback">
-              <ul className="mb-0">
+              <ul className="mb-0 px-0">
                 {state.errors.password.map((error, i) => (
                   <li key={i}>{error}</li>
                 ))}
@@ -125,7 +125,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 value={formValues.first_name}
                 onChange={handleChange}
                 className={`form-control fs-6 ${
-                  state?.errors?.first_name ? "is-invalid" : ""
+                  state?.errors?.first_name?.length ? "is-invalid" : ""
                 }`}
               />
               {state?.errors?.first_name &&
@@ -152,7 +152,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 value={formValues.last_name}
                 onChange={handleChange}
                 className={`form-control fs-6 ${
-                  state?.errors?.last_name ? "is-invalid" : ""
+                  state?.errors?.last_name?.length ? "is-invalid" : ""
                 }`}
               />
               {state?.errors?.last_name &&
