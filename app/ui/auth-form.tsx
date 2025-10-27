@@ -25,13 +25,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
   return (
     <form action={action}>
-      <header>
-        <h2 className="h5 mb-1">Your smart travel planner.</h2>
-        <h3 className="h5 text-secondary">
-          {mode === "login" ? "Login" : "Create"} your TripTally account
-        </h3>
-      </header>
-
       {/* Email Field */}
       <div className="my-3">
         <div className="mb-2">
