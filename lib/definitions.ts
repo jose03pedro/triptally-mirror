@@ -26,3 +26,16 @@ export type FormState =
       };
     }
   | undefined;
+
+export type AuthErrors = {
+  email?: string[];
+  password?: string[];
+  first_name?: string[];
+  last_name?: string[];
+};
+
+export type AuthResponse = {
+  success: boolean;
+  token?: string;
+  errors?: AuthErrors;
+};

@@ -4,11 +4,11 @@ import connectionToDB from "@/lib/mongoose";
 import User from "../models/User";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
-import { FormState, SignupFormSchema } from "@/lib/definitions";
+import { AuthResponse, FormState, SignupFormSchema } from "@/lib/definitions";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-export async function signup(state: FormState, formData: FormData) {
+export async function signup(formData: FormData): Promise<AuthResponse> {
   try {
     await connectionToDB();
 
