@@ -30,6 +30,19 @@ export async function login(formData: FormData): Promise<AuthResponse> {
       };
     }
 
+    if (user.provider !== "local") {
+      return {
+        success: false,
+        token: undefined,
+        errors: {
+          email: ["This email was registered with a different login method."],
+          password: [],
+          first_name: [],
+          last_name: [],
+        },
+      };
+    }
+
     // Verify password
     const isPasswordValid = await compare(password, user.password);
     if (!isPasswordValid) {
