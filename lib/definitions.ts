@@ -11,6 +11,8 @@ export const SignupFormSchema = z.object({
       error: "Contain at least one special character.",
     })
     .trim(),
+  first_name: z.string().trim().nonempty("First name is required"),
+  last_name: z.string().trim().nonempty("Last name is required"),
 });
 
 export type FormState =
@@ -19,6 +21,8 @@ export type FormState =
       errors?: {
         email?: string[];
         password?: string[];
+        first_name?: string[];
+        last_name?: string[];
       };
     }
   | undefined;
