@@ -3,7 +3,10 @@
 import connectionToDB from "@/lib/mongoose";
 import User from "../models/User";
 import { hash } from "bcrypt";
+import jwt from "jsonwebtoken";
 import { FormState, SignupFormSchema } from "@/lib/definitions";
+
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function signup(state: FormState, formData: FormData) {
   try {
@@ -46,14 +49,19 @@ export async function signup(state: FormState, formData: FormData) {
 
     // Create user
     const hashedPassword = await hash(validatedFields.data.password, 10);
-    await User.create({
+    const user = await User.create({
       email: validatedFields.data.email,
       password: hashedPassword,
       first_name: validatedFields.data.first_name,
       last_name: validatedFields.data.last_name,
     });
 
-    return { success: true };
+    // Generate token
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    return { success: true, token };
   } catch (error: any) {
     console.error("Signup error:", error);
     return { success: false };
