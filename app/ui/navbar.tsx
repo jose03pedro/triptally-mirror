@@ -10,10 +10,10 @@ export function Navbar() {
           TripTally
         </Link>
         <div className="d-flex gap-2">
-          <Link href="\" className="btn">
+          <Link href="/login" className="btn">
             Log in
           </Link>
-          <Link href="\" className="btn btn-primary">
+          <Link href="/signup" className="btn btn-primary">
             Get started
           </Link>
         </div>
