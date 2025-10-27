@@ -34,10 +34,13 @@ describe("signup action", () => {
       email: "test@example.com",
     });
 
-    const res = await signup(
-      {} as any,
-      mockFormData({ email: "test@example.com" })
-    );
+    const formData = new FormData();
+    formData.append("email", "test@example.com");
+    formData.append("password", "Password123!");
+    formData.append("first_name", "John");
+    formData.append("last_name", "Doe");
+
+    const res = await signup(formData);
 
     expect(res.success).toBe(false);
     expect(res.errors?.email).toContain("This email is already registered.");
@@ -46,17 +49,18 @@ describe("signup action", () => {
   test("creates a new user with valid data", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(null);
     (hash as jest.Mock).mockResolvedValue("hashed-password");
-    (User.create as jest.Mock).mockResolvedValue({ _id: "123" });
+    (User.create as jest.Mock).mockResolvedValue({
+      _id: "123",
+      email: "new@example.com",
+    });
 
-    const res = await signup(
-      {} as any,
-      mockFormData({
-        email: "new@example.com",
-        password: "Password123!",
-        first_name: "John",
-        last_name: "Doe",
-      })
-    );
+    const formData = new FormData();
+    formData.append("email", "new@example.com");
+    formData.append("password", "Password123!");
+    formData.append("first_name", "John");
+    formData.append("last_name", "Doe");
+
+    const res = await signup(formData);
 
     expect(User.create).toHaveBeenCalledWith({
       email: "new@example.com",
@@ -70,11 +74,17 @@ describe("signup action", () => {
   test("returns validation errors for missing fields", async () => {
     (User.findOne as jest.Mock).mockResolvedValue(null);
 
-    const res = await signup({} as any, mockFormData({ email: "" }));
+    const formData = new FormData();
+    formData.append("email", "");
+    formData.append("password", "");
+    formData.append("first_name", "");
+    formData.append("last_name", "");
+
+    const res = await signup(formData);
 
     expect(res.success).toBe(false);
     expect(res.errors?.email).toHaveLength(1);
-    expect(res.errors?.password).toHaveLength(1);
+    expect(res.errors?.password).toHaveLength(4);
     expect(res.errors?.first_name).toHaveLength(1);
     expect(res.errors?.last_name).toHaveLength(1);
   });
