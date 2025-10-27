@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signup } from "../actions/signup";
 
 type AuthFormProps = {
@@ -9,6 +9,18 @@ type AuthFormProps = {
 
 export default function AuthForm({ submitType }: AuthFormProps) {
   const [state, action, pending] = useActionState(signup, undefined);
+
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+    first_name: "",
+    last_name: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <form action={action}>
@@ -22,7 +34,10 @@ export default function AuthForm({ submitType }: AuthFormProps) {
       {/* Email Field */}
       <div className="my-3">
         <div className="mb-2">
-          <label htmlFor="email" className="form-label text-secondary fs-7">
+          <label
+            htmlFor="email"
+            className="form-label text-secondary mb-0 fs-7"
+          >
             Email
           </label>
           <input
@@ -30,6 +45,8 @@ export default function AuthForm({ submitType }: AuthFormProps) {
             name="email"
             type="email"
             placeholder="Enter your email address..."
+            value={formValues.email}
+            onChange={handleChange}
             className={`form-control fs-6 ${
               state?.errors?.email ? "is-invalid" : ""
             }`}
@@ -41,10 +58,12 @@ export default function AuthForm({ submitType }: AuthFormProps) {
               </div>
             ))}
         </div>
-
         {/* Password Field */}
         <div className="mb-3">
-          <label htmlFor="password" className="form-label text-secondary fs-7">
+          <label
+            htmlFor="password"
+            className="form-label text-secondary mb-0 fs-7"
+          >
             Password
           </label>
 
@@ -53,6 +72,8 @@ export default function AuthForm({ submitType }: AuthFormProps) {
             name="password"
             type="password"
             placeholder="Enter password..."
+            value={formValues.password}
+            onChange={handleChange}
             className={`form-control fs-6 ${
               state?.errors?.password ? "is-invalid" : ""
             }`}
@@ -68,6 +89,59 @@ export default function AuthForm({ submitType }: AuthFormProps) {
               </ul>
             </div>
           )}
+        </div>
+        {/* First Name Field */}
+        <div className="mb-2">
+          <label
+            htmlFor="first_name"
+            className="form-label text-secondary mb-0 fs-7"
+          >
+            First Name
+          </label>
+          <input
+            id="first_name"
+            name="first_name"
+            type="text"
+            placeholder="Enter your first name..."
+            value={formValues.first_name}
+            onChange={handleChange}
+            className={`form-control fs-6 ${
+              state?.errors?.first_name ? "is-invalid" : ""
+            }`}
+          />
+          {state?.errors?.first_name &&
+            state.errors.first_name.map((err, i) => (
+              <div key={i} className="invalid-feedback">
+                {err}
+              </div>
+            ))}
+        </div>
+
+        {/* Last Name Field */}
+        <div className="mb-2">
+          <label
+            htmlFor="last_name"
+            className="form-label text-secondary mb-0 fs-7"
+          >
+            Last Name
+          </label>
+          <input
+            id="last_name"
+            name="last_name"
+            type="text"
+            placeholder="Enter your last name..."
+            value={formValues.last_name}
+            onChange={handleChange}
+            className={`form-control fs-6 ${
+              state?.errors?.last_name ? "is-invalid" : ""
+            }`}
+          />
+          {state?.errors?.last_name &&
+            state.errors.last_name.map((err, i) => (
+              <div key={i} className="invalid-feedback">
+                {err}
+              </div>
+            ))}
         </div>
       </div>
 
