@@ -1,11 +1,17 @@
+"use client";
+
+import { useActionState } from "react";
+import { signup } from "../actions/signup";
+
 type AuthFormProps = {
   submitType: string;
 };
 
 export default function AuthForm({ submitType }: AuthFormProps) {
+  const [state, action, pending] = useActionState(signup, undefined);
+
   return (
-    //<form action={signup}>
-    <form>
+    <form action={action}>
       <header>
         <h2 className="h5 mb-1">Your smart travel planner.</h2>
         <h3 className="h5 text-secondary">
@@ -24,6 +30,7 @@ export default function AuthForm({ submitType }: AuthFormProps) {
             placeholder="Enter your email address..."
             className="form-control fs-6"
           />
+          {state?.errors?.email && <p>{state.errors.email}</p>}
         </div>
         <div>
           <label htmlFor="password" className="form-label text-secondary fs-7">
@@ -37,6 +44,16 @@ export default function AuthForm({ submitType }: AuthFormProps) {
             className="form-control fs-6"
           />
         </div>
+        {state?.errors?.password && (
+          <div>
+            <p>Password must:</p>
+            <ul>
+              {state.errors.password.map((error) => (
+                <li key={error}>- {error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <button type="submit" className="btn btn-primary w-100">
         Continue
