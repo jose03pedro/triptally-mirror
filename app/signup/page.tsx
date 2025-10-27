@@ -1,5 +1,5 @@
-import AuthForm from "@/app/ui/auth-form";
+import Auth from "@/app/ui/auth";
 
 export default function SignupPage() {
-  return <AuthForm mode="signup" />;
+  return <Auth mode="signup" />;
 }
