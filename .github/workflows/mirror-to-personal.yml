@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - develop
+      - dev
     tags:
       - '*'
   workflow_dispatch: {}
@@ -41,10 +41,10 @@ jobs:
           git push mirror refs/heads/main:refs/heads/main --force
           git push --tags mirror
 
-      - name: Push develop -> develop (mirror)
-        if: github.ref == 'refs/heads/develop'
+      - name: Push develop -> dev (mirror)
+        if: github.ref == 'refs/heads/dev'
         run: |
-          git push mirror refs/heads/develop:refs/heads/develop --force
+          git push mirror refs/heads/develop:refs/heads/dev --force
           git push --tags mirror
 
       - name: Push tags (on tag push)
