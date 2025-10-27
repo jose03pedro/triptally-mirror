@@ -2,9 +2,16 @@
 
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const user = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token
+    router.push("/login"); // Redirect
+  };
 
   return (
     <nav className="navbar fixed-top my-2 mx-4">
@@ -13,19 +20,24 @@ export function Navbar() {
           TripTally
         </Link>
 
-        {/*Render log in and signup buttons when user is a logged out*/}
-        {!user ? (
-          <div className="d-flex gap-2">
-            <Link href="/login" className="btn">
-              Log in
-            </Link>
-            <Link href="/signup" className="btn btn-primary">
-              Get started
-            </Link>
-          </div>
-        ) : (
-          <></>
-        )}
+        <div className="d-flex gap-2">
+          {!user ? (
+            <>
+              <Link href="/login" className="btn">
+                Log in
+              </Link>
+              <Link href="/signup" className="btn btn-primary">
+                Get started
+              </Link>
+            </>
+          ) : (
+            <>
+              <button onClick={handleLogout} className="btn btn-primary">
+                Log out
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
