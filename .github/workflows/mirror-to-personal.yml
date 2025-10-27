@@ -1,0 +1,53 @@
+name: Mirror to Personal Repo
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - '*'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add mirror remote (authenticated)
+        env:
+          MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
+          MIRROR_URL: ${{ secrets.MIRROR_URL }}
+        run: |
+          # Embed token in URL without printing it
+          MIRROR_AUTH_URL="${MIRROR_URL/https:\/\//https:\/\/x-access-token:${MIRROR_PAT}@}"
+          git remote add mirror "$MIRROR_AUTH_URL"
+
+      - name: Push main -> main (mirror)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git push mirror refs/heads/main:refs/heads/main --force
+          git push --tags mirror
+
+      - name: Push develop -> develop (mirror)
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          git push mirror refs/heads/develop:refs/heads/develop --force
+          git push --tags mirror
+
+      - name: Push tags (on tag push)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git push --tags mirror
