@@ -97,7 +97,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
           {state?.errors?.password && (
             <div className="invalid-feedback">
-              <p>Password must:</p>
               <ul className="mb-0">
                 {state.errors.password.map((error, i) => (
                   <li key={i}>{error}</li>
