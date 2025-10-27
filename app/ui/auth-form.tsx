@@ -3,6 +3,8 @@
 import { useActionState, useEffect, useState } from "react";
 import { signup } from "../actions/signup";
 import { useRouter } from "next/navigation";
+import { login } from "../actions/login";
+import { AuthResponse } from "@/lib/definitions";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -10,7 +12,17 @@ type AuthFormProps = {
 
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
-  const actionFn = signup;
+  const actionFn = async (
+    _state: AuthResponse | undefined,
+    formData: FormData
+  ) => {
+    if (mode === "login") {
+      return await login(formData);
+    } else {
+      return await signup(formData);
+    }
+  };
+
   const [state, action, pending] = useActionState(actionFn, undefined);
 
   const [formValues, setFormValues] = useState({
