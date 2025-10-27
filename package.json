@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/google.accounts": "^0.0.18",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
+    "googleapis": "^164.1.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.2",
     "next": "16.0.0",
