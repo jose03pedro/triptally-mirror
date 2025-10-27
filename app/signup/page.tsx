@@ -1,5 +1,5 @@
 import AuthForm from "@/app/ui/auth-form";
 
 export default function SignupPage() {
-  return <AuthForm submitType="Create" />;
+  return <AuthForm mode="signup" />;
 }
