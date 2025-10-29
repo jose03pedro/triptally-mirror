@@ -1,15 +1,13 @@
-@use "bootstrap/scss/functions" as *;
-@use "bootstrap/scss/variables" as *;
-@use "bootstrap/scss/mixins" as *;
+// Functions and variables first
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
 
-// Custom colors
+// Your variable overrides
 $light-grey: #a8a49c;
-
-// Add custom font sizes: fs-7
 $custom-font-sizes: (
-  7: $font-size-base * 0.8,
+        7: 0.8 * 1rem
 );
 $font-sizes: map-merge($font-sizes, $custom-font-sizes);
-
-// Import Bootstrap using relative path to node_modules
-@import "../../node_modules/bootstrap/scss/bootstrap";
+// Then the rest of Bootstrap
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/bootstrap";
