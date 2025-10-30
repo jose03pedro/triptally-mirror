@@ -15,13 +15,11 @@ export default function ProfileLayout({
       <Navbar />
       <main
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          maxWidth: "1400px",
+          margin: "auto",
           marginTop: "7rem",
-          flexDirection: "column",
-          gap: "1rem",
         }}
+        className="container position-relative"
       >
         {children}
       </main>

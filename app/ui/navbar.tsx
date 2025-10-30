@@ -32,6 +32,9 @@ export function Navbar() {
             </>
           ) : (
             <>
+              <Link href="/profile" className="btn btn-primary">
+                Profile
+              </Link>
               <button onClick={handleLogout} className="btn btn-primary">
                 Log out
               </button>
