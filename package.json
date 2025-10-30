@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@types/google.accounts": "^0.0.18",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",

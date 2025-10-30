@@ -1,4 +1,4 @@
-import Auth from "@/app/ui/auth";
+import Auth from "@/app/components/auth/auth";
 
 export default function LoginPage() {
   return <Auth mode="login" />;

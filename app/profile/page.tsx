@@ -1,11 +1,18 @@
 "use client";
 
 import { useAuth } from "@/lib/hook/useAuth";
+import {UserCard} from "@/app/components/user/user-card";
+import {useRouter} from "next/navigation";
+import {useEffect} from "react";
 
 export default function ProfilePage() {
-  const user = useAuth();
+  const session = useAuth();
+  const router = useRouter();
 
-  if (!user) return <p>Please log in first.</p>;
+  const user = session?.user;
+  if (!user) return <p>User not found.</p>;
 
-  return <h2>Welcome, {user.email}</h2>;
+  return (
+      <UserCard firstName={user.first_name} lastName={user.last_name} />
+  );
 }

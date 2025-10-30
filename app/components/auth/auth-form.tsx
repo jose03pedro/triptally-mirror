@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { signup } from "../actions/signup";
+import { signup } from "../../actions/signup";
 import { useRouter } from "next/navigation";
-import { login } from "../actions/login";
+import { login } from "../../actions/login";
 import { AuthResponse } from "@/lib/definitions";
 
 type AuthFormProps = {
