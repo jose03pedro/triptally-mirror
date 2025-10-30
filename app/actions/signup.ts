@@ -5,6 +5,7 @@ import User from "../models/User";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthResponse, FormState, SignupFormSchema } from "@/lib/definitions";
+import {loginHandler} from "@/app/actions/login";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -57,16 +58,7 @@ export async function signup(formData: FormData): Promise<AuthResponse> {
     });
 
     // Generate token
-      const token = jwt.sign(
-          { user: {
-                  id: user._id,
-                  email: user.email,
-                  first_name: user.first_name,
-                  last_name: user.last_name
-              }}, JWT_SECRET, {
-              expiresIn: "24h",
-          }
-      );
+    const token = await loginHandler(user._id, user.email, user.first_name, user.last_name);
 
     return { success: true, token };
   } catch (error: any) {

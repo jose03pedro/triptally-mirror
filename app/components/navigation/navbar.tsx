@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
-import {NavDropdown} from "@/app/ui/nav-dropdown";
+import {NavDropdown} from "@/app/components/navigation/nav-dropdown";
 
 export function Navbar() {
   const session = useAuth();
