@@ -10,7 +10,7 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
         <>
             <div className={"d-flex flex-row align-items-center gap-4"}>
                 <div
-                    className="rounded-circle overflow-hidden"
+                    className="user-icon rounded-circle overflow-hidden"
                     style={{width: "120px", height: "120px"}}>
                     <Image
                         src={`/default-profile.png`}
