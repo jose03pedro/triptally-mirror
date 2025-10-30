@@ -28,15 +28,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script
-          src="https://accounts.google.com/gsi/client"
-          strategy="afterInteractive"
-        />
+          <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+          <Script
+              src="https://accounts.google.com/gsi/client"
+              strategy="afterInteractive"
+          />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{backgroundColor: "#fafafa"}}
       >
         {children}
+        <Script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        />
       </body>
     </html>
   );
