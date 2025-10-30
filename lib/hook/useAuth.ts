@@ -2,9 +2,15 @@
 
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
+import User from "@/app/models/User";
 
 type DecodedToken = {
-  email: string;
+  user: {
+      id: string;
+      email: string;
+      first_name: string;
+      last_name: string;
+  };
   exp: number;
   iat: number;
 };

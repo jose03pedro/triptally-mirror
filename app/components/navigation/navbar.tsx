@@ -2,19 +2,14 @@
 
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {NavDropdown} from "@/app/components/navigation/nav-dropdown";
 
 export function Navbar() {
-  const user = useAuth();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token
-    router.push("/login"); // Redirect
-  };
+  const session = useAuth();
+  const user = session?.user;
 
   return (
-    <nav className="navbar fixed-top my-2 mx-4">
+    <nav className="navbar fixed-top py-3 px-4" style={{ backgroundColor: "#fff" }}>
       <div className="container-fluid">
         <Link className="navbar-brand" href="\">
           TripTally
@@ -32,9 +27,7 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <button onClick={handleLogout} className="btn btn-primary">
-                Log out
-              </button>
+              <NavDropdown firstName={user?.first_name} lastName={user?.last_name} />
             </>
           )}
         </div>
