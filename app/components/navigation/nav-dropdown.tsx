@@ -1,8 +1,9 @@
 "use client";
 
-import {UserImage} from "@/app/ui/user-image";
+import {UserImage} from "@/app/components/user/user-image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {logoutHandler} from "@/app/actions/logout";
 
 type NavDropdownProps = {
     firstName: string;
@@ -14,6 +15,7 @@ export function NavDropdown({firstName, lastName}: NavDropdownProps) {
 
     const handleLogout = () => {
         localStorage.removeItem("token"); // Remove token
+        logoutHandler(); // Remove 'session' cookie
         router.push("/login"); // Redirect
     };
 
