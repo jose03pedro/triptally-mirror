@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@internationalized/date": "^3.10.0",
     "@popperjs/core": "^2.11.8",
+    "@react-aria/i18n": "^3.12.13",
     "@types/google.accounts": "^0.0.18",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
@@ -21,6 +23,7 @@
     "mongoose": "^8.19.2",
     "next": "16.0.0",
     "react": "19.2.0",
+    "react-aria-components": "^1.13.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
