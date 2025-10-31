@@ -3,14 +3,14 @@ import {cookies} from "next/headers";
 
 // Define the protected and public routes
 const protectedRoutes = ['/profile']
-const publicRoutes = ['/login', '/signup', '/']
+const guestRoutes = ['/login', '/signup']
 
 export async function proxy(request: NextRequest) {
     const path = request.nextUrl.pathname
 
     // Check if the current route is protected or public
     const isProtectedRoute = protectedRoutes.includes(path)
-    const isPublicRoute = publicRoutes.includes(path)
+    const isGuestRoute = guestRoutes.includes(path)
 
     // Check if a 'session' cookie exists
     const cookieSession = (await cookies())?.get('session')?.name;
@@ -21,7 +21,7 @@ export async function proxy(request: NextRequest) {
     }
 
     // Redirect to /profile if the user is authenticated
-    if (isPublicRoute && cookieSession && !request.nextUrl.pathname.startsWith('/profile')) {
+    if (isGuestRoute && cookieSession) {
         return NextResponse.redirect(new URL('/profile', request.nextUrl))
     }
 }
