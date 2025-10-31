@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import {ActionBtn} from "@/app/components/ui/actionBtn";
+import { ActionBtn } from "@/app/components/ui/actionBtn";
+import { CitySelect } from "@/app/components/trip/citySearch";
 
 export default function TripCitiesInput() {
-    const [cities, setCities] = useState<string[]>([""]); // Start with one input
+    const [cities, setCities] = useState<string[]>([""]); // Start with one city
 
     const handleCityChange = (index: number, value: string) => {
         const updated = [...cities];
@@ -34,16 +35,14 @@ export default function TripCitiesInput() {
 
             {cities.map((city, idx) => (
                 <div key={idx} className="d-flex align-items-center my-1">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder='Type a city'
-                        value={city}
-                        name="cities"
-                        onChange={(e) => handleCityChange(idx, e.target.value)}
+                    <CitySelect
+                        availableCities={["Paris", "Rome", "Berlin", "London", "Madrid"]}
+                        selectedCity={city}
+                        setSelectedCity={(newCity) => handleCityChange(idx, newCity)}
                     />
+
                     {cities.length > 1 && (
-                        <div onClick={() => removeCity(idx)}>
+                        <div onClick={() => removeCity(idx)} className="ms-2">
                             <ActionBtn size={19} action="delete" />
                         </div>
                     )}
@@ -52,4 +51,5 @@ export default function TripCitiesInput() {
         </div>
     );
 }
+
 
