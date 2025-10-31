@@ -1,6 +1,6 @@
 "use client";
 
-import {UserImage} from "@/app/components/user/user-image";
+import {UserNameImage} from "@/app/components/user/user-name-image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {logoutHandler} from "@/app/actions/logout";
@@ -30,7 +30,7 @@ export function NavDropdown({firstName, lastName}: NavDropdownProps) {
                     aria-haspopup="true"
                     aria-expanded="false"
                 >
-                    <UserImage firstName={firstName} lastName={lastName} />
+                    <UserNameImage firstName={firstName} lastName={lastName} />
                 </div>
                 <div className="dropdown-menu w-100" aria-labelledby="dropdownNavbar">
                     <Link className="dropdown-item d-flex gap-2" href="/profile">
