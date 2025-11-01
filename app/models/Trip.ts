@@ -5,7 +5,13 @@ const tripSchema = new mongoose.Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now },
-    cities: { type: [String], required: true },
+    cities: [
+        {
+            name: { type: String, required: true },
+            country: { type: String, required: true },
+        },
+    ],
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Trip = mongoose.models?.Trip || mongoose.model("Trip", tripSchema);

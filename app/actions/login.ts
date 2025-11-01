@@ -104,11 +104,11 @@ export async function loginHandler(id: string, email: string, first_name: string
     // Set the cookie
     cookieStore?.set({
         name: 'session',
-        value: token,
+        value: id,
         path: '/',               // available for all routes
         httpOnly: true,          // inaccessible via JS (more secure)
         sameSite: 'strict',      // CSRF protection
-        maxAge: 60 * 60 * 24 // 24 h
+        maxAge: 60 * 60 * 24     // 24 h
     });
 
     return token;

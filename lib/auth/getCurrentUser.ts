@@ -15,9 +15,6 @@ export async function getCurrentUser() {
 
     return {
       id: user._id.toString(),
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
     };
   } catch (err) {
     console.error("Error verifying token:", err);

@@ -1,25 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ActionBtn } from "@/app/components/ui/actionBtn";
-import { CitySelect } from "@/app/components/trip/citySearch";
+import { CitySelect } from "@/app/components/trip/citySelect";
+
+interface TripCity {
+    name: string;
+    country: string;
+    id: string;
+}
 
 export default function TripCitiesInput() {
-    const [cities, setCities] = useState<string[]>([""]); // Start with one city
+    const [cities, setCities] = useState<TripCity[]>([{ name: "", country: "", id:"" }]);
+    const [availableCities, setAvailableCities] = useState<TripCity[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const handleCityChange = (index: number, value: string) => {
-        const updated = [...cities];
-        updated[index] = value;
-        setCities(updated);
-    };
+    // Fetch cities whenever searchTerm changes
+    useEffect(() => {
+        const fetchCities = async () => {
+            if (!searchTerm) return;
+            try {
+                const res = await fetch(`/api/cities?namePrefix=${searchTerm}`);
+                const data = await res.json();
+                setAvailableCities(data);
+            } catch (error) {
+                console.error("Error fetching cities:", error);
+            }
+        };
 
-    const addCity = () => {
-        setCities([...cities, ""]);
-    };
+        const timeout = setTimeout(fetchCities, 400); // debounce
+        return () => clearTimeout(timeout);
+    }, [searchTerm]);
 
-    const removeCity = (index: number) => {
-        setCities(cities.filter((_, i) => i !== index));
-    };
+    const addCity = () => setCities([...cities, { name: "", country: "", id: "" }]);
+    const removeCity = (i: number) => setCities(cities.filter((_, idx) => idx !== i));
 
     return (
         <div className="mb-3">
@@ -33,12 +47,17 @@ export default function TripCitiesInput() {
                 </div>
             </div>
 
-            {cities.map((city, idx) => (
+            {cities.map((cityObj, idx) => (
                 <div key={idx} className="d-flex align-items-center my-1">
                     <CitySelect
-                        availableCities={["Paris", "Rome", "Berlin", "London", "Madrid"]}
-                        selectedCity={city}
-                        setSelectedCity={(newCity) => handleCityChange(idx, newCity)}
+                        availableCities={availableCities}
+                        selectedCity={cityObj}
+                        setSelectedCity={(newCity) => {
+                            const updated = [...cities];
+                            updated[idx] = newCity;
+                            setCities(updated);
+                        }}
+                        setSearchTerm={setSearchTerm}
                     />
 
                     {cities.length > 1 && (
@@ -51,5 +70,6 @@ export default function TripCitiesInput() {
         </div>
     );
 }
+
 
 
