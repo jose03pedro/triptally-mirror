@@ -1,39 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ActionBtn } from "@/app/components/ui/actionBtn";
 import { CitySelect } from "@/app/components/trip/citySelect";
 
-interface TripCity {
+export interface City {
+    id: string;
     name: string;
     country: string;
-    id: string;
+}
+
+interface TripCity extends City {
+    search: string;
+    availableCities: City[];
 }
 
 export default function TripCitiesInput() {
-    const [cities, setCities] = useState<TripCity[]>([{ name: "", country: "", id:"" }]);
-    const [availableCities, setAvailableCities] = useState<TripCity[]>([]);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [cities, setCities] = useState<TripCity[]>([
+        { id: "", name: "", country: "", search: "", availableCities: [] },
+    ]);
 
-    // Fetch cities whenever searchTerm changes
-    useEffect(() => {
-        const fetchCities = async () => {
-            if (!searchTerm) return;
-            try {
-                const res = await fetch(`/api/cities?namePrefix=${searchTerm}`);
-                const data = await res.json();
-                setAvailableCities(data);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        };
+    const addCity = () =>
+        setCities([
+            ...cities,
+            { id: "", name: "", country: "", search: "", availableCities: [] },
+        ]);
 
-        const timeout = setTimeout(fetchCities, 400); // debounce
-        return () => clearTimeout(timeout);
-    }, [searchTerm]);
+    const removeCity = (idx: number) =>
+        setCities(cities.filter((_, i) => i !== idx));
 
-    const addCity = () => setCities([...cities, { name: "", country: "", id: "" }]);
-    const removeCity = (i: number) => setCities(cities.filter((_, idx) => idx !== i));
+    const updateCity = (idx: number, updatedCity: Partial<TripCity>) => {
+        setCities((prev) => {
+            const newCities = [...prev];
+            newCities[idx] = { ...newCities[idx], ...updatedCity };
+            return newCities;
+        });
+    };
 
     return (
         <div className="mb-3">
@@ -50,14 +52,14 @@ export default function TripCitiesInput() {
             {cities.map((cityObj, idx) => (
                 <div key={idx} className="d-flex align-items-center my-1">
                     <CitySelect
-                        availableCities={availableCities}
                         selectedCity={cityObj}
-                        setSelectedCity={(newCity) => {
-                            const updated = [...cities];
-                            updated[idx] = newCity;
-                            setCities(updated);
-                        }}
-                        setSearchTerm={setSearchTerm}
+                        search={cityObj.search}
+                        availableCities={cityObj.availableCities}
+                        setSearch={(term) => updateCity(idx, { search: term })}
+                        setAvailableCities={(list) => updateCity(idx, { availableCities: list })}
+                        setSelectedCity={(city) =>
+                            updateCity(idx, { ...city, search: "", availableCities: [] })
+                        }
                     />
 
                     {cities.length > 1 && (

@@ -17,7 +17,7 @@ export default function ProfilePage() {
       <>
         <UserCard firstName={user.first_name} lastName={user.last_name} />
         <button className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createTripModal">
-            <IconText icon={"add"} text={"New trip"} />
+            <IconText icon={"add"} text={"New trips"} />
         </button>
         <CreateTripModal/>
       </>

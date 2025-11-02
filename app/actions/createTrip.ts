@@ -2,15 +2,17 @@
 
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
-import {useAuth} from "@/lib/hook/useAuth";
 import {getCurrentUser} from "@/lib/auth/getCurrentUser";
 
-export async function createTrip(formData: FormData) {
+export async function createTrip(prevState: any, formData: FormData)  {
     try {
         await connectionToDB();
 
         const currentUser = await getCurrentUser();
-        if (!currentUser) throw new Error("User not authenticated");
+        if (!currentUser) {
+            console.error("User not authenticated.");
+            return { success: false };
+        }
 
         const title = formData.get("title") as string;
         const startDate = formData.get("start-date") as string;
@@ -18,14 +20,17 @@ export async function createTrip(formData: FormData) {
         const citiesJson = formData.getAll("cities") as string[];
         const cities = citiesJson?.map(city => JSON.parse(city));
 
-        await Trip.create({
+        const newTrip = await Trip.create({
             title,
             startDate,
             endDate,
             cities,
             user: currentUser.id,
         });
+
+        return { success: true, id: newTrip._id.toString() };
     } catch (error) {
-        console.error("Error creating trip:", error);
+        console.error("Error creating trips:", error);
+        return { success: false };
     }
 }
