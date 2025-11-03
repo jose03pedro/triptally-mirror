@@ -24,7 +24,7 @@ export function CitySelect({
 
     const toggleDropdown = () => setIsOpen(!isOpen);
 
-    // Fetch cities whenever search changes (debounced)
+    // Fetch cities whenever search changes
     useEffect(() => {
         if (!search) return setAvailableCities([]);
 
@@ -40,7 +40,7 @@ export function CitySelect({
         }, 400);
 
         return () => clearTimeout(timeout);
-    }, [search]); // only depends on search
+    }, [search]);
 
     const filteredCities =
         search.length > 0
@@ -68,14 +68,15 @@ export function CitySelect({
             />
             <input type="hidden" name="cities" value={JSON.stringify(selectedCity)} />
 
+
             {isOpen && (
                 <div
-                    className="dropdown-menu show p-2"
+                    className="dropdown-menu show p-2 w-100"
                     style={{ maxHeight: "200px", overflowY: "auto" }}
                 >
                     <input
                         type="text"
-                        className="form-control mb-2"
+                        className={`form-control ${filteredCities.length > 0 || search.length > 0 ? "mb-2" : ""}`}
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -91,8 +92,8 @@ export function CitySelect({
                             >
                                 <span>{city.name}</span>
                                 <span className="text-muted" style={{ fontSize: "12px" }}>
-                  {city.country}
-                </span>
+                                    {city.country}
+                                </span>
                             </button>
                         ))
                     ) : (

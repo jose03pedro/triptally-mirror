@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ActionBtn } from "@/app/components/ui/actionBtn";
 import { CitySelect } from "@/app/components/trip/citySelect";
+import FieldErrors from "@/app/components/ui/fieldErrors";
 
 export interface City {
     id: string;
@@ -15,7 +16,11 @@ interface TripCity extends City {
     availableCities: City[];
 }
 
-export default function TripCitiesInput() {
+interface TripCitiesInputProps {
+    cityErrors?: string[];
+}
+
+export default function TripCitiesInput({cityErrors} : TripCitiesInputProps) {
     const [cities, setCities] = useState<TripCity[]>([
         { id: "", name: "", country: "", search: "", availableCities: [] },
     ]);
@@ -40,7 +45,7 @@ export default function TripCitiesInput() {
     return (
         <div className="mb-3">
             <p className="form-label text-secondary mb-0">Where are you going?</p>
-            <div className="d-flex align-items-center justify-content-between">
+            <div className={`d-flex align-items-center justify-content-between ${cityErrors?.length ? "is-invalid" : ""}`}>
                 <small id="citiesHelpBlock" className="form-text text-muted">
                     Select all the cities you are visiting during this trip.
                 </small>
@@ -69,6 +74,7 @@ export default function TripCitiesInput() {
                     )}
                 </div>
             ))}
+            <FieldErrors errors={cityErrors} />
         </div>
     );
 }

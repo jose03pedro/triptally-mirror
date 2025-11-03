@@ -64,7 +64,7 @@ export default function CreateTripModal() {
                                 endDateErrors={state?.errors?.endDate}
                                 onChange={handleChange}
                             />
-                            <TripCitiesInput/>
+                            <TripCitiesInput cityErrors={state?.errors?.cities}/>
                         </div>
 
                         <div className="modal-footer">
