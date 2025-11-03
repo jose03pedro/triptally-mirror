@@ -15,17 +15,28 @@ export const SignupFormSchema = z.object({
   last_name: z.string().trim().nonempty("Last name is required"),
 });
 
-export type FormState =
-  | {
-      success?: boolean;
-      errors?: {
-        email?: string[];
-        password?: string[];
-        first_name?: string[];
-        last_name?: string[];
-      };
-    }
-  | undefined;
+export const CreateTripSchema = z.object({
+    title: z.string().trim().nonempty("Title is required"),
+    startDate: z.string().trim().nonempty("Start date is required"),
+    endDate: z.string().trim().nonempty("End date is required"),
+    cities: z
+        .array(
+            z.object({
+                name: z.string().trim().nonempty("Please select a valid city"),
+                country: z.string().trim(),
+            })
+        )
+        .min(1, "At least one city is required"),
+}).refine((data) => {
+    // Check that endDate >= startDate
+    if (!data.startDate || !data.endDate) return true;
+    const start = new Date(data.startDate);
+    const end = new Date(data.endDate);
+    return end >= start;
+}, {
+    message: "Must be after the start date",
+    path: ["endDate"],
+});
 
 export type AuthErrors = {
   email?: string[];

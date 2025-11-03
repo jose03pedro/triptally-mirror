@@ -1,29 +1,45 @@
 "use client";
 
-export default function TripDateRangePicker() {
+import FieldErrors from "@/app/components/ui/fieldErrors";
+
+interface TripDateRangePickerProps {
+    startDate?: string;
+    endDate?: string;
+    startDateErrors?: string[];
+    endDateErrors?: string[];
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export default function TripDateRangePicker({ startDate, endDate, startDateErrors, endDateErrors, onChange }: TripDateRangePickerProps) {
     return (
             <div className="row mb-2">
                 <div className="col">
-                    <label htmlFor="start-date" className="form-label text-secondary mb-0">
+                    <label htmlFor="startDate" className="form-label text-secondary mb-0">
                         Start date
                     </label>
                     <input
-                        id="start-date"
-                        name="start-date"
+                        id="startDate"
+                        name="startDate"
                         type="date"
-                        className={`form-control fs-6`}
+                        className={`form-control fs-6 ${ startDateErrors?.length ? "is-invalid" : "" }`}
+                        value={startDate}
+                        onChange={onChange}
                     />
+                    <FieldErrors errors={startDateErrors} />
                 </div>
                 <div className="col">
-                    <label htmlFor="end-date" className="form-label text-secondary mb-0">
+                    <label htmlFor="endDate" className="form-label text-secondary mb-0">
                         End date
                     </label>
                     <input
-                        id="end-date"
-                        name="end-date"
+                        id="endDate"
+                        name="endDate"
                         type="date"
-                        className={`form-control fs-6`}
+                        className={`form-control fs-6 ${ endDateErrors?.length ? "is-invalid" : "" }`}
+                        value={endDate}
+                        onChange={onChange}
                     />
+                    <FieldErrors errors={ endDateErrors } />
                 </div>
             </div>
     );

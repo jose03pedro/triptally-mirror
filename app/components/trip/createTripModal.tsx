@@ -2,19 +2,32 @@ import {createTrip} from "@/app/actions/createTrip";
 import TripDateRangePicker from "@/app/components/trip/tripDateRangePicker";
 import {CloseBtn} from "@/app/components/ui/closeBtn";
 import TripCitiesInput from "@/app/components/trip/tripCitiesInput";
-import {useActionState, useEffect} from "react";
+import {useActionState, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
+import FieldErrors from "@/app/components/ui/fieldErrors";
 
 export default function CreateTripModal() {
     const router = useRouter();
 
-    const [state, action, isPending] = useActionState(createTrip, { success: false, id: null });
+    const [state, action, isPending] = useActionState(createTrip, { success: false, id: null, errors: { title: [], startDate: [], endDate: [], cities: [] }  });
 
     useEffect(() => {
         if (state?.success && state?.id) {
             router.push(`/trips/${state.id}`);
         }
     }, [state, router]);
+
+    const [formValues, setFormValues] = useState({
+        title: "",
+        startDate: "",
+        endDate: "",
+        cities: [],
+    })
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setFormValues((prev) => ({ ...prev, [name]: value }));
+    }
 
     return (
         <div className="modal fade" id="createTripModal" role="dialog" aria-labelledby="createTripModalLabel"
@@ -37,10 +50,20 @@ export default function CreateTripModal() {
                                     name="title"
                                     type="text"
                                     placeholder="Give your trip a title..."
-                                    className={`form-control fs-6`}
+                                    className={`form-control fs-6 ${ state?.errors?.title?.length ? "is-invalid" : "" }`}
+                                    onChange={handleChange}
+                                    value={formValues.title}
                                 />
+                                <FieldErrors errors={state?.errors?.title} />
                             </div>
-                            <TripDateRangePicker/>
+
+                            <TripDateRangePicker
+                                startDate={formValues.startDate}
+                                endDate={formValues.endDate}
+                                startDateErrors={state?.errors?.startDate}
+                                endDateErrors={state?.errors?.endDate}
+                                onChange={handleChange}
+                            />
                             <TripCitiesInput/>
                         </div>
 

@@ -4,10 +4,8 @@ import connectionToDB from "@/lib/mongoose";
 import User from "../models/User";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
-import { AuthResponse, FormState, SignupFormSchema } from "@/lib/definitions";
+import { AuthResponse, SignupFormSchema } from "@/lib/definitions";
 import {loginHandler} from "@/app/actions/login";
-
-const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function signup(formData: FormData): Promise<AuthResponse> {
   try {
