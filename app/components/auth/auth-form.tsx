@@ -5,6 +5,7 @@ import { signup } from "../../actions/signup";
 import { useRouter } from "next/navigation";
 import { login } from "../../actions/login";
 import { AuthResponse } from "@/lib/definitions";
+import FieldErrors from "@/app/components/ui/fieldErrors";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -66,12 +67,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
               state?.errors?.email?.length ? "is-invalid" : ""
             }`}
           />
-          {state?.errors?.email &&
-            state.errors.email.map((err, i) => (
-              <div key={i} className="invalid-feedback">
-                {err}
-              </div>
-            ))}
+          <FieldErrors errors={state?.errors?.email} />
         </div>
 
         {/* Password Field */}
@@ -94,16 +90,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
               state?.errors?.password?.length ? "is-invalid" : ""
             }`}
           />
-
-          {state?.errors?.password && (
-            <div className="invalid-feedback">
-              <ul className="mb-0 px-0">
-                {state.errors.password.map((error, i) => (
-                  <li key={i}>{error}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <FieldErrors errors={state?.errors?.password} asList />
         </div>
 
         {/* Extra fields for signup */}
@@ -128,12 +115,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                   state?.errors?.first_name?.length ? "is-invalid" : ""
                 }`}
               />
-              {state?.errors?.first_name &&
-                state.errors.first_name.map((err, i) => (
-                  <div key={i} className="invalid-feedback">
-                    {err}
-                  </div>
-                ))}
+              <FieldErrors errors={state?.errors?.first_name} />
             </div>
 
             {/* Last Name Field */}
@@ -155,12 +137,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                   state?.errors?.last_name?.length ? "is-invalid" : ""
                 }`}
               />
-              {state?.errors?.last_name &&
-                state.errors.last_name.map((err, i) => (
-                  <div key={i} className="invalid-feedback">
-                    {err}
-                  </div>
-                ))}
+              <FieldErrors errors={state?.errors?.last_name} />
             </div>
           </div>
         )}

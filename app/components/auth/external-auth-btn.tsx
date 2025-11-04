@@ -42,7 +42,7 @@ export function ExternalAuthBtn({ provider }: { provider: string }) {
           src={`/icons/${provider.toLowerCase()}.png`}
           alt={`${provider} logo`}
           width={18}
-          className="position-absolute start-3 top-50 translate-middle-y"
+          className="position-absolute start-0 top-50 translate-middle-y mx-2"
         />
         <span className="d-block text-center w-100">
           Continue with {provider}

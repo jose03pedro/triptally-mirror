@@ -4,6 +4,7 @@ import {UserNameImage} from "@/app/components/user/user-name-image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {logoutHandler} from "@/app/actions/logout";
+import IconText from "@/app/components/ui/icon-text";
 
 type NavDropdownProps = {
     firstName: string;
@@ -33,14 +34,12 @@ export function NavDropdown({firstName, lastName}: NavDropdownProps) {
                     <UserNameImage firstName={firstName} lastName={lastName} />
                 </div>
                 <div className="dropdown-menu w-100" aria-labelledby="dropdownNavbar">
-                    <Link className="dropdown-item d-flex gap-2" href="/profile">
-                        <span className="material-icons md-dark">person</span>
-                        <span>Profile</span>
+                    <Link className="dropdown-item" href="/profile">
+                        <IconText icon={"person"} text={"Profile"} />
                     </Link>
                     <div className="dropdown-divider"></div>
-                    <button className="dropdown-item d-flex gap-2" onClick={handleLogout}>
-                        <span className="material-icons md-dark">logout</span>
-                        <span>Log out</span>
+                    <button className="dropdown-item" onClick={handleLogout}>
+                        <IconText icon={"logout"} text={"Log out"} />
                     </button>
                 </div>
             </div>
