@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {useState, useEffect, useRef} from "react";
 import { City } from "@/app/components/trip/tripCitiesInput";
 
 interface CitySelectProps {
@@ -21,8 +21,21 @@ export function CitySelect({
                                setSelectedCity,
                            }: CitySelectProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     // Fetch cities whenever search changes
     useEffect(() => {
@@ -44,7 +57,7 @@ export function CitySelect({
 
     const filteredCities =
         search.length > 0
-            ? availableCities.filter((city) =>
+            ? availableCities?.filter((city) =>
                 city.name.toLowerCase().includes(search.toLowerCase())
             )
             : [];
@@ -57,7 +70,7 @@ export function CitySelect({
     };
 
     return (
-        <div className="position-relative w-100" style={{ minWidth: "200px" }}>
+        <div ref={dropdownRef} className="position-relative w-100" style={{ minWidth: "200px" }}>
             <input
                 type="text"
                 className="form-control w-100"
