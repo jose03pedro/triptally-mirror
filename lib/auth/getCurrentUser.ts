@@ -10,8 +10,10 @@ export async function getCurrentUser() {
     if (!token) return null;
 
   try {
-    const decoded : string | JwtPayload  = jwt.verify(token, process.env.JWT_SECRET!);
-    const userId = decoded.user.id;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as string | JwtPayload;
+    if (typeof decoded === "string") return null;
+
+    const userId = (decoded as JwtPayload & { user: { id: string } }).user.id;
 
     const user = await User.findById(userId);
     if (!user) return null;
