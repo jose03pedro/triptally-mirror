@@ -5,7 +5,7 @@ import Trip from "@/app/models/Trip";
 import {getCurrentUser} from "@/lib/auth/getCurrentUser";
 import {CreateTripSchema} from "@/lib/definitions";
 
-export async function createTrip(prevState: any, formData: FormData)  {
+export async function createTrip(formData: FormData)  {
     try {
         await connectionToDB();
 
