@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
-import {NavDropdown} from "@/app/components/navigation/nav-dropdown";
+import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
 
 export function Navbar() {
   const session = useAuth();
@@ -14,6 +14,8 @@ export function Navbar() {
         <Link className="navbar-brand" href="\">
           TripTally
         </Link>
+
+        <Link className="nav-link" href="/trips">Trips</Link>
 
         <div className="d-flex gap-2">
           {!user ? (

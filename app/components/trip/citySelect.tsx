@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { City } from "@/app/components/trip/tripCitiesInput";
 
 interface CitySelectProps {
@@ -13,13 +13,13 @@ interface CitySelectProps {
 }
 
 export function CitySelect({
-                               selectedCity,
-                               search,
-                               availableCities,
-                               setSearch,
-                               setAvailableCities,
-                               setSelectedCity,
-                           }: CitySelectProps) {
+    selectedCity,
+    search,
+    availableCities,
+    setSearch,
+    setAvailableCities,
+    setSelectedCity,
+}: CitySelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +79,9 @@ export function CitySelect({
                 onClick={toggleDropdown}
                 readOnly
             />
-            <input type="hidden" name="cities" value={JSON.stringify(selectedCity)} />
+            {selectedCity?.name && (
+                <input type="hidden" name="cities" value={JSON.stringify(selectedCity)} />
+            )}
 
 
             {isOpen && (
@@ -111,7 +113,16 @@ export function CitySelect({
                         ))
                     ) : (
                         search.length > 0 && (
-                            <span className="dropdown-item text-muted">No cities found</span>
+                            <>
+                                <span className="dropdown-item text-muted">No cities found</span>
+                                <button
+                                    type="button"
+                                    className="dropdown-item btn btn-link text-start"
+                                    onClick={() => handleSelect({ id: search, name: search, country: "Unknown" })}
+                                >
+                                    Use "{search}" as city
+                                </button>
+                            </>
                         )
                     )}
                 </div>
