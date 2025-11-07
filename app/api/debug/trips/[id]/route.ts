@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
     await connectionToDB();
-    const { id } = await context.params;
+    const { id } = params;
     const trip = await Trip.findById(id);
     return new Response(JSON.stringify({ trip }), {
         headers: { "Content-Type": "application/json" },
