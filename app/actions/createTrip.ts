@@ -18,10 +18,7 @@ export async function createTrip(prevState: any, formData: FormData) {
         const title = formData.get("title") as string;
         const startDate = formData.get("startDate") as string;
         const endDate = formData.get("endDate") as string;
-        // formData may include empty hidden inputs for cities (when a city slot
-        // exists but no city was selected). Filter out empty values and safely
-        // parse JSON entries so a single empty value doesn't cause the whole
-        // action to throw.
+        // parse city inputs, ignoring empty values
         const citiesJson = (formData.getAll("cities") as unknown[])
             .map((v) => String(v))
             .filter((s) => s && s.trim() !== "");

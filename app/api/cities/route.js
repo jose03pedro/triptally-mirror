@@ -1,20 +1,7 @@
-/**
- * @typedef {Object} City
- * @property {number} id
- * @property {string} name
- * @property {string} country
- */
-
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const namePrefix = searchParams.get("namePrefix") || "";
-    // If GeoDB environment variables are not configured (e.g., locally),
-    // return a small static fallback list so the UI still works.
-    const GEODB_HOST = process.env.GEODB_API_HOST;
-    const GEODB_KEY = process.env.GEODB_API_KEY;
+    const namePrefix = (searchParams.get("namePrefix") || "").toLowerCase();
 
-    // For local development and simplicity, use a static in-repo list of
-    // popular cities. Custom free-text entries are handled on the client.
     const staticCities = [
         { id: "1", name: "Budapest", country: "Hungary" },
         { id: "2", name: "London", country: "United Kingdom" },
@@ -28,21 +15,15 @@ export async function GET(request) {
         { id: "10", name: "Amsterdam", country: "Netherlands" },
     ];
 
-    const filtered = staticCities.filter((c) =>
-        c.name.toLowerCase().startsWith(namePrefix.toLowerCase())
+    const filtered = staticCities.filter((c) => c.name.toLowerCase().startsWith(namePrefix));
+
+    // ensure unique city names (defensive)
+    const unique = Array.from(
+        filtered.reduce((map, city) => {
+            if (!map.has(city.name)) map.set(city.name, city);
+            return map;
+        }, new Map()).values()
     );
 
-    return Response.json(filtered);
-
-    // Remove duplicates by city name
-    const uniqueCitiesMap = new Map();
-    formatted.forEach((city) => {
-        if (!uniqueCitiesMap.has(city.name)) {
-            uniqueCitiesMap.set(city.name, city);
-        }
-    });
-
-    const uniqueCities = Array.from(uniqueCitiesMap.values());
-
-    return Response.json(uniqueCities);
+    return Response.json(unique);
 }

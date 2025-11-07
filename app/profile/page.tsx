@@ -2,19 +2,18 @@
 
 import { useAuth } from "@/lib/hook/useAuth";
 import { UserCard } from "@/app/components/user/user-card";
-import { useRouter } from "next/navigation";
 import IconText from "@/app/components/ui/icon-text";
 import CreateTripModal from "@/app/components/trip/createTripModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+type City = { name: string; country?: string };
+type Trip = { _id: string; title: string; startDate: string; endDate?: string; cities?: City[] };
+
 export default function ProfilePage() {
   const session = useAuth();
-  const router = useRouter();
-  const [upcoming, setUpcoming] = useState<any[]>([]);
-
+  const [upcoming, setUpcoming] = useState<Trip[]>([]);
   const user = session?.user;
-  if (!user) return <p>User not found.</p>;
 
   useEffect(() => {
     async function fetchUpcoming() {
@@ -31,6 +30,8 @@ export default function ProfilePage() {
 
     fetchUpcoming();
   }, [user]);
+
+  if (!user) return <p>User not found.</p>;
 
   return (
     <>
@@ -53,7 +54,7 @@ export default function ProfilePage() {
                 <li key={t._id} className="list-group-item d-flex justify-content-between align-items-center">
                   <div>
                     <Link href={`/trips/${t._id}`} className="fw-bold">{t.title}</Link>
-                    <div className="text-muted small">{t.cities?.map((c: any) => c.name).join(", ")}</div>
+                    <div className="text-muted small">{t.cities?.map((c: City) => c.name).join(", ")}</div>
                   </div>
                   <div className="small text-muted">{new Date(t.startDate).toLocaleDateString()}</div>
                 </li>

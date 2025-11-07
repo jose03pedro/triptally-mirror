@@ -1,11 +1,9 @@
-import {createTrip} from "@/app/actions/createTrip";
+import { createTrip } from "@/app/actions/createTrip";
 import TripDateRangePicker from "@/app/components/trip/tripDateRangePicker";
-import {CloseBtn} from "@/app/components/ui/closeBtn";
 import TripCitiesInput from "@/app/components/trip/tripCitiesInput";
-import {useActionState, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import FieldErrors from "@/app/components/ui/fieldErrors";
-import {Modal} from "react-aria-components";
 import FormModal from "@/app/components/ui/formModal";
 
 export default function CreateTripModal() {
@@ -21,9 +19,13 @@ export default function CreateTripModal() {
 
     const [state, action, isPending] = useActionState(createTrip, initialState);
     const [formValues, setFormValues] = useState(initialFormValues);
+    const [selectedCitiesCount, setSelectedCitiesCount] = useState(0);
 
     useEffect(() => {
         if (state?.success && state?.id) {
+            // log server action result for development
+            console.log("createTrip result:", state);
+
             // remove leftover modal backdrop and body class
             document.body.classList.remove("modal-open");
             document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
@@ -34,12 +36,14 @@ export default function CreateTripModal() {
     }, [state, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormValues((prev) => ({ ...prev, [name]: value }));
     }
 
+    const canSubmit = Boolean(formValues.title && formValues.startDate && formValues.endDate && selectedCitiesCount > 0);
+
     return (
-        <FormModal id="createTrip" title="Create new trip" action={action} isPending={isPending}>
+        <FormModal id="createTrip" title="Create new trip" action={action} isPending={isPending} canSubmit={canSubmit}>
             <div className="mb-2">
                 <label htmlFor="title" className="form-label text-secondary mb-0">
                     Title
@@ -49,7 +53,7 @@ export default function CreateTripModal() {
                     name="title"
                     type="text"
                     placeholder="Give your trip a title..."
-                    className={`form-control fs-6 ${ state?.errors?.title?.length ? "is-invalid" : "" }`}
+                    className={`form-control fs-6 ${state?.errors?.title?.length ? "is-invalid" : ""}`}
                     onChange={handleChange}
                     value={formValues.title}
                 />
@@ -63,7 +67,7 @@ export default function CreateTripModal() {
                 endDateErrors={state?.errors?.endDate}
                 onChange={handleChange}
             />
-            <TripCitiesInput cityErrors={state?.errors?.cities}/>
+            <TripCitiesInput cityErrors={state?.errors?.cities} onChangeCities={(cities) => setSelectedCitiesCount(cities.length)} />
         </FormModal>
     )
 }
