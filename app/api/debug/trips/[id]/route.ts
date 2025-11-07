@@ -2,13 +2,11 @@ import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import { NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
     await connectionToDB();
-    try {
-        const trip = await Trip.findById(params.id).lean();
-        if (!trip) return NextResponse.json({ error: "Not found" }, { status: 404 });
-        return NextResponse.json({ trip });
-    } catch (err) {
-        return NextResponse.json({ error: String(err) }, { status: 500 });
-    }
+    const { id } = await context.params;
+    const trip = await Trip.findById(id);
+    return new Response(JSON.stringify({ trip }), {
+        headers: { "Content-Type": "application/json" },
+    });
 }
