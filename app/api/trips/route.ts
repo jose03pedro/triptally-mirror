@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     match.isPublic = true;
   } else {
     match.user = userId;
+    match.isPublic = true;
     if (upcoming) {
       match.startDate = { $gte: new Date() };
     }

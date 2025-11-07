@@ -46,6 +46,7 @@ export async function createTrip(prevState: any, formData: FormData) {
             startDate,
             endDate,
             cities: normalizedCities,
+            isPublic: true,
         });
 
         if (!validatedFields.success) {

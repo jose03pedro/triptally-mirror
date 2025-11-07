@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type City = { name: string; country?: string };
-type Trip = { _id: string; title: string; startDate: string; endDate?: string; cities?: City[] };
+type Trip = { _id: string; title: string; startDate: string; endDate?: string; cities?: City[]; userId?: string };
 
 export default function ProfilePage() {
   const session = useAuth();
