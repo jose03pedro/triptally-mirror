@@ -17,30 +17,37 @@ type DecodedToken = {
 
 export function useAuth() {
   const [user, setUser] = useState<DecodedToken | null>(null);
-
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser(null);
-      return;
-    }
+    // Run the token check inside an async loader and await a microtask
+    // so we don't call setState synchronously during render/effect setup.
+    const load = async () => {
+      await Promise.resolve(); // ensure async so setState won't be synchronous here
 
-    try {
-      const decoded = jwtDecode<DecodedToken>(token);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        return;
+      }
 
-      // Check if token is expired
-      if (decoded.exp * 1000 < Date.now()) {
-        console.warn("Token expired");
+      try {
+        const decoded = jwtDecode<DecodedToken>(token);
+
+        // Check if token is expired
+        if (decoded.exp * 1000 < Date.now()) {
+          console.warn("Token expired");
+          localStorage.removeItem("token");
+          setUser(null);
+        } else {
+          setUser(decoded);
+        }
+      } catch (err) {
+        console.error("Invalid token:", err);
         localStorage.removeItem("token");
         setUser(null);
-      } else {
-        setUser(decoded);
       }
-    } catch (err) {
-      console.error("Invalid token:", err);
-      localStorage.removeItem("token");
-      setUser(null);
-    }
+    };
+
+    load();
   }, []);
 
   return user;

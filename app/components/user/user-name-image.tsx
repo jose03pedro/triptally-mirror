@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {UserIcon} from "@/app/components/user/user-icon";
 type UserImageProps = {
     firstName: string;

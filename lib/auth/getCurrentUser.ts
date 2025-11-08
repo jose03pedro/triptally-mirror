@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken"; // or your preferred token lib
+import jwt from "jsonwebtoken";
 import User from "@/app/models/User";
-import {JwtPayload} from "jwt-decode";
+import { JwtPayload } from "jwt-decode";
 
 export async function getCurrentUser() {
-    const cookieStore = cookies();
-    const token = (await cookieStore).get("session")?.value;
+  const cookieStore = cookies();
+  const token = (await cookieStore).get("session")?.value;
 
-    if (!token) return null;
+  if (!token) return null;
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as string | JwtPayload;

@@ -2,10 +2,10 @@
 
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
-import {getCurrentUser} from "@/lib/auth/getCurrentUser";
-import {CreateTripSchema} from "@/lib/definitions";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+import { CreateTripSchema } from "@/lib/definitions";
 
-export async function createTrip(formData: FormData)  {
+export async function createTrip(prevState: any, formData: FormData) {
     try {
         await connectionToDB();
 
@@ -18,14 +18,35 @@ export async function createTrip(formData: FormData)  {
         const title = formData.get("title") as string;
         const startDate = formData.get("startDate") as string;
         const endDate = formData.get("endDate") as string;
-        const citiesJson = formData.getAll("cities") as string[];
-        const cities = citiesJson?.map(city => JSON.parse(city));
+        // parse city inputs, ignoring empty values
+        const citiesJson = (formData.getAll("cities") as unknown[])
+            .map((v) => String(v))
+            .filter((s) => s && s.trim() !== "");
+
+        const cities: any[] = [];
+        for (const c of citiesJson) {
+            try {
+                cities.push(JSON.parse(c));
+            } catch (err) {
+                console.warn("createTrip: skipping invalid city payload", c, err);
+            }
+        }
+
+        // Ensure required fields exist for storage (country is required in the
+        // Mongoose schema). If the city comes from the free-text fallback it may
+        // not have a country — normalize it here.
+        const normalizedCities = cities.map((ct) => ({
+            name: ct.name,
+            country: ct.country || "Unknown",
+            id: ct.id || undefined,
+        }));
 
         const validatedFields = CreateTripSchema.safeParse({
             title,
             startDate,
             endDate,
-            cities,
+            cities: normalizedCities,
+            isPublic: true,
         });
 
         if (!validatedFields.success) {
@@ -44,7 +65,7 @@ export async function createTrip(formData: FormData)  {
         const newTrip = await Trip.create({
             title: validatedFields.data.title,
             startDate: validatedFields.data.startDate,
-            endDate : validatedFields.data.endDate,
+            endDate: validatedFields.data.endDate,
             cities: validatedFields.data.cities,
             user: currentUser.id,
         });

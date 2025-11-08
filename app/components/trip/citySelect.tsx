@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import { City } from "@/app/components/trip/tripCitiesInput";
 
 interface CitySelectProps {
@@ -13,14 +13,16 @@ interface CitySelectProps {
 }
 
 export function CitySelect({
-                               selectedCity,
-                               search,
-                               availableCities,
-                               setSearch,
-                               setAvailableCities,
-                               setSelectedCity,
-                           }: CitySelectProps) {
+    selectedCity,
+    search,
+    availableCities,
+    setSearch,
+    setAvailableCities,
+    setSelectedCity,
+}: CitySelectProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [showCountryPrompt, setShowCountryPrompt] = useState(false);
+    const [customCountry, setCustomCountry] = useState("");
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
@@ -69,6 +71,16 @@ export function CitySelect({
         setAvailableCities([]);
     };
 
+    const handleSelectWithCountry = (cityName: string, country: string) => {
+        const city: City = { id: cityName, name: cityName, country: country || "Unknown" };
+        setSelectedCity(city);
+        setIsOpen(false);
+        setSearch("");
+        setAvailableCities([]);
+        setShowCountryPrompt(false);
+        setCustomCountry("");
+    };
+
     return (
         <div ref={dropdownRef} className="position-relative w-100" style={{ minWidth: "200px" }}>
             <input
@@ -79,7 +91,9 @@ export function CitySelect({
                 onClick={toggleDropdown}
                 readOnly
             />
-            <input type="hidden" name="cities" value={JSON.stringify(selectedCity)} />
+            {selectedCity?.name && (
+                <input type="hidden" name="cities" value={JSON.stringify(selectedCity)} />
+            )}
 
 
             {isOpen && (
@@ -111,7 +125,47 @@ export function CitySelect({
                         ))
                     ) : (
                         search.length > 0 && (
-                            <span className="dropdown-item text-muted">No cities found</span>
+                            <>
+                                <span className="dropdown-item text-muted">No cities found</span>
+                                {!showCountryPrompt ? (
+                                    <div className="d-flex flex-column">
+                                        <button
+                                            type="button"
+                                            className="dropdown-item btn btn-link text-start"
+                                            onClick={() => setShowCountryPrompt(true)}
+                                        >
+                                            Use "{search}" as city
+                                        </button>
+                                        <small className="text-muted px-2">You can provide a country for custom cities.</small>
+                                    </div>
+                                ) : (
+                                    <div className="px-2">
+                                        <input
+                                            type="text"
+                                            className="form-control mb-2"
+                                            placeholder="Country (optional - defaults to Unknown)"
+                                            value={customCountry}
+                                            onChange={(e) => setCustomCountry(e.target.value)}
+                                        />
+                                        <div className="d-flex gap-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-primary"
+                                                onClick={() => handleSelectWithCountry(search, customCountry)}
+                                            >
+                                                Confirm
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-secondary"
+                                                onClick={() => { setShowCountryPrompt(false); setCustomCountry(""); }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )
                     )}
                 </div>

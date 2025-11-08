@@ -7,20 +7,20 @@ import ExpenseCategory from "@/app/models/ExpenseCategory";
 
 export async function GET(
     request: Request,
-    context: { params: Promise<{ tripId: string }> }
+    context: { params: Promise<{ id: string }> }
     ) {
     try {
         await connectionToDB();
-        const { tripId } = await context.params;
+        const { id } = await context.params;
 
-        if (!tripId) {
+        if (!id) {
             return NextResponse.json(
                 {error: "Trip ID is required"},
                 {status: 400}
             );
         }
 
-        const expenses = await Expense.find({ trip: tripId }).populate({path: "category", model: "ExpenseCategory"});
+        const expenses = await Expense.find({ trip: id }).populate({path: "category", model: "ExpenseCategory"});
 
         return NextResponse.json(
             expenses,

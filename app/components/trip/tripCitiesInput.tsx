@@ -18,26 +18,36 @@ interface TripCity extends City {
 
 interface TripCitiesInputProps {
     cityErrors?: string[];
+    onChangeCities?: (cities: { id?: string; name: string; country: string }[]) => void;
 }
 
-export default function TripCitiesInput({cityErrors} : TripCitiesInputProps) {
+export default function TripCitiesInput({ cityErrors, onChangeCities }: TripCitiesInputProps) {
     const [cities, setCities] = useState<TripCity[]>([
         { id: "", name: "", country: "", search: "", availableCities: [] },
     ]);
 
     const addCity = () =>
-        setCities([
-            ...cities,
-            { id: "", name: "", country: "", search: "", availableCities: [] },
-        ]);
+        setCities((prev) => {
+            const next = [
+                ...prev,
+                { id: "", name: "", country: "", search: "", availableCities: [] },
+            ];
+            onChangeCities?.(next.filter((c) => c.name));
+            return next;
+        });
 
     const removeCity = (idx: number) =>
-        setCities(cities.filter((_, i) => i !== idx));
+        setCities((prev) => {
+            const next = prev.filter((_, i) => i !== idx);
+            onChangeCities?.(next.filter((c) => c.name));
+            return next;
+        });
 
     const updateCity = (idx: number, updatedCity: Partial<TripCity>) => {
         setCities((prev) => {
             const newCities = [...prev];
             newCities[idx] = { ...newCities[idx], ...updatedCity };
+            onChangeCities?.(newCities.filter((c) => c.name));
             return newCities;
         });
     };

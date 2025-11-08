@@ -3,49 +3,83 @@
 import {Expense} from "@/app/expenses/expense";
 import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
+import Link from "next/link";
+import {Loading} from "@/app/components/ui/loading";
 
 export default function TripPage() {
-    const params = useParams<{ tripId: string }>();
-    const tripId = params.tripId;
+    const params = useParams();
+    const tripId = params?.tripId;
 
+    const [trip, setTrip] = useState<any>(null);
     const [expenses, setExpenses] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if (!tripId) return;
 
-        const fetchExpenses = async () => {
+        const fetchData = async () => {
+            setLoading(true);
             try {
-                const response = await fetch(`/api/trips/${tripId}/expenses`);
-                if (!response.ok) throw new Error(response.statusText);
-                const data = await response.json();
-                setExpenses(data);
-            } catch (error) {
-                console.error(error);
+                const [tripRes, expensesRes] = await Promise.all([
+                    fetch(`/api/trips/${tripId}`),
+                    fetch(`/api/trips/${tripId}/expenses`)
+                ]);
+                const tripData = await tripRes.json();
+                const expensesData = await expensesRes.json();
+
+                setTrip(tripData);
+                setExpenses(expensesData);
+            } catch (err) {
+                console.error(err);
             } finally {
                 setLoading(false);
             }
-        }
-        fetchExpenses();
-    })
+        };
+
+        fetchData();
+    }, [tripId]);
+
+    if (loading) {
+        return (
+            <Loading />
+        );
+    }
+
+    if (!trip) {
+        console.error("Trip not found.");
+        return (
+            <div className="container py-5">
+                <p>Trip not found.</p>
+                <Link href="/trips" className="btn btn-outline-secondary mt-3">Back to Trips</Link>
+            </div>
+        );
+    }
 
     return (
-        <>
-            <section id="expensesContainer">
-                {expenses?.length === 0 ? (
-                    <p>No expenses yet for this trip.</p>
-                ) : (
-                    expenses?.map((expense) => (
-                        <Expense
-                            key={ expense._id } {...expense}
-                            description={ expense.description }
-                            value={ expense.value }
-                            currency={ expense.currency }
-                            category={ expense?.category }
-                        />
-                    ))
-                )}
-            </section>
-        </>
-    )
+        <div className="container py-5">
+            <Link href="/trips" className="btn btn-link px-0 mb-3">← Back</Link>
+            <h1 className="mb-3">{trip.title}</h1>
+
+            <div className="mb-3">
+                <strong>Dates:</strong>{" "}
+                {new Date(trip.startDate).toLocaleDateString()} – {new Date(trip.endDate).toLocaleDateString()}
+            </div>
+
+            <div className="mb-4">
+                <strong>Destinations:</strong>{" "}
+                {trip.cities?.map((c: {
+                    name: string;
+                    country?: string
+                }) => `${c.name}, ${c.country}`).join(" · ") || "—"}
+            </div>
+
+            {/* Placeholders for future stories (expenses, itinerary, participants) */}
+            <div className="alert alert-info">
+                Trip details sections (Itinerary, Expenses, Participants) go here.
+            </div>
+
+
+        </div>
+    );
 }
+
