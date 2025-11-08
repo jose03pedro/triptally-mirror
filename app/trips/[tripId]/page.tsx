@@ -1,75 +1,52 @@
+'use client'
+
+import {Expense} from "@/app/expenses/expense";
+import {useParams} from "next/navigation";
+import {useEffect, useState} from "react";
 import Link from "next/link";
-import connectionToDB from "@/lib/mongoose";
-import Trip from "@/app/models/Trip";
-import mongoose from "mongoose";
+import {Loading} from "@/app/components/ui/loading";
 
-async function getTrip(tripId?: string | null) {
-    if (!tripId) return null;
+export default function TripPage() {
+    const params = useParams();
+    const tripId = params?.tripId;
 
-    console.log("[TripPage] getTrip called with id:", tripId);
-    await connectionToDB();
+    const [trip, setTrip] = useState<any>(null);
+    const [expenses, setExpenses] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    let trip = null;
-    try {
-        if (mongoose.isValidObjectId(tripId)) {
-            trip = await Trip.findById(tripId).lean();
-            console.log("[TripPage] findById result:", !!trip);
-        }
-    } catch (err) {
-        console.warn("[TripPage] findById error:", err);
-    }
+    useEffect(() => {
+        if (!tripId) return;
 
-    if (!trip) {
-        try {
-            const decoded = decodeURIComponent(tripId);
-            if (decoded !== tripId && mongoose.isValidObjectId(decoded)) {
-                trip = await Trip.findById(decoded).lean();
-                console.log("[TripPage] findById after decode result:", !!trip);
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [tripRes, expensesRes] = await Promise.all([
+                    fetch(`/api/trips/${tripId}`),
+                    fetch(`/api/trips/${tripId}/expenses`)
+                ]);
+                const tripData = await tripRes.json();
+                const expensesData = await expensesRes.json();
+
+                setTrip(tripData);
+                setExpenses(expensesData);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            console.warn("[TripPage] decode/second find error:", err);
-        }
-    }
+        };
 
-    // API fallback: only attempt when we have an absolute base URL configured.
-    if (!trip && process.env.NEXT_PUBLIC_BASE_URL) {
-        try {
-            const base = process.env.NEXT_PUBLIC_BASE_URL.replace(/\/$/, "");
-            const url = `${base}/api/trips/${encodeURIComponent(tripId)}`;
-            const apiRes = await fetch(url, { cache: "no-store" });
-            if (apiRes.ok) {
-                const data = await apiRes.json();
-                // support both { trip } and plain trip return shapes
-                trip = data.trip ?? data;
-                console.log("[TripPage] fetched from API fallback", !!trip);
-            }
-        } catch (err) {
-            console.warn("[TripPage] API fallback error:", err);
-        }
-    }
+        fetchData();
+    }, [tripId]);
 
-    if (!trip) return null;
-    return JSON.parse(JSON.stringify(trip));
-}
-
-export default async function TripPage({ params }: { params: Promise<{ tripId?: string }> }) {
-    // Next.js may pass `params` as a Promise in some RSC contexts. Await it
-    // so we safely access `tripId` and avoid the runtime message.
-    const resolved = await params;
-    const tripId = resolved?.tripId;
-
-    if (!tripId) {
-        console.warn("[TripPage] no tripId in params:", resolved);
+    if (loading) {
         return (
-            <div className="container py-5">
-                <p>Trip not found (missing id).</p>
-                <Link href="/trips" className="btn btn-outline-secondary mt-3">Back to Trips</Link>
-            </div>
+            <Loading />
         );
     }
 
-    const trip = await getTrip(String(tripId));
     if (!trip) {
+        console.error("Trip not found.");
         return (
             <div className="container py-5">
                 <p>Trip not found.</p>
@@ -90,13 +67,19 @@ export default async function TripPage({ params }: { params: Promise<{ tripId?: 
 
             <div className="mb-4">
                 <strong>Destinations:</strong>{" "}
-                {trip.cities?.map((c: { name: string; country?: string }) => `${c.name}, ${c.country}`).join(" · ") || "—"}
+                {trip.cities?.map((c: {
+                    name: string;
+                    country?: string
+                }) => `${c.name}, ${c.country}`).join(" · ") || "—"}
             </div>
 
             {/* Placeholders for future stories (expenses, itinerary, participants) */}
             <div className="alert alert-info">
                 Trip details sections (Itinerary, Expenses, Participants) go here.
             </div>
+
+
         </div>
     );
 }
+

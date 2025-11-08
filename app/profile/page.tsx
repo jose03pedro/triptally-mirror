@@ -39,7 +39,7 @@ export default function ProfilePage() {
       <div className="d-flex gap-3 align-items-start">
         <div>
           <button className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createTripModal">
-            <IconText icon={"add"} text={"New trip"} />
+            <IconText icon={"add"} text={"New trip"} color={"000"}/>
           </button>
           <CreateTripModal />
         </div>

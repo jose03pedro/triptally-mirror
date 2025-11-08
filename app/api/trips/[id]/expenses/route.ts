@@ -1,15 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectionToDB from "@/lib/mongoose";
-import Trip from "@/app/models/Trip";
-import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import Expense from "@/app/models/Expense";
+'use server'
 
-export async function GET(request: Request,
-                          context: { params: Promise<{ id: string }> }
-) {
+import connectionToDB from "@/lib/mongoose";
+import {NextResponse} from "next/server";
+import Expense from "@/app/models/Expense";
+import ExpenseCategory from "@/app/models/ExpenseCategory";
+
+export async function GET(
+    request: Request,
+    context: { params: Promise<{ id: string }> }
+    ) {
     try {
         await connectionToDB();
-
         const { id } = await context.params;
 
         if (!id) {
@@ -19,17 +20,17 @@ export async function GET(request: Request,
             );
         }
 
-        const trip = await Trip.findById(id);
+        const expenses = await Expense.find({ trip: id }).populate({path: "category", model: "ExpenseCategory"});
 
         return NextResponse.json(
-            trip,
+            expenses,
             {status: 200}
         )
-
+        
     } catch (e) {
         console.error(e);
         return NextResponse.json(
-            { error: "Failed to fetch trip" },
+            { error: "Failed to fetch expenses" },
             { status: 500 }
         );
     }
