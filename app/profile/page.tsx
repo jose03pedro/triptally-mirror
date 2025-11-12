@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/hook/useAuth";
-import { UserCard } from "@/app/components/user/user-card";
+import { UserCard } from "@/app/components/user/UserCard";
 import IconText from "@/app/components/ui/icon-text";
 import CreateTripModal from "@/app/components/trip/createTripModal";
 import { useEffect, useState } from "react";

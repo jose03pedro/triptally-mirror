@@ -1,4 +1,4 @@
-import {UserIcon} from "@/app/components/user/user-icon";
+import {UserIcon} from "@/app/components/user/UserIcon";
 type UserImageProps = {
     firstName: string;
     lastName: string;

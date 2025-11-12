@@ -1,6 +1,6 @@
 "use client";
 
-import {UserNameImage} from "@/app/components/user/user-name-image";
+import {UserNameImage} from "@/app/components/user/UserNameImage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {logoutHandler} from "@/app/actions/logout";

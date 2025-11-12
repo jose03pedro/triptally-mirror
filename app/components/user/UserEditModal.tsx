@@ -3,9 +3,9 @@
 import { editUser } from "@/app/actions/editUser";
 import { useActionState, useEffect, useState } from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
-import FormModal from "@/app/components/ui/formModal";
+import ResponsiveModal from "../ui/responsiveModal";
 
-export default function EditUserModal() {
+export default function UserEditModal({ onClose }: { onClose: () => void }) {
   const initialState = {
     success: false,
     errors: {
@@ -31,11 +31,8 @@ export default function EditUserModal() {
 
   useEffect(() => {
     if (state?.success) {
-        
-      // Close modal
-      document.body.classList.remove("modal-open");
-      document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
-      
+      onClose();
+
       setFormValues({
         first_name: "",
         last_name: "",
@@ -48,12 +45,13 @@ export default function EditUserModal() {
   const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 
   return (
-    <FormModal
+    <ResponsiveModal
       id="editUser"
       title="Edit Profile"
       action={action}
       isPending={isPending}
       canSubmit={canSubmit}
+      onCancel={onClose}
     >
       <div className="mb-2">
         <label htmlFor="first_name" className="form-label text-secondary mb-0">
@@ -130,6 +128,6 @@ export default function EditUserModal() {
         />
         <FieldErrors errors={state?.errors?.password} />
       </div>
-    </FormModal>
+    </ResponsiveModal>
   );
 }

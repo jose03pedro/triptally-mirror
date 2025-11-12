@@ -3,31 +3,30 @@
 import Image from "next/image";
 import editIcon from "../icons/edit.png";
 
-type EditIconButtonProps = {
+type EditButtonProps = {
   size?: number;
-  modalId: string; // e.g. "editUser"
-  ariaLabel?: string;
+  label: string;
+  onClick: () => void;
   className?: string;
 };
 
-export function EditIconButton({
+export function UserEditButton({
   size = 24,
-  modalId,
-  ariaLabel = "Edit",
-  className = "",
-}: EditIconButtonProps) {
+  label,
+  onClick,
+  className,
+}: EditButtonProps) {
   return (
     <button
       type="button"
       className={`flex items-center justify-center rounded-full p-1 border-0 outline-none focus:outline-none bg-transparent ${className}`}
       style={{ width: size + 8, height: size + 8 }}
-      aria-label={ariaLabel}
-      data-bs-toggle="modal"
-      data-bs-target={`#${modalId}`}
+      aria-label={label}
+      onClick={onClick}
     >
       <Image
         src={editIcon}
-        alt={ariaLabel}
+        alt={label}
         width={size}
         height={size}
         className="pointer-events-none"
