@@ -4,8 +4,10 @@ import { editUser } from "@/app/actions/editUser";
 import { useActionState, useEffect, useState } from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import ResponsiveModal from "../ui/responsiveModal";
+import { useRouter } from "next/navigation";
 
 export default function UserEditModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   const initialState = {
     success: false,
     errors: {
@@ -32,6 +34,7 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (state?.success) {
       onClose();
+      router.refresh(); // forces server layouts/pages to re-read cookies
 
       setFormValues({
         first_name: "",
@@ -40,7 +43,7 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
         current_password: "",
       });
     }
-  }, [state]);
+  }, [state, router, onClose]);
 
   const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 

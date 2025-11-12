@@ -1,6 +1,6 @@
-import { UserIcon } from "@/app/components/user/UserIcon";
-import { UserEditButton } from "@/app/components/user/UserEditButton";
-import UserEditModal from "./UserEditModal";
+import { UserIcon } from "@/app/components/user/userIcon";
+import { UserEditButton } from "@/app/components/user/userEditButton";
+import UserEditModal from "./userEditModal";
 import { useState } from "react";
 
 type UserCardProps = {
@@ -26,7 +26,12 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
           </p>
         </div>
 
-        <UserEditButton size={22} label="Edit Profile" onClick={openModal} className="" />
+        <UserEditButton
+          size={22}
+          label="Edit Profile"
+          onClick={openModal}
+          className=""
+        />
         {isModalOpen && <UserEditModal onClose={closeModal} />}
       </div>
     </>
