@@ -12,7 +12,7 @@ const tripSchema = new mongoose.Schema({
         },
     ],
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    isPublic: { type: Boolean, default: true },
+    isPublic: { type: Boolean, default: true, required: true },
 });
 
 const Trip = mongoose.models?.Trip || mongoose.model("Trip", tripSchema);

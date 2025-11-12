@@ -1,0 +1,129 @@
+import FormModal from "@/app/components/ui/formModal";
+import {useActionState, useEffect, useMemo, useState} from "react";
+import {createExpense} from "@/app/actions/createExpense";
+import {Loading} from "@/app/components/ui/loading";
+import FieldErrors from "@/app/components/ui/fieldErrors";
+
+interface CreateExpenseModalProps {
+    tripId: string;
+    categories: any[];
+    currencies: any[];
+}
+
+export function CreateExpenseModal({ tripId, categories, currencies }: CreateExpenseModalProps) {
+    const initialState = {
+        success: false,
+    };
+    const initialFormValues = useMemo(() => ({
+        category: "",
+        description: "",
+        value: "",
+        date: "",
+        currency: "",
+    }), []);
+
+    const [state, action, isPending] = useActionState(createExpense, initialState);
+    const [formValues, setFormValues] = useState(initialFormValues);
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = e.target;
+        setFormValues(prev => ({ ...prev, [name]: value }));
+    };
+
+    return (
+        <FormModal
+            id="createExpense"
+            title="Add new expense"
+            action={action}
+            isPending={isPending}
+        >
+            <input type="hidden" name="tripId" value={tripId} />
+
+            <div className="mb-2">
+                <label htmlFor="category" className="form-label text-secondary mb-0">
+                    Category
+                </label>
+
+                <select
+                    id="category"
+                    name="category"
+                    className="form-select fs-6"
+                    onChange={handleChange}
+                    value={formValues.category}
+                >
+                    <option value="">Select a category...</option>
+                    {categories.map((category: any) => (
+                        <option key={category._id} value={category._id}>
+                            {category.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="mb-2">
+                <label htmlFor="description" className="form-label text-secondary mb-0">
+                    Write a description...
+                </label>
+                <input
+                    id="description"
+                    name="description"
+                    type="text"
+                    className={`form-control fs-6`}
+                    onChange={handleChange}
+                    value={formValues.description}
+                />
+            </div>
+
+            <div className="mb-2">
+                <label htmlFor="value" className="form-label text-secondary mb-0">
+                    Value
+                </label>
+                <input
+                    id="value"
+                    name="value"
+                    type="value"
+                    className={`form-control fs-6`}
+                    onChange={handleChange}
+                    value={formValues.value}
+                />
+            </div>
+
+            <div className="mb-2">
+                <label htmlFor="currency" className="form-label text-secondary mb-0">
+                    Currency
+                </label>
+
+                <select
+                    id="currency"
+                    name="currency"
+                    className="form-select fs-6"
+                    onChange={handleChange}
+                    value={formValues.currency}
+                >
+                    <option value="">Select a currency...</option>
+                    {currencies.map((currency: any) => (
+                        <option key={currency._id} value={currency._id}>
+                            {currency.symbol}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="mb-2">
+                <label htmlFor="date" className="form-label text-secondary mb-0">
+                    Date
+                </label>
+                <input
+                    id="date"
+                    name="date"
+                    type="date"
+                    className={`form-control fs-6`}
+                    onChange={handleChange}
+                    value={formValues.date}
+                />
+            </div>
+        </FormModal>
+    )
+}

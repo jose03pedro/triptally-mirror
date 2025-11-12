@@ -5,6 +5,7 @@ import {useParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import Link from "next/link";
 import {Loading} from "@/app/components/ui/loading";
+import {AddExpense} from "@/app/components/trip/addExpense";
 
 export default function TripPage() {
     const params = useParams();
@@ -54,6 +55,7 @@ export default function TripPage() {
             </div>
         );
     }
+    console.log(expenses);
 
     return (
         <div className="container py-5">
@@ -77,6 +79,24 @@ export default function TripPage() {
             <div className="alert alert-info">
                 Trip details sections (Itinerary, Expenses, Participants) go here.
             </div>
+
+            <section id="expensesContainer">
+                <h2 className="fs-3">Expenses</h2>
+                <AddExpense tripId={ tripId as string } />
+                {expenses?.length === 0 ? (
+                    <p>No expenses yet for this trip.</p>
+                ) : (
+                    expenses?.map((expense) => (
+                        <Expense
+                            key={expense._id} {...expense}
+                            description={expense.description}
+                            value={expense.value}
+                            currency={expense?.currency}
+                            category={expense?.category}
+                        />
+                    ))
+                )}
+            </section>
 
 
         </div>

@@ -5,7 +5,7 @@ import {ExpenseIcon} from "@/app/expenses/expenseIcon";
 interface ExpenseProps {
     description: string;
     value: string;
-    currency: string;
+    currency: any;
     category: any;
 }
 
@@ -20,7 +20,7 @@ export function Expense({ description, value, currency, category } : ExpenseProp
                         <IconText icon={"sell"} text={category.name} size={ 18 } color={ "#909090" }/>
                     </div>
                 </div>
-                <p>{value} {currency}</p>
+                <p>{value} {currency.symbol}</p>
             </div>
         </article>
     )

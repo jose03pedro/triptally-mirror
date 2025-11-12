@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import CreateTripModal from "@/app/components/trip/createTripModal";
 import { Navbar } from "@/app/components/navigation/navbar";
+import {Loading} from "@/app/components/ui/loading";
 
 type City = { name: string; country: string };
 type Trip = {
@@ -90,7 +91,7 @@ export default function TripsPage() {
             </form>
 
             {loading ? (
-                <p>Loading…</p>
+                <Loading />
             ) : items.length === 0 ? (
                 <p>No trips found.</p>
             ) : (
