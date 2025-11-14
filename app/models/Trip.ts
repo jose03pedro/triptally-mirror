@@ -36,9 +36,9 @@ const tripSchema = new mongoose.Schema({
   // Owner of the trip
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   // Whether the trip is discoverable by other users
-  isPublic: { type: Boolean, default: true },
+  isPublic: { type: Boolean, required: true, default: true },
   // Optional Base64 cover image
-  coverImage: { type: String },
+  coverImage: { type: String, required: false },
   // Simple collaborative structure for future expansion
   collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   participants: [participantSchema],

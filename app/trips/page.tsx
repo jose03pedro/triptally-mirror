@@ -16,6 +16,7 @@ type Trip = {
     endDate: string;
     cities: City[];
     isPublic?: boolean;
+    owner?: string;
 };
 
 type TripsResponse = {
@@ -101,7 +102,7 @@ export default function TripsPage() {
         return () => {
             ignore = true;
         };
-    }, [q, startDate, endDate]);
+    }, [q, startDate, endDate, user]);
 
     // Fetch trips whenever applied filters, page, OR active tab changes
     useEffect(() => {
@@ -158,7 +159,7 @@ export default function TripsPage() {
         return () => {
             ignore = true;
         };
-    }, [page, q, startDate, endDate, status, activeTab]);
+    }, [page, q, startDate, endDate, status, activeTab, user]);
 
     // Apply filters when user clicks "Apply filters"
     const onSearch = (e: React.FormEvent) => {
@@ -228,7 +229,7 @@ export default function TripsPage() {
         <div className="container py-5">
             <Navbar />
             {/* spacer so content isn't hidden under the fixed navbar */}
-            <div style={{ height: "4.5rem" }} />
+            <div style={{ height: "2.5rem" }} />
 
             <div className="d-flex align-items-center justify-content-between mb-4">
                 <h1 className="mb-0">My trips</h1>
@@ -251,7 +252,7 @@ export default function TripsPage() {
                 </div>
             </div>
 
-            {/* � Search bar outside filters */}
+            {/* Search bar outside filters */}
             <form onSubmit={onSearch} className="mb-3">
                 <div className="input-group">
                     <input
@@ -266,7 +267,7 @@ export default function TripsPage() {
                 </div>
             </form>
 
-            {/* 🔎 Additional filters inside a collapsible panel */}
+            {/* Additional filters inside a collapsible panel */}
             {filtersOpen && (
                 <div className="card mb-4">
                     <div className="card-body">

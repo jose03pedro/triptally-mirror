@@ -114,7 +114,7 @@ export default function TripPage() {
     (trip as any).createdByName ||
     (typeof trip.user === "object"
       ? `${trip.user.first_name || ""} ${trip.user.last_name || ""}`.trim() ||
-        "Unknown traveler"
+      "Unknown traveler"
       : "Unknown traveler");
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
@@ -269,10 +269,20 @@ export default function TripPage() {
                 <span className="font-medium">{creatorName}</span>.
               </p>
               {isOwner ? (
-                <p className="mt-2 text-[11px] text-slate-500">
-                  You can edit this trip&apos;s details, cover image and privacy settings using
-                  the <span className="font-semibold">Edit trip</span> button above.
-                </p>
+                <>
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    You can edit this trip&apos;s details, cover image and privacy settings using
+                    the <span className="font-semibold">Edit trip</span> button above.
+                  </p>
+                  <div className="mt-3">
+                    <Link
+                      href={`/trips/${trip._id}/edit`}
+                      className="text-xs md:text-sm inline-flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
+                    >
+                      Edit details
+                    </Link>
+                  </div>
+                </>
               ) : (
                 <p className="mt-2 text-[11px] text-slate-500">
                   You are viewing a shared version of this trip. Some details may be hidden
