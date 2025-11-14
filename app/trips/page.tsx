@@ -267,6 +267,55 @@ export default function TripsPage() {
                 </div>
             </form>
 
+            {/* Tabs for ongoing / upcoming / past (separated from filters and always visible) */}
+            <ul className="nav nav-pills mb-3">
+                <li className="nav-item">
+                    <button
+                        className={
+                            "nav-link" +
+                            (activeTab === "ongoing" ? " active" : "")
+                        }
+                        type="button"
+                        onClick={() => switchTab("ongoing")}
+                    >
+                        Ongoing{" "}
+                        <span className="badge bg-light text-dark ms-1">
+                            {ongoingCount}
+                        </span>
+                    </button>
+                </li>
+                <li className="nav-item">
+                    <button
+                        className={
+                            "nav-link" +
+                            (activeTab === "upcoming" ? " active" : "")
+                        }
+                        type="button"
+                        onClick={() => switchTab("upcoming")}
+                    >
+                        Upcoming{" "}
+                        <span className="badge bg-light text-dark ms-1">
+                            {upcomingCount}
+                        </span>
+                    </button>
+                </li>
+                <li className="nav-item">
+                    <button
+                        className={
+                            "nav-link" +
+                            (activeTab === "past" ? " active" : "")
+                        }
+                        type="button"
+                        onClick={() => switchTab("past")}
+                    >
+                        Past{" "}
+                        <span className="badge bg-light text-dark ms-1">
+                            {pastCount}
+                        </span>
+                    </button>
+                </li>
+            </ul>
+
             {/* Additional filters inside a collapsible panel */}
             {filtersOpen && (
                 <div className="card mb-4">
@@ -336,54 +385,7 @@ export default function TripsPage() {
 
             {!loading && items.length > 0 && (
                 <>
-                    {/* Tabs for ongoing / upcoming / past */}
-                    <ul className="nav nav-pills mb-3">
-                        <li className="nav-item">
-                            <button
-                                className={
-                                    "nav-link" +
-                                    (activeTab === "ongoing" ? " active" : "")
-                                }
-                                type="button"
-                                onClick={() => switchTab("ongoing")}
-                            >
-                                Ongoing{" "}
-                                <span className="badge bg-light text-dark ms-1">
-                                    {ongoingCount}
-                                </span>
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={
-                                    "nav-link" +
-                                    (activeTab === "upcoming" ? " active" : "")
-                                }
-                                type="button"
-                                onClick={() => switchTab("upcoming")}
-                            >
-                                Upcoming{" "}
-                                <span className="badge bg-light text-dark ms-1">
-                                    {upcomingCount}
-                                </span>
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={
-                                    "nav-link" +
-                                    (activeTab === "past" ? " active" : "")
-                                }
-                                type="button"
-                                onClick={() => switchTab("past")}
-                            >
-                                Past{" "}
-                                <span className="badge bg-light text-dark ms-1">
-                                    {pastCount}
-                                </span>
-                            </button>
-                        </li>
-                    </ul>
+                    {/* (tabs moved above search for persistent visibility) */}
 
                     {/* Render trips for the active tab */}
                     {renderTripGrid(items)}
