@@ -23,7 +23,8 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       </head>
-      <body className={`antialiased`}>
+      {/* Add top padding so fixed navbar does not overlap page content */}
+      <body className={`antialiased`} style={{ paddingTop: "64px" }}>
         {children}
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

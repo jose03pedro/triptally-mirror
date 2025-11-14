@@ -6,17 +6,18 @@ import User from "@/app/models/User";
 
 type DecodedToken = {
   user: {
-      id: string;
-      email: string;
-      first_name: string;
-      last_name: string;
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
   };
   exp: number;
   iat: number;
 };
 
 export function useAuth() {
-  const [user, setUser] = useState<DecodedToken | null>(null);
+  // `undefined` = not checked yet, `null` = checked and unauthenticated, object = authenticated
+  const [user, setUser] = useState<DecodedToken | null | undefined>(undefined);
   useEffect(() => {
     // Run the token check inside an async loader and await a microtask
     // so we don't call setState synchronously during render/effect setup.

@@ -3,13 +3,26 @@ import IconText from "@/app/components/ui/icon-text";
 import {ExpenseIcon} from "@/app/expenses/expenseIcon";
 
 interface ExpenseProps {
-    description: string;
-    value: string;
-    currency: string;
-    category: any;
+    // backward-compatible: either pass a single `expense` object
+    expense?: {
+        name: string;
+        amount: number;
+        currency: string;
+        category?: any;
+    };
+    // or pass explicit fields
+    description?: string;
+    value?: string;
+    currency?: string;
+    category?: any;
 }
 
-export function Expense({ description, value, currency, category } : ExpenseProps): JSX.Element {
+export function Expense(props: ExpenseProps): JSX.Element {
+    const { expense } = props;
+    const description = expense ? expense.name : props.description || "";
+    const value = expense ? String(expense.amount) : props.value || "";
+    const currency = expense ? expense.currency : props.currency || "";
+    const category = expense ? expense.category : props.category || { name: "Misc", color: "#909090" };
     return (
         <article className="expense">
             <div className="d-flex justify-content-between align-items-center">
@@ -20,7 +33,7 @@ export function Expense({ description, value, currency, category } : ExpenseProp
                         <IconText icon={"sell"} text={category.name} size={ 18 } color={ "#909090" }/>
                     </div>
                 </div>
-                <p>{value} {currency}</p>
+                    <p>{value} {currency}</p>
             </div>
         </article>
     )
