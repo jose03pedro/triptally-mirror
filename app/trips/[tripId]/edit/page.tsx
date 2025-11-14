@@ -15,7 +15,7 @@ type Trip = {
     title: string;
     startDate: string;
     endDate: string;
-    isPublic?: boolean;
+    isPublic: boolean;
     coverImage?: string;
     privacy?: {
         showCities?: boolean;
