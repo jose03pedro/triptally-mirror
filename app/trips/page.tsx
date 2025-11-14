@@ -345,23 +345,6 @@ export default function TripsPage() {
                                 />
                             </div>
 
-                            <div className="col-6 col-lg-3">
-                                <label className="form-label small text-muted">Status</label>
-                                <select
-                                    className="form-select"
-                                    value={statusInput}
-                                    onChange={(e) =>
-                                        setStatusInput(
-                                            e.target.value as StatusFilter
-                                        )
-                                    }
-                                >
-                                    <option value="all">All trips</option>
-                                    <option value="ongoing">Ongoing</option>
-                                    <option value="upcoming">Upcoming</option>
-                                    <option value="past">Past</option>
-                                </select>
-                            </div>
 
                             <div className="col-6 col-lg-3 d-flex align-items-end">
                                 <button
