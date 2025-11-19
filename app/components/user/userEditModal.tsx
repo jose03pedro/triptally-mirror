@@ -34,7 +34,7 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (state?.success) {
       onClose();
-      router.refresh(); // forces server layouts/pages to re-read cookies
+      router.refresh();
 
       setFormValues({
         first_name: "",
@@ -47,6 +47,13 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
 
   const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 
+  const inputClass = (hasError: boolean) =>
+    `w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition ${
+      hasError
+        ? "border-red-300 focus:ring-red-200 bg-red-50/30"
+        : "border-slate-200 focus:ring-blue-500/50"
+    }`;
+
   return (
     <ResponsiveModal
       id="editUser"
@@ -56,57 +63,51 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
       canSubmit={canSubmit}
       onCancel={onClose}
     >
-      <div className="mb-2">
-        <label htmlFor="first_name" className="form-label text-secondary mb-0">
-          First Name <span className="text-danger">*</span>
+      <div>
+        <label htmlFor="first_name" className="block mb-1.5 text-sm font-medium text-slate-700">
+          First Name <span className="text-red-500">*</span>
         </label>
         <input
           id="first_name"
           name="first_name"
           type="text"
           placeholder="Set Your New First Name"
-          className={`form-control fs-6 ${
-            state?.errors?.first_name?.length ? "is-invalid" : ""
-          }`}
+          className={inputClass(!!state?.errors?.first_name?.length)}
           onChange={handleChange}
           value={formValues.first_name}
         />
         <FieldErrors errors={state?.errors?.first_name} />
       </div>
 
-      <div className="mb-2">
-        <label htmlFor="last_name" className="form-label text-secondary mb-0">
-          Last Name <span className="text-danger">*</span>
+      <div>
+        <label htmlFor="last_name" className="block mb-1.5 text-sm font-medium text-slate-700">
+          Last Name <span className="text-red-500">*</span>
         </label>
         <input
           id="last_name"
           name="last_name"
           type="text"
           placeholder="Set Your New Last Name"
-          className={`form-control fs-6 ${
-            state?.errors?.last_name?.length ? "is-invalid" : ""
-          }`}
+          className={inputClass(!!state?.errors?.last_name?.length)}
           onChange={handleChange}
           value={formValues.last_name}
         />
         <FieldErrors errors={state?.errors?.last_name} />
       </div>
 
-      <div className="mb-2">
+      <div>
         <label
           htmlFor="current_password"
-          className="form-label text-secondary mb-0"
+          className="block mb-1.5 text-sm font-medium text-slate-700"
         >
-          Current Password <span className="text-danger">*</span>
+          Current Password <span className="text-red-500">*</span>
         </label>
         <input
           id="current_password"
           name="current_password"
           type="password"
           placeholder="Enter your current password"
-          className={`form-control fs-6 ${
-            state?.errors?.current_password?.length ? "is-invalid" : ""
-          }`}
+          className={inputClass(!!state?.errors?.current_password?.length)}
           onChange={handleChange}
           value={formValues.current_password}
           required
@@ -114,8 +115,8 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
         <FieldErrors errors={state?.errors?.current_password} />
       </div>
 
-      <div className="mb-2">
-        <label htmlFor="password" className="form-label text-secondary mb-0">
+      <div>
+        <label htmlFor="password" className="block mb-1.5 text-sm font-medium text-slate-700">
           New Password (optional)
         </label>
         <input
@@ -123,9 +124,7 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
           name="password"
           type="password"
           placeholder="Leave blank to keep current password"
-          className={`form-control fs-6 ${
-            state?.errors?.password?.length ? "is-invalid" : ""
-          }`}
+          className={inputClass(!!state?.errors?.password?.length)}
           onChange={handleChange}
           value={formValues.password}
         />

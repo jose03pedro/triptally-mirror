@@ -125,12 +125,12 @@ export default function TripPage() {
         {/* HEADER */}
         <header className="space-y-3">
           {showCover && trip.coverImage && (
-            <div className="rounded-3xl overflow-hidden shadow-md bg-slate-200 max-h-64 fade-up">
+            <div className="relative h-48 md:h-64 w-full rounded-3xl overflow-hidden shadow-md bg-slate-200 fade-up">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={trip.coverImage}
                 alt={trip.title}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
           )}

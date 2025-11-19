@@ -54,10 +54,30 @@ export async function updateTrip(
         };
     }
 
+    // Parse cities
+    const citiesJson = (formData.getAll("cities") as unknown[])
+        .map((v) => String(v))
+        .filter((s) => s && s.trim() !== "");
+
+    const cities: any[] = [];
+    for (const c of citiesJson) {
+        try {
+            cities.push(JSON.parse(c));
+        } catch (err) {
+            // ignore invalid json
+        }
+    }
+
+    const normalizedCities = cities.map((ct) => ({
+        name: ct.name,
+        country: ct.country || "Unknown",
+    }));
+
     const update: any = {
         title,
         startDate: start,
         endDate: end,
+        cities: normalizedCities,
         isPublic,
         privacy: {
             showCities,

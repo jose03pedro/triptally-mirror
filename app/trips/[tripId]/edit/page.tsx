@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { updateTrip } from "@/app/actions/updateTrip";
 import { useAuth } from "@/lib/hook/useAuth";
 import { Loading } from "@/app/components/ui/loading";
+import TripCitiesInput, { City } from "@/app/components/trip/tripCitiesInput";
 
 type TripUser = {
     _id: string;
@@ -15,6 +16,7 @@ type Trip = {
     title: string;
     startDate: string;
     endDate: string;
+    cities?: City[];
     isPublic: boolean;
     coverImage?: string;
     privacy?: {
@@ -185,6 +187,16 @@ export default function EditTripPage() {
                                 />
                             </div>
                         </div>
+
+                        {/* Trip Cities Input */}
+                        <TripCitiesInput
+                            initialCities={trip.cities?.map((c: any) => ({
+                                id: c._id || c.name,
+                                name: c.name,
+                                country: c.country || "Unknown"
+                            }))}
+                            cityErrors={state.errors?.cities}
+                        />
 
                         <div className="flex items-center gap-2">
                             <input

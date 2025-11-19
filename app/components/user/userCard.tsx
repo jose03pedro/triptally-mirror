@@ -1,5 +1,4 @@
 import { UserIcon } from "@/app/components/user/userIcon";
-import { UserEditButton } from "@/app/components/user/userEditButton";
 import UserEditModal from "./userEditModal";
 import { useState } from "react";
 
@@ -17,21 +16,32 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
 
   return (
     <>
-      <div className={"d-flex flex-row align-items-center gap-4"}>
-        <UserIcon size={120} />
-
-        <div className="user-info">
-          <p className="mb-0 fw-bold fs-5">
-            {firstName} {lastName}
-          </p>
+      <div className="flex flex-col sm:flex-row items-center gap-6">
+        <div className="flex-shrink-0">
+           {/* Adjusted size to be slightly smaller/cleaner */}
+           <UserIcon size={96} />
         </div>
 
-        <UserEditButton
-          size={22}
-          label="Edit Profile"
-          onClick={openModal}
-          className=""
-        />
+        <div className="flex-1 text-center sm:text-left space-y-1">
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
+            {firstName} {lastName}
+          </h2>
+          <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-slate-500">
+             <span className="material-icons text-[18px] text-blue-500">verified</span>
+             <span>Traveler</span>
+          </div>
+        </div>
+
+        <div className="flex-shrink-0">
+          <button
+            onClick={openModal}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition"
+          >
+             <span className="material-icons text-[18px] text-slate-400">edit</span>
+             Edit Profile
+          </button>
+        </div>
+
         {isModalOpen && <UserEditModal onClose={closeModal} />}
       </div>
     </>
