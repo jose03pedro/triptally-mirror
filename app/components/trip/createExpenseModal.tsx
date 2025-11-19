@@ -22,6 +22,14 @@ export function CreateExpenseModal({
   const initialState = {
     success: false,
     expense: null,
+    errors: {
+      category: [],
+      currency: [],
+      date: [],
+      description: [],
+      value: [],
+      form: [],
+    },
   };
   const initialFormValues = useMemo(
     () => ({
@@ -78,7 +86,12 @@ export function CreateExpenseModal({
       action={action}
       isPending={isPending}
     >
-      <input type="hidden" name="tripId" value={tripId} />
+      <input
+        type="hidden"
+        name="tripId"
+        value={tripId}
+        className={`${state?.errors?.form?.length ? "is-invalid" : ""}`}
+      />
 
       <div className="mb-2">
         <label htmlFor="category" className="form-label text-secondary mb-0">
@@ -88,7 +101,9 @@ export function CreateExpenseModal({
         <select
           id="category"
           name="category"
-          className="form-select fs-6"
+          className={`form-select fs-6 ${
+            state?.errors?.category?.length ? "is-invalid" : ""
+          }`}
           onChange={handleChange}
           value={formValues.category}
         >
@@ -99,6 +114,7 @@ export function CreateExpenseModal({
             </option>
           ))}
         </select>
+        <FieldErrors errors={state?.errors?.category} />
       </div>
 
       <div className="mb-2">
@@ -109,10 +125,13 @@ export function CreateExpenseModal({
           id="description"
           name="description"
           type="text"
-          className={`form-control fs-6`}
+          className={`form-control fs-6 ${
+            state?.errors?.description?.length ? "is-invalid" : ""
+          }`}
           onChange={handleChange}
           value={formValues.description}
         />
+        <FieldErrors errors={state?.errors?.description} />
       </div>
 
       <div className="mb-2">
@@ -123,10 +142,13 @@ export function CreateExpenseModal({
           id="value"
           name="value"
           type="value"
-          className={`form-control fs-6`}
+          className={`form-control fs-6 ${
+            state?.errors?.value?.length ? "is-invalid" : ""
+          }`}
           onChange={handleChange}
           value={formValues.value}
         />
+        <FieldErrors errors={state?.errors?.value} />
       </div>
 
       <div className="mb-2">
@@ -137,7 +159,9 @@ export function CreateExpenseModal({
         <select
           id="currency"
           name="currency"
-          className="form-select fs-6"
+          className={`form-control fs-6 ${
+            state?.errors?.currency?.length ? "is-invalid" : ""
+          }`}
           onChange={handleChange}
           value={formValues.currency}
         >
@@ -148,6 +172,7 @@ export function CreateExpenseModal({
             </option>
           ))}
         </select>
+        <FieldErrors errors={state?.errors?.currency} />
       </div>
 
       <div className="mb-2">
@@ -158,11 +183,16 @@ export function CreateExpenseModal({
           id="date"
           name="date"
           type="date"
-          className={`form-control fs-6`}
+          className={`form-control fs-6 ${
+            state?.errors?.date?.length ? "is-invalid" : ""
+          }`}
           onChange={handleChange}
           value={formValues.date}
         />
+        <FieldErrors errors={state?.errors?.date} />
       </div>
+
+      <FieldErrors errors={state?.errors?.form} />
     </FormModal>
   );
 }

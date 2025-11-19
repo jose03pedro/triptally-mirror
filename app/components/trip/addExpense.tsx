@@ -1,18 +1,33 @@
 import IconText from "@/app/components/ui/icon-text";
 import { CreateExpenseModal } from "@/app/components/trip/createExpenseModal";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/hook/useAuth";
+import { set } from "mongoose";
 
 interface AddExpenseProps {
   tripId: string;
+  userId: string;
   onExpenseCreated?: (expense: any) => void;
 }
 
-export function AddExpense({ tripId, onExpenseCreated }: AddExpenseProps) {
+export function AddExpense({
+  tripId,
+  userId,
+  onExpenseCreated,
+}: AddExpenseProps) {
+  const session = useAuth();
+  const loggedUser = session?.user;
+
   const [categories, setCategories] = useState<any[]>([]);
   const [currencies, setCurrencies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!loggedUser) {
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -30,6 +45,12 @@ export function AddExpense({ tripId, onExpenseCreated }: AddExpenseProps) {
     };
     fetchData();
   }, []);
+
+  console.log({ loggedUser, userId, loading });
+
+  if (!loggedUser || loggedUser.id !== userId || loading) {
+    return null;
+  }
 
   return (
     <>

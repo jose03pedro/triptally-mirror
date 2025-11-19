@@ -86,6 +86,7 @@ export default function TripPage() {
         <h2 className="fs-3">Expenses</h2>
         <AddExpense
           tripId={tripId as string}
+          userId={trip.user}
           onExpenseCreated={(newExpense) => {
             setExpenses((prev) => {
               // prevent duplicates by ID
