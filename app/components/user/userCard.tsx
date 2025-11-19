@@ -1,4 +1,5 @@
 import { UserIcon } from "@/app/components/user/userIcon";
+import { UserEditButton } from "@/app/components/user/userEditButton";
 import UserEditModal from "./userEditModal";
 import { useState } from "react";
 
@@ -42,15 +43,12 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
 
         {/* Edit button */}
         <div className="w-full pt-1">
-          <button
+          <UserEditButton
+            size={22}
+            label="Edit Profile"
             onClick={openModal}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs md:text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition"
-          >
-            <span className="material-icons text-[18px] text-slate-400">
-              edit
-            </span>
-            Edit profile
-          </button>
+            className=""
+          />
         </div>
       </div>
 
