@@ -6,6 +6,7 @@ import IconText from "@/app/components/ui/icon-text";
 import CreateTripModal from "@/app/components/trip/createTripModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { TravelerProfileButton } from '../components/traveler/travelerButton';
 
 type City = { name: string; country?: string };
 type Trip = { _id: string; title: string; startDate: string; endDate?: string; cities?: City[]; userId?: string };
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   return (
     <>
       <UserCard firstName={user.first_name} lastName={user.last_name} />
+      <TravelerProfileButton label="Create Traveler Profile" />
       <div className="d-flex gap-3 align-items-start">
         <div>
           <button className="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#createTripModal">
