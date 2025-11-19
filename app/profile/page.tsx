@@ -227,8 +227,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Modal lives at page level */}
-      <CreateTripModal />
+      <CreateTripModal onClose={() => { }} />
     </div>
   );
 }

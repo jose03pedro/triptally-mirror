@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import FormModal from "@/app/components/ui/formModal";
 
-export default function CreateTripModal() {
+// 1. Define the props interface to include onClose
+interface CreateTripModalProps {
+    onClose: () => void;
+}
+
+// 2. Destructure onClose from the props
+export default function CreateTripModal({ onClose }: CreateTripModalProps) {
     const router = useRouter();
 
     const initialState = {
@@ -43,7 +49,15 @@ export default function CreateTripModal() {
     const canSubmit = Boolean(formValues.title && formValues.startDate && formValues.endDate && selectedCitiesCount > 0);
 
     return (
-        <FormModal id="createTrip" title="Create new trip" action={action} isPending={isPending} canSubmit={canSubmit}>
+        // 3. Pass onClose to FormModal so the close/cancel buttons work
+        <FormModal
+            id="createTrip"
+            title="Create new trip"
+            action={action}
+            isPending={isPending}
+            canSubmit={canSubmit}
+            onClose={onClose}
+        >
             <div className="mb-2">
                 <label htmlFor="title" className="form-label text-secondary mb-0">
                     Title

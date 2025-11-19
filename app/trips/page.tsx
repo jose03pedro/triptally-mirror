@@ -432,7 +432,7 @@ export default function TripsPage() {
             )}
 
             {/* Modal component must be rendered on this page */}
-            <CreateTripModal />
+            <CreateTripModal onClose={() => { }} />
         </div>
     );
 }
