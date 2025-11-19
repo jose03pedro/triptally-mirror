@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/hook/useAuth";
 import { UserCard } from "@/app/components/user/userCard";
 import CreateTripModal from "@/app/components/trip/createTripModal";
+import UserEditModal from "@/app/components/user/userEditModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
@@ -228,6 +229,7 @@ export default function ProfilePage() {
       </div>
 
       <CreateTripModal onClose={() => { }} />
+      <UserEditModal onClose={() => { }} />
     </div>
   );
 }

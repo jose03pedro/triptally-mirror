@@ -1,7 +1,5 @@
 import { UserIcon } from "@/app/components/user/userIcon";
 import { UserEditButton } from "@/app/components/user/userEditButton";
-import UserEditModal from "./userEditModal";
-import { useState } from "react";
 
 type UserCardProps = {
   firstName?: string;
@@ -9,11 +7,6 @@ type UserCardProps = {
 };
 
 export function UserCard({ firstName, lastName }: UserCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   const displayName =
     [firstName, lastName].filter(Boolean).join(" ") || "Traveler";
 
@@ -46,13 +39,12 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
           <UserEditButton
             size={22}
             label="Edit Profile"
-            onClick={openModal}
+            data-bs-toggle="modal"
+            data-bs-target="#editUserModal"
             className=""
           />
         </div>
       </div>
-
-      {isModalOpen && <UserEditModal onClose={closeModal} />}
     </>
   );
 }

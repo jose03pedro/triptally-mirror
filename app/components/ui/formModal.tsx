@@ -9,6 +9,8 @@ interface FormModalProps {
     isPending?: boolean;
     canSubmit?: boolean;
     onClose?: () => void;
+    submitLabel?: string;
+    pendingLabel?: string;
 }
 
 export default function FormModal({
@@ -18,7 +20,9 @@ export default function FormModal({
     children,
     isPending = false,
     canSubmit = true,
-    onClose // Destructure the new prop
+    onClose, // Destructure the new prop
+    submitLabel = "Create",
+    pendingLabel = "Creating…"
 }: FormModalProps) {
     return (
         <div className="modal fade"
@@ -57,7 +61,7 @@ export default function FormModal({
                                 Cancel
                             </button>
                             <button type="submit" className="btn btn-primary" disabled={isPending || !canSubmit}>
-                                {isPending ? "Creating…" : "Create"}
+                                {isPending ? pendingLabel : submitLabel}
                             </button>
                         </div>
                     </form>

@@ -3,7 +3,7 @@
 import { editUser } from "@/app/actions/editUser";
 import { useActionState, useEffect, useState } from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
-import ResponsiveModal from "../ui/responsiveModal";
+import FormModal from "../ui/formModal";
 import { useRouter } from "next/navigation";
 
 export default function UserEditModal({ onClose }: { onClose: () => void }) {
@@ -33,7 +33,16 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     if (state?.success) {
-      onClose();
+      // Close the modal programmatically by clicking the dismiss button
+      const closeBtn = document.querySelector('#editUserModal [data-bs-dismiss="modal"]') as HTMLElement;
+      if (closeBtn) {
+        closeBtn.click();
+      }
+      
+      // Additional cleanup just in case
+      document.body.classList.remove("modal-open");
+      document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+
       router.refresh(); // forces server layouts/pages to re-read cookies
 
       setFormValues({
@@ -43,18 +52,20 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
         current_password: "",
       });
     }
-  }, [state, router, onClose]);
+  }, [state, router]);
 
   const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 
   return (
-    <ResponsiveModal
+    <FormModal
       id="editUser"
       title="Edit Profile"
       action={action}
       isPending={isPending}
       canSubmit={canSubmit}
-      onCancel={onClose}
+      onClose={onClose}
+      submitLabel="Save"
+      pendingLabel="Saving..."
     >
       <div className="mb-2">
         <label htmlFor="first_name" className="form-label text-secondary mb-0">
@@ -131,6 +142,6 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
         />
         <FieldErrors errors={state?.errors?.password} />
       </div>
-    </ResponsiveModal>
+    </FormModal>
   );
 }
