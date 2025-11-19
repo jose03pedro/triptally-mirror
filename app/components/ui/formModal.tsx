@@ -27,7 +27,6 @@ export default function FormModal({
             aria-labelledby={`${id}ModalLabel`}
             aria-hidden="true"
             data-bs-backdrop="static"
-            style={{ display: 'block', background: 'rgba(0,0,0,0.5)' }}
         >
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
