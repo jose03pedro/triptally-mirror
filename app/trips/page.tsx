@@ -40,6 +40,7 @@ export default function TripsPage() {
             router.push("/login");
         }
     }, [session, router]);
+
     // Form input values (inside filter panel)
     const [qInput, setQInput] = useState("");
     const [startDateInput, setStartDateInput] = useState("");
@@ -78,9 +79,24 @@ export default function TripsPage() {
                 if (endDate) baseParams.set("endDate", endDate);
 
                 const [ongoingRes, upcomingRes, pastRes] = await Promise.all([
-                    fetch(`/api/trips?${new URLSearchParams({ ...Object.fromEntries(baseParams), status: "ongoing" })}`),
-                    fetch(`/api/trips?${new URLSearchParams({ ...Object.fromEntries(baseParams), status: "upcoming" })}`),
-                    fetch(`/api/trips?${new URLSearchParams({ ...Object.fromEntries(baseParams), status: "past" })}`),
+                    fetch(
+                        `/api/trips?${new URLSearchParams({
+                            ...Object.fromEntries(baseParams),
+                            status: "ongoing",
+                        })}`
+                    ),
+                    fetch(
+                        `/api/trips?${new URLSearchParams({
+                            ...Object.fromEntries(baseParams),
+                            status: "upcoming",
+                        })}`
+                    ),
+                    fetch(
+                        `/api/trips?${new URLSearchParams({
+                            ...Object.fromEntries(baseParams),
+                            status: "past",
+                        })}`
+                    ),
                 ]);
 
                 if (!ignore) {
@@ -192,9 +208,10 @@ export default function TripsPage() {
             <div className="row g-3 mb-3">
                 {trips.map((t) => (
                     <div className="col-12 col-md-6 col-lg-4" key={t._id}>
-                        <div className="card h-100">
+                        <div className="card h-100 trip-card shadow-sm">
+                            <div className="trip-thumb rounded-top" />
                             <div className="card-body d-flex flex-column">
-                                <h5 className="card-title">
+                                <h5 className="card-title mb-2">
                                     <Link href={`/trips/${t._id}`}>{t.title}</Link>
                                 </h5>
                                 <p className="card-text mb-1 text-muted small">
@@ -202,7 +219,7 @@ export default function TripsPage() {
                                         ?.map((c) => `${c.name}, ${c.country}`)
                                         .join(" · ") || "—"}
                                 </p>
-                                <p className="card-text mb-1 text-muted small">
+                                <p className="card-text mb-2 text-muted small">
                                     {new Date(t.startDate).toLocaleDateString()} –{" "}
                                     {new Date(t.endDate).toLocaleDateString()}
                                 </p>
@@ -231,44 +248,59 @@ export default function TripsPage() {
             {/* spacer so content isn't hidden under the fixed navbar */}
             <div style={{ height: "2.5rem" }} />
 
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <h1 className="mb-0">My trips</h1>
-                <div className="d-flex gap-2 align-items-center">
-                    <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={() => setFiltersOpen((v) => !v)}
-                    >
-                        Filters
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#createTripModal"
-                    >
-                        Create Trip
-                    </button>
+            {/* Page header / hero */}
+            <div className="rounded-4 p-4 mb-4 shadow-sm bg-light border fade-up">
+                <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 className="fw-bold mb-1">My Trips</h2>
+                        <div className="text-muted">
+                            Plan, track & explore your adventures.
+                        </div>
+                    </div>
+                    <div className="d-flex gap-2 align-items-center">
+                        <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={() => setFiltersOpen((v) => !v)}
+                        >
+                            <i className="bi bi-funnel me-1" />
+                            Filters
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#createTripModal"
+                        >
+                            <i className="bi bi-plus-lg me-1" />
+                            Create Trip
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Search bar outside filters */}
-            <form onSubmit={onSearch} className="mb-3">
-                <div className="input-group">
-                    <input
-                        className="form-control"
-                        placeholder="Search destination, country, or trip name"
-                        value={qInput}
-                        onChange={(e) => setQInput(e.target.value)}
-                    />
-                    <button className="btn btn-primary" type="submit">
-                        Search
-                    </button>
-                </div>
-            </form>
+            {/* Search bar in its own card */}
+            <div className="card border-0 shadow-sm mb-4 p-3 fade-up-delay-1">
+                <form onSubmit={onSearch}>
+                    <div className="input-group">
+                        <span className="input-group-text bg-white border-end-0">
+                            <i className="bi bi-search" />
+                        </span>
+                        <input
+                            className="form-control border-start-0"
+                            placeholder="Search destination, country, or trip name"
+                            value={qInput}
+                            onChange={(e) => setQInput(e.target.value)}
+                        />
+                        <button className="btn btn-primary" type="submit">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-            {/* Tabs for ongoing / upcoming / past (separated from filters and always visible) */}
-            <ul className="nav nav-pills mb-3">
+            {/* Tabs for ongoing / upcoming / past */}
+            <ul className="nav nav-pills mb-4 gap-2">
                 <li className="nav-item">
                     <button
                         className={
@@ -318,11 +350,12 @@ export default function TripsPage() {
 
             {/* Additional filters inside a collapsible panel */}
             {filtersOpen && (
-                <div className="card mb-4">
+                <div className="card border-0 shadow-sm mb-4">
                     <div className="card-body">
-                        <div className="row g-2">
-                            <div className="col-6 col-lg-3">
-                                <label className="form-label small text-muted">Start date</label>
+                        <h6 className="text-muted mb-3">Filters</h6>
+                        <div className="row g-3">
+                            <div className="col-12 col-md-3">
+                                <div className="filter-label">Start date</div>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -333,8 +366,8 @@ export default function TripsPage() {
                                 />
                             </div>
 
-                            <div className="col-6 col-lg-3">
-                                <label className="form-label small text-muted">End date</label>
+                            <div className="col-12 col-md-3">
+                                <div className="filter-label">End date</div>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -345,14 +378,13 @@ export default function TripsPage() {
                                 />
                             </div>
 
-
-                            <div className="col-6 col-lg-3 d-flex align-items-end">
+                            <div className="col-12 col-md-3 d-flex align-items-end">
                                 <button
                                     className="btn btn-primary w-100"
                                     type="button"
                                     onClick={onSearch}
                                 >
-                                    Apply filters
+                                    Apply
                                 </button>
                             </div>
                         </div>
@@ -368,33 +400,34 @@ export default function TripsPage() {
 
             {!loading && items.length > 0 && (
                 <>
-                    {/* (tabs moved above search for persistent visibility) */}
-
-                    {/* Render trips for the active tab */}
                     {renderTripGrid(items)}
                 </>
             )}
 
             {/* Pagination */}
             {pages > 1 && (
-                <div className="d-flex gap-2 mt-4 align-items-center">
-                    <button
-                        className="btn btn-outline-secondary"
-                        disabled={page <= 1}
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    >
-                        Prev
-                    </button>
-                    <span className="align-self-center">
-                        Page {page} / {pages}
-                    </span>
-                    <button
-                        className="btn btn-outline-secondary"
-                        disabled={page >= pages}
-                        onClick={() => setPage((p) => Math.min(pages, p + 1))}
-                    >
-                        Next
-                    </button>
+                <div className="d-flex justify-content-center mt-4">
+                    <div className="pagination-custom rounded-pill shadow-sm p-2 bg-white d-inline-flex align-items-center">
+                        <button
+                            className="btn btn-sm btn-outline-secondary me-2"
+                            disabled={page <= 1}
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        >
+                            Prev
+                        </button>
+                        <span className="px-3 small">
+                            Page {page} / {pages}
+                        </span>
+                        <button
+                            className="btn btn-sm btn-outline-secondary ms-2"
+                            disabled={page >= pages}
+                            onClick={() => setPage((p) =>
+                                Math.min(pages, p + 1)
+                            )}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             )}
 

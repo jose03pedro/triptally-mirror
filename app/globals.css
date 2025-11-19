@@ -1,4 +1,3 @@
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +9,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -62,4 +62,77 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ---------- NEW STYLES FOR TRIPS PAGE ---------- */
+
+/* Trip cards */
+.trip-card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #ffffff;
+}
+
+.trip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.trip-thumb {
+  height: 120px;
+  background: linear-gradient(135deg, #74abea, #5563de);
+}
+
+/* Tabs */
+.nav-pills .nav-link {
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+}
+
+.nav-pills .nav-link.active {
+  background: #0d6efd;
+  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+}
+
+/* Filter panel labels */
+.filter-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6c757d;
+}
+
+/* Pagination pill */
+.pagination-custom {
+  border-radius: 999px;
+}
+
+/* Profile stats small helper */
+.profile-stat span:first-child {
+  font-size: 0.9rem;
+}
+
+/* Reusable hover lift effect for cards */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Profile Page Styles */
+.navbar-spacer {
+  height: 2.5rem;
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
 }
