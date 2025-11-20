@@ -7,6 +7,8 @@ import { Loading } from "@/app/components/ui/loading";
 import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
 import { Expense } from "@/app/expenses/expense";
+import { Expenses } from "@/app/expenses/expenses";
+import ExpenseTabs from "@/app/expenses/expenseTabs";
 
 type City = { name: string; country?: string };
 
@@ -33,7 +35,7 @@ type Trip = {
   user?: TripUser | string;
 };
 
-type ExpenseType = {
+export type ExpenseType = {
   _id: string;
   description: string;
   value: number;
@@ -260,36 +262,7 @@ export default function TripPage() {
                   </span>
                 </div>
 
-                {expenses.length === 0 ? (
-                  <p className="text-xs md:text-sm text-slate-500">
-                    No expenses added yet.
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="row my-3">
-                      {expenses.map((expense) => (
-                        <div
-                          key={expense._id}
-                          className="col-12 col-sm-6 col-md-4 mb-3"
-                        >
-                          <Expense
-                            {...expense}
-                            id={expense._id}
-                            description={expense.description}
-                            amount={expense.value}
-                            currency={expense.currency}
-                            category={expense.category}
-                            onDeleted={(id: string) =>
-                              setExpenses((prev) =>
-                                prev.filter((e) => e._id !== id)
-                              )
-                            }
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <ExpenseTabs expenses={expenses} setExpenses={setExpenses} />
               </div>
             )}
           </section>
