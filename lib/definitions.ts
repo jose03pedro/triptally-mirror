@@ -66,6 +66,27 @@ export const CreateExpenseSchema = z.object({
     }),
 });
 
+export const EditExpenseSchema = z.object({
+  expenseId: z.string().min(1, "Expense ID is required"),
+  description: z.string().min(1, "Description is required"),
+  category: z.string().min(1, "Category is required"),
+  currency: z.string().min(1, "Currency is required"),
+
+  date: z
+    .string()
+    .min(1, "Date is required")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Date must be a valid date",
+    }),
+
+  value: z
+    .string()
+    .min(1, "Value is required")
+    .refine((v) => !isNaN(Number(v)), {
+      message: "Value must be a valid number",
+    }),
+});
+
 // -------------------- Edit User Schema --------------------
 export const EditUserSchema = z.object({
   first_name: z.string().trim().nonempty("First name is required"),

@@ -6,8 +6,6 @@ import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
 import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
-import { Expense } from "@/app/expenses/singleExpense";
-import { Expenses } from "@/app/expenses/expenses";
 import ExpenseTabs from "@/app/expenses/expenseTabs";
 
 type City = { name: string; country?: string };
@@ -61,6 +59,8 @@ export default function TripPage() {
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<ExpenseType[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [currencies, setCurrencies] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -71,19 +71,25 @@ export default function TripPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [tripRes, expRes] = await Promise.all([
+        const [tripRes, expRes, currRes, catRes] = await Promise.all([
           fetch(`/api/trips/${tripId}`, { cache: "no-store" }),
           fetch(`/api/trips/${tripId}/expenses`, { cache: "no-store" }),
+          fetch(`/api/currencies`, { cache: "no-store" }),
+          fetch(`/api/expensecategories`, { cache: "no-store" }),
         ]);
 
         if (!tripRes.ok) throw new Error("Failed to load trip");
         const tripData: Trip = await tripRes.json();
 
         const expData = expRes.ok ? await expRes.json() : [];
+        const currData = currRes.ok ? await currRes.json() : [];
+        const catData = catRes.ok ? await catRes.json() : [];
 
         if (!ignore) {
           setTrip(tripData);
           setExpenses(expData || []);
+          setCurrencies(currData || []);
+          setCategories(catData || []);
         }
       } catch (err) {
         console.error("Error loading trip:", err);
@@ -262,7 +268,21 @@ export default function TripPage() {
                   </span>
                 </div>
 
-                <ExpenseTabs expenses={expenses} setExpenses={setExpenses} />
+                <ExpenseTabs
+                  expenses={expenses}
+                  setExpenses={setExpenses}
+                  currencies={currencies}
+                  categories={categories}
+                  onExpensesUpdated={(updatedExpense) => {
+                    setExpenses((prev) =>
+                      prev.some((e) => e._id === updatedExpense._id)
+                        ? prev.map((e) =>
+                            e._id === updatedExpense._id ? updatedExpense : e
+                          )
+                        : [...prev, updatedExpense]
+                    );
+                  }}
+                />
               </div>
             )}
           </section>

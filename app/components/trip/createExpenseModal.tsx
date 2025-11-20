@@ -3,27 +3,32 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 import { createExpense } from "@/app/actions/createExpense";
 import { Loading } from "@/app/components/ui/loading";
 import FieldErrors from "@/app/components/ui/fieldErrors";
+import { editExpense } from "@/app/actions/editExpense";
 
 declare const bootstrap: any;
 
 interface CreateExpenseModalProps {
-  tripId: string;
+  tripId?: string;
+  expenseId?: string;
   categories: any[];
   currencies: any[];
-  onExpenseCreated?: (expense: any) => void; // new prop
+  onExpensesUpdated?: (expense: any) => void;
 }
 
 export function CreateExpenseModal({
   tripId,
+  expenseId,
   categories,
   currencies,
-  onExpenseCreated,
+  onExpensesUpdated,
 }: CreateExpenseModalProps) {
+  const formId = expenseId ? `createExpense-${expenseId}` : "createExpense";
+
   const initialState = {
     success: false,
     expense: undefined,
     errors: {
-      tripId: [], // <-- Add this
+      tripId: [],
       category: [],
       currency: [],
       date: [],
@@ -44,10 +49,55 @@ export function CreateExpenseModal({
     []
   );
 
-  const [state, action, isPending] = useActionState(
-    createExpense,
-    initialState
-  );
+  const [expenseData, setExpenseData] = useState<any>(null);
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  // fetch existing expense if editing
+  useEffect(() => {
+    let isMounted = true;
+    if (expenseId) {
+      fetch(`/api/expenses/${expenseId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (isMounted) setExpenseData(data);
+        })
+        .catch(() => {});
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [expenseId]);
+
+  // fill form values when editing
+  useEffect(() => {
+    if (expenseData) {
+      setFormValues((prev) => {
+        const newValues = {
+          category: expenseData.category?._id || "",
+          description: expenseData.description || "",
+          value: expenseData.value || "",
+          date: expenseData.date ? expenseData.date.split("T")[0] : "",
+          currency: expenseData.currency?._id || "",
+        };
+
+        // avoid unnecessary state update
+        if (
+          prev.category === newValues.category &&
+          prev.description === newValues.description &&
+          prev.value === newValues.value &&
+          prev.date === newValues.date &&
+          prev.currency === newValues.currency
+        ) {
+          return prev;
+        }
+        return newValues;
+      });
+    }
+  }, [expenseData]);
+
+  const actionFn = expenseId ? editExpense : createExpense;
+  const [state, action, isPending] = useActionState(actionFn, initialState);
+
   const [formValues, setFormValues] = useState(initialFormValues);
 
   const handleChange = (
@@ -56,8 +106,6 @@ export function CreateExpenseModal({
     const { name, value } = e.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
-
-  const formId = "createExpense";
 
   useEffect(() => {
     if (state.success) {
@@ -68,8 +116,11 @@ export function CreateExpenseModal({
 
       setFormValues(initialFormValues);
 
-      if (state.expense && onExpenseCreated) {
-        onExpenseCreated(state.expense); // Add the new expense to UI
+      console.log(state);
+
+      if (state.expense && onExpensesUpdated && !isUpdated) {
+        onExpensesUpdated(state.expense);
+        setIsUpdated(true);
       }
     }
   }, [
@@ -77,7 +128,7 @@ export function CreateExpenseModal({
     initialFormValues,
     formId,
     state.expense,
-    onExpenseCreated,
+    onExpensesUpdated,
   ]);
 
   return (
@@ -86,6 +137,8 @@ export function CreateExpenseModal({
       title="Add new expense"
       action={action}
       isPending={isPending}
+      submitLabel={expenseId ? "Save" : "Create"}
+      pendingLabel={expenseId ? "Saving..." : "Creating…"}
     >
       <input
         type="hidden"
@@ -93,6 +146,7 @@ export function CreateExpenseModal({
         value={tripId}
         className={`${state?.errors?.form?.length ? "is-invalid" : ""}`}
       />
+      <input type="hidden" name="expenseId" value={expenseId} />
 
       <div className="mb-2">
         <label htmlFor="category" className="form-label text-secondary mb-0">
@@ -109,7 +163,7 @@ export function CreateExpenseModal({
           value={formValues.category}
         >
           <option value="">Select a category...</option>
-          {categories.map((category: any) => (
+          {categories?.map((category: any) => (
             <option key={category._id} value={category._id}>
               {category.name}
             </option>
@@ -167,7 +221,7 @@ export function CreateExpenseModal({
           value={formValues.currency}
         >
           <option value="">Select a currency...</option>
-          {currencies.map((currency: any) => (
+          {currencies?.map((currency: any) => (
             <option key={currency._id} value={currency._id}>
               {currency?.symbol}
             </option>

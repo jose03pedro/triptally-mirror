@@ -39,7 +39,6 @@ export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
     <div className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-5">
       <div className="d-flex justify-content-center">
         <PieChart
-          skipAnimation
           series={[
             {
               data: groupedData,
