@@ -10,7 +10,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -33,6 +32,7 @@ body {
 }
 
 .expense {
+  position: relative;
   background-color: #f5f5f5;
   padding: 0.8rem 1rem;
   border-radius: 15px;
@@ -41,16 +41,27 @@ body {
   margin: 0;
 }
 
-.expense .delete-expense-btn {
+.expense .expense-actions {
+  position: absolute;
+  top: 0;
+  right: 0.4rem;
+}
+
+.expense .expense-btn {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
-.expense:hover .delete-expense-btn {
+.expense:hover .expense-btn {
   opacity: 1;
   pointer-events: auto;
-    margin: 0;
+  margin: 0;
+}
+
+.expense .expense-btn > * {
+  margin: 0;
+  padding: 0.2rem !important;
 }
 
 html {
@@ -63,11 +74,21 @@ html {
   animation: fadeUp 0.6s ease-out forwards;
 }
 
-.fade-up-delay-1 { animation-delay: 0.08s; }
-.fade-up-delay-2 { animation-delay: 0.16s; }
-.fade-up-delay-3 { animation-delay: 0.24s; }
-.fade-up-delay-4 { animation-delay: 0.32s; }
-.fade-up-delay-5 { animation-delay: 0.40s; }
+.fade-up-delay-1 {
+  animation-delay: 0.08s;
+}
+.fade-up-delay-2 {
+  animation-delay: 0.16s;
+}
+.fade-up-delay-3 {
+  animation-delay: 0.24s;
+}
+.fade-up-delay-4 {
+  animation-delay: 0.32s;
+}
+.fade-up-delay-5 {
+  animation-delay: 0.4s;
+}
 
 @keyframes fadeUp {
   to {
