@@ -29,9 +29,8 @@ export function AddExpense({
     }
 
     const fetchData = async () => {
-      setLoading(true);
       try {
-        const categoriesRes = await fetch(`/api/expensecategories`);
+        const categoriesRes = await fetch("/api/expensecategories");
         const currenciesRes = await fetch("/api/currencies");
         const categoriesData = await categoriesRes.json();
         const currenciesData = await currenciesRes.json();
@@ -43,10 +42,11 @@ export function AddExpense({
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
 
-  console.log({ loggedUser, userId, loading });
+    fetchData();
+  }, [loggedUser]);
+
+  console.log({ categories, currencies });
 
   if (!loggedUser || loggedUser.id !== userId || loading) {
     return null;

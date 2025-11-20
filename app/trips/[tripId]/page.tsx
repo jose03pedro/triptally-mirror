@@ -104,10 +104,14 @@ export default function TripPage() {
               <div key={expense._id} className="col-12 col-sm-6 col-md-4 mb-3">
                 <Expense
                   {...expense}
+                  id={expense._id}
                   description={expense.description}
                   value={expense.value}
                   currency={expense.currency}
                   category={expense.category}
+                  onDeleted={(id: string) =>
+                    setExpenses((prev) => prev.filter((e) => e._id !== id))
+                  }
                 />
               </div>
             ))}

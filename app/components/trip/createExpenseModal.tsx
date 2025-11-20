@@ -58,7 +58,6 @@ export function CreateExpenseModal({
   const formId = "createExpense";
 
   useEffect(() => {
-    console.log(state);
     if (state.success) {
       const modal = bootstrap.Modal.getInstance(
         document.getElementById(formId + "Modal")
