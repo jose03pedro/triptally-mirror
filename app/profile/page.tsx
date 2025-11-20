@@ -7,6 +7,7 @@ import UserEditModal from "@/app/components/user/userEditModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
+import { TravelerProfileButton } from '../components/traveler/travelerButton';
 
 type City = { name: string; country?: string };
 type Trip = {
@@ -115,6 +116,7 @@ export default function ProfilePage() {
             <div className="card-body">
               {/* Existing user card inside a cleaner container */}
               <UserCard firstName={user.first_name} lastName={user.last_name} />
+      <TravelerProfileButton label="Create Traveler Profile" />
             </div>
           </div>
 

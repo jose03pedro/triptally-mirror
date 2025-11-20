@@ -86,6 +86,20 @@ export const ChangePasswordSchema = z.object({
     .trim(),
 });
 
+// -------------------- Traveler Profile --------------------
+export const TravelerProfileSchema = z.object({
+  travelFrequency: z.string().optional(),
+  preferredTransport: z.array(z.string()).optional(),
+  accommodationType: z.string().optional(),
+  budgetRange: z.string().optional(),
+  dietaryRestrictions: z.array(z.string()).optional(),
+  mobilityNeeds: z.string().optional(),
+  interests: z.array(z.string()).optional(),
+  languagesSpoken: z.array(z.string()).optional(),
+  tripStyle: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 // -------------------- Types --------------------
 export type AuthErrors = {
   email?: string[];
