@@ -8,15 +8,17 @@ type EditButtonProps = {
   size?: number;
   label: string;
   className?: string;
+  initialData?: any;
+  onProfileUpdate?: (data: any) => void;
 };
 
 export function TravelerProfileButton({
   label,
+  initialData,
+  onProfileUpdate,
 }: EditButtonProps) {
-  const [isModalOpen, setIsModalOpen] =
-    useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Functions to control the modal's visibility
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -30,14 +32,18 @@ export function TravelerProfileButton({
           onClick={openModal}
         >
           <IconText
-            icon={"add"}
-            text={"Create Traveler Profile"}
+            icon={initialData ? "edit" : "add"} // Change icon based on state
+            text={label}
             color={"000"}
           />
         </button>
       </div>
       {isModalOpen && (
-        <TravelerProfileModal onClose={closeModal} />
+        <TravelerProfileModal
+          onClose={closeModal}
+          initialData={initialData}
+          onProfileUpdate={onProfileUpdate}
+        />
       )}
     </>
   );

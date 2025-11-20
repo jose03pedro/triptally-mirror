@@ -7,7 +7,8 @@ import UserEditModal from "@/app/components/user/userEditModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
-import { TravelerProfileButton } from '../components/traveler/travelerButton';
+import { getTravelerProfile } from "../api/traveler/route";
+import { TravelerCard } from "../components/traveler/TravelerCard";
 
 type City = { name: string; country?: string };
 type Trip = {
@@ -23,24 +24,38 @@ export default function ProfilePage() {
   const session = useAuth();
   const [upcoming, setUpcoming] = useState<Trip[]>([]);
   const user = session?.user;
+  const [travelerProfile, setTravelerProfile] = useState<any>(null); // State for profile
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    async function fetchUpcoming() {
+    async function loadData() {
       if (!user) return;
+
+      // 1. Fetch Trips
       try {
-        const res = await fetch(
-          `/api/trips?userId=${user.id}&upcoming=1`,
-          { cache: "no-store" }
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        setUpcoming(data.items || []);
+        const res = await fetch(`/api/trips?userId=${user.id}&upcoming=1`, {
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUpcoming(data.items || []);
+        }
       } catch (err) {
         console.error("Failed to load upcoming trips:", err);
       }
+
+      // 2. Fetch Traveler Profile
+      try {
+        const profile = await getTravelerProfile();
+        setTravelerProfile(profile);
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      }
     }
 
-    fetchUpcoming();
+    loadData();
   }, [user]);
 
   if (!user) {
@@ -73,7 +88,8 @@ export default function ProfilePage() {
             <div>
               <h2 className="fw-bold mb-1">{displayName}</h2>
               <div className="text-muted small">
-                This is your travel dashboard – keep track of your trips and plans.
+                This is your travel dashboard – keep track of your trips and
+                plans.
               </div>
             </div>
           </div>
@@ -84,7 +100,12 @@ export default function ProfilePage() {
                 <span className="d-block fw-semibold fs-5">
                   {upcoming.length}
                 </span>
-                <span className="d-block text-muted text-uppercase" style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>Upcoming trips</span>
+                <span
+                  className="d-block text-muted text-uppercase"
+                  style={{ fontSize: "0.7rem", letterSpacing: "0.5px" }}
+                >
+                  Upcoming trips
+                </span>
               </div>
             </div>
             <div className="d-flex gap-2">
@@ -116,7 +137,14 @@ export default function ProfilePage() {
             <div className="card-body">
               {/* Existing user card inside a cleaner container */}
               <UserCard firstName={user.first_name} lastName={user.last_name} />
-      <TravelerProfileButton label="Create Traveler Profile" />
+
+    
+                <div className="mt-4 pt-3">
+                <TravelerCard
+                  travelerProfile={travelerProfile}
+                  onProfileUpdate={setTravelerProfile} // <--- Pass the setter here
+                />
+                </div>
             </div>
           </div>
 
@@ -180,10 +208,9 @@ export default function ProfilePage() {
           ) : (
             <div className="d-flex flex-column gap-3">
               {upcoming.map((t) => {
-                const cities =
-                  t.cities?.length
-                    ? t.cities.map((c) => c.name).join(", ")
-                    : "No cities added";
+                const cities = t.cities?.length
+                  ? t.cities.map((c) => c.name).join(", ")
+                  : "No cities added";
                 const startDate = new Date(t.startDate);
                 const endDate = t.endDate ? new Date(t.endDate) : null;
 
@@ -196,17 +223,14 @@ export default function ProfilePage() {
                     <div className="card border-0 shadow-sm hover-lift position-relative overflow-hidden">
                       <div className="card-body d-flex justify-content-between align-items-start">
                         <div className="me-3">
-                          <h5 className="card-title mb-1">
-                            {t.title}
-                          </h5>
+                          <h5 className="card-title mb-1">{t.title}</h5>
                           <div className="text-muted small mb-1">
                             <i className="bi bi-geo-alt me-1" />
                             {cities}
                           </div>
                           <div className="text-muted small">
                             {startDate.toLocaleDateString()}{" "}
-                            {endDate &&
-                              `– ${endDate.toLocaleDateString()}`}
+                            {endDate && `– ${endDate.toLocaleDateString()}`}
                           </div>
                         </div>
                         <div className="text-end">
@@ -230,8 +254,8 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <CreateTripModal onClose={() => { }} />
-      <UserEditModal onClose={() => { }} />
+      <CreateTripModal onClose={() => {}} />
+      <UserEditModal onClose={() => {}} />
     </div>
   );
 }
