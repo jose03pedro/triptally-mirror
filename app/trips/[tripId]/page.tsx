@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
 import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
-import { Expense } from "@/app/expenses/expense";
+import { Expense } from "@/app/expenses/singleExpense";
 import { Expenses } from "@/app/expenses/expenses";
 import ExpenseTabs from "@/app/expenses/expenseTabs";
 

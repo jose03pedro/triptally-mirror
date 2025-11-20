@@ -1,5 +1,5 @@
 import { ExpenseType } from "../trips/[tripId]/page";
-import { Expense } from "./expense";
+import { SingleExpense } from "./singleExpense";
 
 interface ExpensesProps {
   expenses: Array<ExpenseType>;
@@ -18,7 +18,7 @@ export function Expenses({ expenses, setExpenses }: ExpensesProps) {
           <div className="row my-3">
             {expenses.map((expense) => (
               <div key={expense._id} className="col-12 col-sm-6 col-md-4 mb-3">
-                <Expense
+                <SingleExpense
                   {...expense}
                   id={expense._id}
                   description={expense.description}
