@@ -65,7 +65,7 @@ export function AddExpense({
           tripId={tripId}
           categories={categories}
           currencies={currencies}
-          onExpenseCreated={onExpenseCreated}
+          onExpensesUpdated={onExpenseCreated}
         />
       </Portal>
     </>

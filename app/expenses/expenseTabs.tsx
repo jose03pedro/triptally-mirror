@@ -10,12 +10,18 @@ import Box from "@mui/material/Box";
 
 interface ExpenseTabsProps {
   expenses: Array<ExpenseType>;
+  currencies: Array<any>;
+  categories: Array<any>;
   setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+  onExpensesUpdated?: (expense: any) => void;
 }
 
 export default function ExpenseTabs({
   expenses,
+  currencies,
+  categories,
   setExpenses,
+  onExpensesUpdated,
 }: ExpenseTabsProps) {
   const [value, setValue] = React.useState("1");
 
@@ -32,7 +38,13 @@ export default function ExpenseTabs({
         </TabList>
       </Box>
       <TabPanel value="1">
-        <Expenses expenses={expenses} setExpenses={setExpenses} />
+        <Expenses
+          expenses={expenses}
+          setExpenses={setExpenses}
+          currencies={currencies}
+          categories={categories}
+          onExpensesUpdated={onExpensesUpdated}
+        />
       </TabPanel>
       <TabPanel value="2">
         <ExpensesDashboard expenses={expenses} />

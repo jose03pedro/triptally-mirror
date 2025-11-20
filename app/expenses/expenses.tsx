@@ -3,10 +3,19 @@ import { SingleExpense } from "./singleExpense";
 
 interface ExpensesProps {
   expenses: Array<ExpenseType>;
+  currencies: Array<any>;
+  categories: Array<any>;
   setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+  onExpensesUpdated?: (expense: any) => void;
 }
 
-export function Expenses({ expenses, setExpenses }: ExpensesProps) {
+export function Expenses({
+  expenses,
+  currencies,
+  categories,
+  setExpenses,
+  onExpensesUpdated,
+}: ExpensesProps) {
   return (
     <>
       {expenses.length === 0 ? (
@@ -25,6 +34,9 @@ export function Expenses({ expenses, setExpenses }: ExpensesProps) {
                   amount={expense.value}
                   currency={expense.currency}
                   category={expense.category}
+                  currencies={currencies}
+                  categories={categories}
+                  onExpensesUpdated={onExpensesUpdated}
                   onDeleted={(id: string) =>
                     setExpenses((prev) => prev.filter((e) => e._id !== id))
                   }
