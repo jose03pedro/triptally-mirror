@@ -9,7 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@internationalized/date": "^3.10.0",
+    "@mui/lab": "^7.0.1-beta.19",
+    "@mui/material": "^7.3.5",
+    "@mui/x-charts": "^8.18.0",
     "@popperjs/core": "^2.11.8",
     "@react-aria/i18n": "^3.12.13",
     "@types/google.accounts": "^0.0.18",
