@@ -2,6 +2,8 @@ import { JSX } from "react";
 import IconText from "@/app/components/ui/icon-text";
 import { ExpenseIcon } from "@/app/expenses/expenseIcon";
 import { deleteExpense } from "../actions/deleteExpense";
+import { CloseBtn } from "../components/ui/closeBtn";
+import { ActionBtn } from "../components/ui/actionBtn";
 
 interface ExpenseProps {
   id: string;
@@ -10,6 +12,10 @@ interface ExpenseProps {
   currency: any;
   category: any;
   onDeleted?: (id: string) => void;
+}
+
+export function formatMoney(value: string) {
+  return Number(value || 0).toFixed(2);
 }
 
 export function Expense({
@@ -42,15 +48,15 @@ export function Expense({
         </div>
 
         {/* Right side: value + delete button */}
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-1">
           <p className="mb-0">
-            {value} {currency.symbol}
+            {formatMoney(value)} {currency.symbol}
           </p>
 
           {/* Delete button – hidden until hover */}
-          <button className="delete-expense-btn btn btn-sm" onClick={onDelete}>
-            🗑️
-          </button>
+          <span className="delete-expense-btn" onClick={onDelete}>
+            <ActionBtn action="delete" />
+          </span>
         </div>
       </div>
     </article>
