@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/lib/hook/useAuth";
 import { Loading } from "@/app/components/ui/loading";
+import { AddExpense } from "@/app/components/trip/addExpense";
+import { useAuth } from "@/lib/hook/useAuth";
 import { Expense } from "@/app/expenses/expense";
 
 type City = { name: string; country?: string };
@@ -40,7 +41,7 @@ type ExpenseType = {
   category?: string;
 };
 
-export default function TripPage() {
+export default function TripPage() {  
   const params = useParams();
   const tripId = params?.tripId as string | undefined;
 
@@ -221,6 +222,43 @@ export default function TripPage() {
             </div>
 
             {/* Expenses dashboard */}
+            <section id="expensesContainer">
+              <h2 className="fs-3">Expenses</h2>
+              <AddExpense
+                tripId={tripId as string}
+                userId={trip.user}
+                onExpenseCreated={(newExpense) => {
+                  setExpenses((prev) => {
+                    // prevent duplicates by ID
+                    if (prev.some((e) => e._id === newExpense._id)) return prev;
+                    return [...prev, newExpense];
+                  });
+                }}
+              />
+
+              {expenses?.length === 0 ? (
+                <p>No expenses yet for this trip.</p>
+              ) : (
+                <div className="row my-3">
+                  {expenses.map((expense) => (
+                    <div key={expense._id} className="col-12 col-sm-6 col-md-4 mb-3">
+                      <Expense
+                        {...expense}
+                        id={expense._id}
+                        description={expense.description}
+                        value={expense.value}
+                        currency={expense.currency}
+                        category={expense.category}
+                        onDeleted={(id: string) =>
+                          setExpenses((prev) => prev.filter((e) => e._id !== id))
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
             {showExpenses && (
               <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
                 <div className="flex items-center justify-between mb-2">

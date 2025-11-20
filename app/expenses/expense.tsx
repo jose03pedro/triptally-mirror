@@ -1,6 +1,9 @@
-import {JSX} from "react";
+import { JSX } from "react";
 import IconText from "@/app/components/ui/icon-text";
-import {ExpenseIcon} from "@/app/expenses/expenseIcon";
+import { ExpenseIcon } from "@/app/expenses/expenseIcon";
+import { deleteExpense } from "../actions/deleteExpense";
+import { CloseBtn } from "../components/ui/closeBtn";
+import { ActionBtn } from "../components/ui/actionBtn";
 
 interface ExpenseProps {
     // backward-compatible: either pass a single `expense` object

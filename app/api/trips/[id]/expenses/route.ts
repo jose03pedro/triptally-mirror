@@ -4,6 +4,7 @@ import connectionToDB from "@/lib/mongoose";
 import {NextResponse} from "next/server";
 import Expense from "@/app/models/Expense";
 import ExpenseCategory from "@/app/models/ExpenseCategory";
+import Currency from "@/app/models/Currency";
 
 export async function GET(
     request: Request,
@@ -20,7 +21,10 @@ export async function GET(
             );
         }
 
-        const expenses = await Expense.find({ trip: id }).populate({path: "category", model: "ExpenseCategory"});
+        const expenses = await Expense
+            .find({ trip: id })
+            .populate({path: "category", model: "ExpenseCategory"})
+            .populate("currency");
 
         return NextResponse.json(
             expenses,
