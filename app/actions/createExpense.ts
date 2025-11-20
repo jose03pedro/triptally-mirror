@@ -33,6 +33,7 @@ export async function createExpense(prevState: any, formData: FormData) {
     if (!currentUser) {
       return {
         success: false,
+        expense: undefined,
         errors: {
           tripId: [],
           category: [],
@@ -54,13 +55,13 @@ export async function createExpense(prevState: any, formData: FormData) {
       currency: formData.get("currency"),
     };
 
-    // Validate fields
     const validated = CreateExpenseSchema.safeParse(rawData);
 
     if (!validated.success) {
       const flat = validated.error.flatten();
       return {
         success: false,
+        expense: undefined,
         errors: {
           tripId: flat.fieldErrors.tripId || [],
           category: flat.fieldErrors.category || [],
@@ -76,7 +77,6 @@ export async function createExpense(prevState: any, formData: FormData) {
     const { tripId, category, description, value, date, currency } =
       validated.data;
 
-    // Create record
     const expenseDoc = await Expense.create({
       trip: tripId,
       category,
@@ -93,17 +93,25 @@ export async function createExpense(prevState: any, formData: FormData) {
 
     return {
       success: true,
-      expense: {
-        ...populated,
-        _id: populated?._id.toString(),
-        trip: populated?.trip.toString(),
-        category: populated?.category
-          ? { ...populated.category, _id: populated.category._id.toString() }
-          : null,
-        currency: populated?.currency
-          ? { ...populated.currency, _id: populated.currency._id.toString() }
-          : null,
-      },
+      expense: populated
+        ? {
+            ...populated,
+            _id: populated._id.toString(),
+            trip: populated.trip.toString(),
+            category: populated.category
+              ? {
+                  ...populated.category,
+                  _id: populated.category._id.toString(),
+                }
+              : null,
+            currency: populated.currency
+              ? {
+                  ...populated.currency,
+                  _id: populated.currency._id.toString(),
+                }
+              : null,
+          }
+        : undefined,
       errors: {
         tripId: [],
         category: [],
@@ -116,9 +124,9 @@ export async function createExpense(prevState: any, formData: FormData) {
     };
   } catch (err) {
     console.error("Error creating expense:", err);
-
     return {
       success: false,
+      expense: undefined,
       errors: {
         tripId: [],
         category: [],

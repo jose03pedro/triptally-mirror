@@ -35,13 +35,22 @@ type Trip = {
 
 type ExpenseType = {
   _id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  category?: string;
+  description: string;
+  value: number;
+  currency?: {
+    _id: string;
+    code: string;
+    name: string;
+    symbol: string;
+  };
+  category?: {
+    _id: string;
+    name: string;
+    color: string;
+  };
 };
 
-export default function TripPage() {  
+export default function TripPage() {
   const params = useParams();
   const tripId = params?.tripId as string | undefined;
 
@@ -106,8 +115,7 @@ export default function TripPage() {
   const showExpenses = privacy.showExpenses !== false;
   const showCover = privacy.showCover !== false;
 
-  const ownerId =
-    typeof trip.user === "string" ? trip.user : trip.user?._id;
+  const ownerId = typeof trip.user === "string" ? trip.user : trip.user?._id;
   // Prefer `createdByName` returned by the API (consistent with the list endpoint),
   // otherwise fall back to populated `trip.user` or unknown.
   const creatorName =
@@ -115,7 +123,7 @@ export default function TripPage() {
     (trip as any).createdByName ||
     (typeof trip.user === "object"
       ? `${trip.user.first_name || ""} ${trip.user.last_name || ""}`.trim() ||
-      "Unknown traveler"
+        "Unknown traveler"
       : "Unknown traveler");
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
@@ -147,8 +155,9 @@ export default function TripPage() {
               </p>
               {showCities && (
                 <p className="text-xs text-slate-500 mt-1">
-                  {trip.cities?.map((c) => `${c.name}, ${c.country ?? ""}`).join(" · ") ||
-                    "No cities added yet"}
+                  {trip.cities
+                    ?.map((c) => `${c.name}, ${c.country ?? ""}`)
+                    .join(" · ") || "No cities added yet"}
                 </p>
               )}
               <p className="text-[11px] text-slate-400 mt-1">
@@ -161,10 +170,11 @@ export default function TripPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${trip.isPublic
-                  ? "bg-green-50 text-green-700 border border-green-100"
-                  : "bg-slate-100 text-slate-700 border border-slate-200"
-                  }`}
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
+                  trip.isPublic
+                    ? "bg-green-50 text-green-700 border border-green-100"
+                    : "bg-slate-100 text-slate-700 border border-slate-200"
+                }`}
               >
                 {trip.isPublic ? "Public" : "Private"}
               </span>
@@ -197,9 +207,9 @@ export default function TripPage() {
                 Overview
               </h2>
               <p className="text-xs md:text-sm text-slate-600 mb-3">
-                Here you will later see itinerary, key highlights and AI-generated suggestions
-                for this trip. For now this section is a simple overview of your dates and
-                destinations.
+                Here you will later see itinerary, key highlights and
+                AI-generated suggestions for this trip. For now this section is
+                a simple overview of your dates and destinations.
               </p>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-xs md:text-sm text-slate-700">
                 <div>
@@ -222,49 +232,29 @@ export default function TripPage() {
             </div>
 
             {/* Expenses dashboard */}
-            <section id="expensesContainer">
-              <h2 className="fs-3">Expenses</h2>
-              <AddExpense
-                tripId={tripId as string}
-                userId={trip.user}
-                onExpenseCreated={(newExpense) => {
-                  setExpenses((prev) => {
-                    // prevent duplicates by ID
-                    if (prev.some((e) => e._id === newExpense._id)) return prev;
-                    return [...prev, newExpense];
-                  });
-                }}
-              />
-
-              {expenses?.length === 0 ? (
-                <p>No expenses yet for this trip.</p>
-              ) : (
-                <div className="row my-3">
-                  {expenses.map((expense) => (
-                    <div key={expense._id} className="col-12 col-sm-6 col-md-4 mb-3">
-                      <Expense
-                        {...expense}
-                        id={expense._id}
-                        description={expense.description}
-                        value={expense.value}
-                        currency={expense.currency}
-                        category={expense.category}
-                        onDeleted={(id: string) =>
-                          setExpenses((prev) => prev.filter((e) => e._id !== id))
-                        }
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
             {showExpenses && (
               <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                    Expenses
-                  </h2>
+                <div className="mb-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
+                      Expenses
+                    </h2>
+                    <AddExpense
+                      tripId={tripId as string}
+                      userId={
+                        typeof trip.user === "string"
+                          ? trip.user
+                          : (trip.user?._id as string)
+                      }
+                      onExpenseCreated={(newExpense) => {
+                        setExpenses((prev) => {
+                          if (prev.some((e) => e._id === newExpense._id))
+                            return prev;
+                          return [...prev, newExpense];
+                        });
+                      }}
+                    />
+                  </div>
                   <span className="text-[11px] text-slate-400">
                     {expenses.length} item(s)
                   </span>
@@ -276,20 +266,28 @@ export default function TripPage() {
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {expenses.map((e) => (
-                      <article key={e._id} className="expense rounded p-2 bg-white border">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className="d-flex gap-2 align-items-center">
-                            <div style={{ width: 40, height: 40, borderRadius: 8, background: '#f1f1f1' }} />
-                            <div>
-                              <p className="fw-bolder mb-0">{e.name}</p>
-                              <small className="text-muted">{e.category || 'Misc'}</small>
-                            </div>
-                          </div>
-                          <p className="mb-0">{String(e.amount)} {e.currency}</p>
+                    <div className="row my-3">
+                      {expenses.map((expense) => (
+                        <div
+                          key={expense._id}
+                          className="col-12 col-sm-6 col-md-4 mb-3"
+                        >
+                          <Expense
+                            {...expense}
+                            id={expense._id}
+                            description={expense.description}
+                            amount={expense.value}
+                            currency={expense.currency}
+                            category={expense.category}
+                            onDeleted={(id: string) =>
+                              setExpenses((prev) =>
+                                prev.filter((e) => e._id !== id)
+                              )
+                            }
+                          />
                         </div>
-                      </article>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -309,8 +307,10 @@ export default function TripPage() {
               {isOwner ? (
                 <>
                   <p className="mt-2 text-[11px] text-slate-500">
-                    You can edit this trip&apos;s details, cover image and privacy settings using
-                    the <span className="font-semibold">Edit trip</span> button above.
+                    You can edit this trip&apos;s details, cover image and
+                    privacy settings using the{" "}
+                    <span className="font-semibold">Edit trip</span> button
+                    above.
                   </p>
                   <div className="mt-3">
                     <Link
@@ -323,8 +323,8 @@ export default function TripPage() {
                 </>
               ) : (
                 <p className="mt-2 text-[11px] text-slate-500">
-                  You are viewing a shared version of this trip. Some details may be hidden
-                  based on the creator&apos;s privacy settings.
+                  You are viewing a shared version of this trip. Some details
+                  may be hidden based on the creator&apos;s privacy settings.
                 </p>
               )}
             </div>

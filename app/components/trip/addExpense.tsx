@@ -2,7 +2,7 @@ import IconText from "@/app/components/ui/icon-text";
 import { CreateExpenseModal } from "@/app/components/trip/createExpenseModal";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/hook/useAuth";
-import { set } from "mongoose";
+import { Portal } from "../ui/portal";
 
 interface AddExpenseProps {
   tripId: string;
@@ -46,8 +46,6 @@ export function AddExpense({
     fetchData();
   }, [loggedUser]);
 
-  console.log({ categories, currencies });
-
   if (!loggedUser || loggedUser.id !== userId || loading) {
     return null;
   }
@@ -61,12 +59,15 @@ export function AddExpense({
       >
         <IconText icon="add" text="New expense" color="#fff" />
       </button>
-      <CreateExpenseModal
-        tripId={tripId}
-        categories={categories}
-        currencies={currencies}
-        onExpenseCreated={onExpenseCreated}
-      />
+
+      <Portal>
+        <CreateExpenseModal
+          tripId={tripId}
+          categories={categories}
+          currencies={currencies}
+          onExpenseCreated={onExpenseCreated}
+        />
+      </Portal>
     </>
   );
 }

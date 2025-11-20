@@ -1,20 +1,22 @@
 import * as z from "zod";
 
+// -------------------- Signup Schema --------------------
 export const SignupFormSchema = z.object({
-  email: z.email({ error: "Please enter a valid email." }).trim(),
+  email: z.string().email({ message: "Please enter a valid email." }).trim(),
   password: z
     .string()
-    .min(8, { error: "Must be at least 8 characters long" })
-    .regex(/[a-zA-Z]/, { error: "Must contain at least one letter." })
-    .regex(/[0-9]/, { error: "Must contain at least one number." })
+    .min(8, { message: "Must be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Must contain at least one letter." })
+    .regex(/[0-9]/, { message: "Must contain at least one number." })
     .regex(/[^a-zA-Z0-9]/, {
-      error: "Must contain at least one special character.",
+      message: "Must contain at least one special character.",
     })
     .trim(),
   first_name: z.string().trim().nonempty("First name is required"),
   last_name: z.string().trim().nonempty("Last name is required"),
 });
 
+// -------------------- Create Trip Schema --------------------
 export const CreateTripSchema = z
   .object({
     title: z.string().trim().nonempty("Title is required"),
@@ -31,7 +33,6 @@ export const CreateTripSchema = z
   })
   .refine(
     (data) => {
-      // Check that endDate >= startDate
       if (!data.startDate || !data.endDate) return true;
       const start = new Date(data.startDate);
       const end = new Date(data.endDate);
@@ -43,6 +44,7 @@ export const CreateTripSchema = z
     }
   );
 
+// -------------------- Create Expense Schema --------------------
 export const CreateExpenseSchema = z.object({
   tripId: z.string().min(1, "Trip is required"),
   description: z.string().min(1, "Description is required"),
@@ -62,25 +64,29 @@ export const CreateExpenseSchema = z.object({
     .refine((v) => !isNaN(Number(v)), {
       message: "Value must be a valid number",
     }),
-  
+});
+
+// -------------------- Edit User Schema --------------------
 export const EditUserSchema = z.object({
   first_name: z.string().trim().nonempty("First name is required"),
   last_name: z.string().trim().nonempty("Last name is required"),
   current_password: z.string().trim().nonempty("Current password is required"),
 });
 
+// -------------------- Change Password Schema --------------------
 export const ChangePasswordSchema = z.object({
-    password: z
-      .string()
-      .min(8, { error: "Must be at least 8 characters long" })
-      .regex(/[a-zA-Z]/, { error: "Must contain at least one letter." })
-      .regex(/[0-9]/, { error: "Must contain at least one number." })
-      .regex(/[^a-zA-Z0-9]/, {
-        error: "Must contain at least one special character.",
-      })
-      .trim(),
-  })
+  password: z
+    .string()
+    .min(8, { message: "Must be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Must contain at least one letter." })
+    .regex(/[0-9]/, { message: "Must contain at least one number." })
+    .regex(/[^a-zA-Z0-9]/, {
+      message: "Must contain at least one special character.",
+    })
+    .trim(),
+});
 
+// -------------------- Types --------------------
 export type AuthErrors = {
   email?: string[];
   password?: string[];

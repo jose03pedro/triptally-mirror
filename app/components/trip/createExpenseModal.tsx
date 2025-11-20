@@ -21,8 +21,9 @@ export function CreateExpenseModal({
 }: CreateExpenseModalProps) {
   const initialState = {
     success: false,
-    expense: null,
+    expense: undefined,
     errors: {
+      tripId: [], // <-- Add this
       category: [],
       currency: [],
       date: [],
@@ -31,6 +32,7 @@ export function CreateExpenseModal({
       form: [],
     },
   };
+
   const initialFormValues = useMemo(
     () => ({
       category: "",
@@ -167,7 +169,7 @@ export function CreateExpenseModal({
           <option value="">Select a currency...</option>
           {currencies.map((currency: any) => (
             <option key={currency._id} value={currency._id}>
-              {currency.symbol}
+              {currency?.symbol}
             </option>
           ))}
         </select>
