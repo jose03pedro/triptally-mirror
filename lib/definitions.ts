@@ -62,7 +62,24 @@ export const CreateExpenseSchema = z.object({
     .refine((v) => !isNaN(Number(v)), {
       message: "Value must be a valid number",
     }),
+  
+export const EditUserSchema = z.object({
+  first_name: z.string().trim().nonempty("First name is required"),
+  last_name: z.string().trim().nonempty("Last name is required"),
+  current_password: z.string().trim().nonempty("Current password is required"),
 });
+
+export const ChangePasswordSchema = z.object({
+    password: z
+      .string()
+      .min(8, { error: "Must be at least 8 characters long" })
+      .regex(/[a-zA-Z]/, { error: "Must contain at least one letter." })
+      .regex(/[0-9]/, { error: "Must contain at least one number." })
+      .regex(/[^a-zA-Z0-9]/, {
+        error: "Must contain at least one special character.",
+      })
+      .trim(),
+  })
 
 export type AuthErrors = {
   email?: string[];

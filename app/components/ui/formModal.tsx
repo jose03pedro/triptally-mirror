@@ -8,9 +8,22 @@ interface FormModalProps {
     children: ReactNode;
     isPending?: boolean;
     canSubmit?: boolean;
+    onClose?: () => void;
+    submitLabel?: string;
+    pendingLabel?: string;
 }
 
-export default function FormModal({ id, title, action, children, isPending = false, canSubmit = true }: FormModalProps) {
+export default function FormModal({
+    id,
+    title,
+    action,
+    children,
+    isPending = false,
+    canSubmit = true,
+    onClose, // Destructure the new prop
+    submitLabel = "Create",
+    pendingLabel = "Creating…"
+}: FormModalProps) {
     return (
         <div className="modal fade"
             id={`${id}Modal`}
@@ -23,7 +36,14 @@ export default function FormModal({ id, title, action, children, isPending = fal
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title fs-6" id={`${id}ModalLabel`}>{title}</h5>
-                        <div data-bs-dismiss="modal" aria-label="Close"><CloseBtn /></div>
+                        <div
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                            onClick={onClose}
+                            style={{ cursor: "pointer" }}
+                        >
+                            <CloseBtn />
+                        </div>
                     </div>
 
                     <form id={`${id}ModalForm`} action={action}>
@@ -32,9 +52,16 @@ export default function FormModal({ id, title, action, children, isPending = fal
                         </div>
 
                         <div className="modal-footer">
-                            <button type="button" className="btn " data-bs-dismiss="modal">Cancel</button>
+                            <button
+                                type="button"
+                                className="btn"
+                                data-bs-dismiss="modal"
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </button>
                             <button type="submit" className="btn btn-primary" disabled={isPending || !canSubmit}>
-                                {isPending ? "Creating…" : "Create"}
+                                {isPending ? pendingLabel : submitLabel}
                             </button>
                         </div>
                     </form>

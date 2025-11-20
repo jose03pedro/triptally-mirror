@@ -9,12 +9,22 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const namePrefix = (searchParams.get("namePrefix") || "").toLowerCase();
 
-    const url = `https://${process.env.GEODB_API_HOST}/v1/geo/cities?namePrefix=${namePrefix}&type=CITY&limit=10`;
+    const GEODB_API_KEY = process.env.GEODB_API_KEY;
+    const GEODB_API_HOST = process.env.GEODB_API_HOST;
+
+    if (!GEODB_API_KEY || !GEODB_API_HOST) {
+        return Response.json(
+            { error: "GeoDB API key/host not configured on the server." },
+            { status: 500 }
+        );
+    }
+
+    const url = `https://${GEODB_API_HOST}/v1/geo/cities?namePrefix=${namePrefix}&type=CITY&limit=10`;
 
     const res = await fetch(url, {
         headers: {
-            "X-RapidAPI-Key": process.env.GEODB_API_KEY,
-            "X-RapidAPI-Host": process.env.GEODB_API_HOST,
+            "X-RapidAPI-Key": GEODB_API_KEY,
+            "X-RapidAPI-Host": GEODB_API_HOST,
         },
     });
 
@@ -41,7 +51,7 @@ export async function GET(request: Request) {
         if (!data || !Array.isArray(data.data)) {
             console.error("Unexpected GeoDB response:", data);
         } else {
-            cities = data.data.map((city) => ({
+            cities = data.data.map((city: any) => ({
                 id: city.id,
                 name: city.city,
                 country: city.country,

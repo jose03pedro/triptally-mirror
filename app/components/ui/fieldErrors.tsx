@@ -9,10 +9,12 @@ type FieldErrorsProps = {
 export default function FieldErrors({ errors, asList = false, className = "" }: FieldErrorsProps) {
     if (!errors || errors.length === 0) return null;
 
+    const baseClass = `text-xs text-red-600 mt-1 ${className}`;
+
     if (asList) {
         return (
-            <div className={`invalid-feedback ${className}`}>
-                <ul className="mb-0 px-0">
+            <div className={baseClass}>
+                <ul className="list-disc list-inside">
                     {errors.map((err, i) => (
                         <li key={i}>{err}</li>
                     ))}
@@ -22,12 +24,10 @@ export default function FieldErrors({ errors, asList = false, className = "" }: 
     }
 
     return (
-        <>
+        <div className={baseClass}>
             {errors.map((err, i) => (
-                <div key={i} className={`invalid-feedback ${className}`}>
-                    {err}
-                </div>
+                <p key={i}>{err}</p>
             ))}
-        </>
+        </div>
     );
 }

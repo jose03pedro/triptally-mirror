@@ -19,12 +19,16 @@ interface TripCity extends City {
 interface TripCitiesInputProps {
     cityErrors?: string[];
     onChangeCities?: (cities: { id?: string; name: string; country: string }[]) => void;
+    initialCities?: City[];
 }
 
-export default function TripCitiesInput({ cityErrors, onChangeCities }: TripCitiesInputProps) {
-    const [cities, setCities] = useState<TripCity[]>([
-        { id: "", name: "", country: "", search: "", availableCities: [] },
-    ]);
+export default function TripCitiesInput({ cityErrors, onChangeCities, initialCities = [] }: TripCitiesInputProps) {
+    const [cities, setCities] = useState<TripCity[]>(() => {
+        if (initialCities && initialCities.length > 0) {
+             return initialCities.map(c => ({ ...c, search: "", availableCities: [] }));
+        }
+        return [{ id: "", name: "", country: "", search: "", availableCities: [] }];
+    });
 
     const addCity = () =>
         setCities((prev) => {
@@ -53,41 +57,42 @@ export default function TripCitiesInput({ cityErrors, onChangeCities }: TripCiti
     };
 
     return (
-        <div className="mb-3">
-            <p className="form-label text-secondary mb-0">Where are you going?</p>
-            <div className={`d-flex align-items-center justify-content-between ${cityErrors?.length ? "is-invalid" : ""}`}>
-                <small id="citiesHelpBlock" className="form-text text-muted">
-                    Select all the cities you are visiting during this trip.
-                </small>
-                <div onClick={addCity}>
-                    <ActionBtn size={20} action="add" />
-                </div>
+        <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+               <div>
+                  <p className="block font-medium text-slate-900 text-sm mb-0">Destinations</p>
+                  <p className="text-[11px] text-slate-500">
+                    Select the cities you are visiting.
+                  </p>
+               </div>
+               <div onClick={addCity} title="Add another city" className="cursor-pointer">
+                    <ActionBtn size={24} action="add_circle" color="#2563eb" />
+               </div>
             </div>
+            
+            <div className={`space-y-2 ${cityErrors?.length ? "p-2 border border-red-200 rounded bg-red-50" : ""}`}>
+                {cities.map((cityObj, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                        <CitySelect
+                            selectedCity={cityObj}
+                            search={cityObj.search}
+                            availableCities={cityObj.availableCities}
+                            setSearch={(term) => updateCity(idx, { search: term })}
+                            setAvailableCities={(list) => updateCity(idx, { availableCities: list })}
+                            setSelectedCity={(city) =>
+                                updateCity(idx, { ...city, search: "", availableCities: [] })
+                            }
+                        />
 
-            {cities.map((cityObj, idx) => (
-                <div key={idx} className="d-flex align-items-center my-1">
-                    <CitySelect
-                        selectedCity={cityObj}
-                        search={cityObj.search}
-                        availableCities={cityObj.availableCities}
-                        setSearch={(term) => updateCity(idx, { search: term })}
-                        setAvailableCities={(list) => updateCity(idx, { availableCities: list })}
-                        setSelectedCity={(city) =>
-                            updateCity(idx, { ...city, search: "", availableCities: [] })
-                        }
-                    />
-
-                    {cities.length > 1 && (
-                        <div onClick={() => removeCity(idx)} className="ms-2">
-                            <ActionBtn size={19} action="delete" />
-                        </div>
-                    )}
-                </div>
-            ))}
+                        {cities.length > 1 && (
+                            <div onClick={() => removeCity(idx)} className="flex-shrink-0 cursor-pointer">
+                                <ActionBtn size={20} action="delete" color="#ef4444" />
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
             <FieldErrors errors={cityErrors} />
         </div>
     );
 }
-
-
-

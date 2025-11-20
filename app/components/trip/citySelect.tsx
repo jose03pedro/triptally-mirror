@@ -82,10 +82,10 @@ export function CitySelect({
     };
 
     return (
-        <div ref={dropdownRef} className="position-relative w-100" style={{ minWidth: "200px" }}>
+        <div ref={dropdownRef} className="relative w-full min-w-[200px]">
             <input
                 type="text"
-                className="form-control w-100"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer bg-white text-slate-700"
                 placeholder="Select a city..."
                 value={selectedCity?.name || ""}
                 onClick={toggleDropdown}
@@ -97,67 +97,65 @@ export function CitySelect({
 
 
             {isOpen && (
-                <div
-                    className="dropdown-menu show p-2 w-100"
-                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                >
+                <div className="absolute z-50 mt-1 w-full rounded-lg border border-slate-100 bg-white shadow-xl p-2 max-h-[250px] overflow-y-auto">
                     <input
                         type="text"
-                        className={`form-control ${filteredCities.length > 0 || search.length > 0 ? "mb-2" : ""}`}
+                        className="w-full rounded-md border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 mb-2"
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                        autoFocus
                     />
 
                     {filteredCities.length > 0 ? (
-                        filteredCities.map((city) => (
-                            <button
-                                key={city.id}
-                                type="button"
-                                className="dropdown-item d-flex align-items-center justify-content-between gap-4"
-                                onClick={() => handleSelect(city)}
-                            >
-                                <span>{city.name}</span>
-                                <span className="text-muted" style={{ fontSize: "12px" }}>
-                                    {city.country}
-                                </span>
-                            </button>
-                        ))
+                        <div className="space-y-1">
+                            {filteredCities.map((city) => (
+                                <button
+                                    key={city.id}
+                                    type="button"
+                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-slate-50 text-sm flex items-center justify-between gap-2 transition"
+                                    onClick={() => handleSelect(city)}
+                                >
+                                    <span className="font-medium text-slate-700">{city.name}</span>
+                                    <span className="text-xs text-slate-500 truncate max-w-[100px]">{city.country}</span>
+                                </button>
+                            ))}
+                        </div>
                     ) : (
                         search.length > 0 && (
                             <>
-                                <span className="dropdown-item text-muted">No cities found</span>
+                                <div className="px-3 py-2 text-xs text-slate-500">No cities found</div>
                                 {!showCountryPrompt ? (
-                                    <div className="d-flex flex-column">
+                                    <div className="flex flex-col px-1 mt-1">
                                         <button
                                             type="button"
-                                            className="dropdown-item btn btn-link text-start"
+                                            className="w-full text-left px-2 py-1.5 rounded-md text-blue-600 hover:bg-blue-50 text-sm font-medium transition"
                                             onClick={() => setShowCountryPrompt(true)}
                                         >
                                             Use "{search}" as city
                                         </button>
-                                        <small className="text-muted px-2">You can provide a country for custom cities.</small>
+                                        <p className="px-2 text-[10px] text-slate-400 mt-1">You can manually add a country.</p>
                                     </div>
                                 ) : (
-                                    <div className="px-2">
+                                    <div className="px-1 mt-2 p-2 bg-slate-50 rounded-md border border-slate-100">
                                         <input
                                             type="text"
-                                            className="form-control mb-2"
-                                            placeholder="Country (optional - defaults to Unknown)"
+                                            className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                            placeholder="Country (optional)"
                                             value={customCountry}
                                             onChange={(e) => setCustomCountry(e.target.value)}
                                         />
-                                        <div className="d-flex gap-2">
+                                        <div className="flex gap-2">
                                             <button
                                                 type="button"
-                                                className="btn btn-sm btn-primary"
+                                                className="flex-1 rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-500"
                                                 onClick={() => handleSelectWithCountry(search, customCountry)}
                                             >
-                                                Confirm
+                                                Add
                                             </button>
                                             <button
                                                 type="button"
-                                                className="btn btn-sm btn-secondary"
+                                                className="flex-1 rounded bg-white border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50"
                                                 onClick={() => { setShowCountryPrompt(false); setCustomCountry(""); }}
                                             >
                                                 Cancel
@@ -173,5 +171,3 @@ export function CitySelect({
         </div>
     );
 }
-
-
