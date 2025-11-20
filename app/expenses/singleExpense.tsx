@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX, useState } from "react";
 import IconText from "@/app/components/ui/icon-text";
 import { ExpenseIcon } from "@/app/expenses/expenseIcon";
 import { deleteExpense } from "../actions/deleteExpense";
@@ -13,7 +13,10 @@ interface ExpenseProps {
   amount: number;
   currency: any;
   category: any;
+  categories: any[];
+  currencies: any[];
   onDeleted?: (id: string) => void;
+  onExpensesUpdated?: (expense: any) => void;
 }
 
 export function formatMoney(amount: number) {
@@ -26,15 +29,30 @@ export function SingleExpense({
   amount,
   currency,
   category,
+  categories,
+  currencies,
   onDeleted,
+  onExpensesUpdated,
 }: ExpenseProps): JSX.Element {
+  const [showModal, setShowModal] = useState(false);
+
   const onDelete = async () => {
     const response = await deleteExpense(id);
     response.success && onDeleted && onDeleted(id);
   };
-
   return (
     <>
+      {
+        <Portal>
+          <CreateExpenseModal
+            currencies={currencies}
+            categories={categories}
+            expenseId={id}
+            onExpensesUpdated={onExpensesUpdated}
+          />
+        </Portal>
+      }
+
       <article className="expense w-100 position-relative">
         <div className="d-flex flex-wrap justify-content-between align-items-center">
           <div className="d-flex gap-2 align-items-center flex-grow-1 min-width-0">
@@ -58,7 +76,7 @@ export function SingleExpense({
               <span
                 className="expense-btn"
                 data-bs-toggle="modal"
-                data-bs-target="#createExpenseModal"
+                data-bs-target={`#createExpense-${id}Modal`}
               >
                 <ActionBtn action="edit" size={15} color="#909090" />
               </span>
