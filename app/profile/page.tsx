@@ -7,7 +7,7 @@ import UserEditModal from "@/app/components/user/userEditModal";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
-import { getTravelerProfile } from "../api/traveler/route";
+// import { getTravelerProfile } from "@/app/api/traveler/getTravelerProfile";
 import { TravelerCard } from "../components/traveler/TravelerCard";
 
 type City = { name: string; country?: string };
@@ -25,9 +25,6 @@ export default function ProfilePage() {
   const [upcoming, setUpcoming] = useState<Trip[]>([]);
   const user = session?.user;
   const [travelerProfile, setTravelerProfile] = useState<any>(null); // State for profile
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     async function loadData() {
@@ -48,8 +45,12 @@ export default function ProfilePage() {
 
       // 2. Fetch Traveler Profile
       try {
-        const profile = await getTravelerProfile();
-        setTravelerProfile(profile);
+        const res = await fetch(`/api/traveler`, { cache: "no-store" });
+
+        if (res.ok) {
+          const data = await res.json();
+          setTravelerProfile(data);
+        }
       } catch (err) {
         console.error("Failed to load profile:", err);
       }
@@ -138,13 +139,12 @@ export default function ProfilePage() {
               {/* Existing user card inside a cleaner container */}
               <UserCard firstName={user.first_name} lastName={user.last_name} />
 
-    
-                <div className="mt-4 pt-3">
+              <div className="mt-4 pt-3">
                 <TravelerCard
                   travelerProfile={travelerProfile}
                   onProfileUpdate={setTravelerProfile} // <--- Pass the setter here
                 />
-                </div>
+              </div>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import { addTravelerProfile } from "@/app/actions/addTravelerProfile";
 import ResponsiveModal from "../ui/responsiveModal";
 import { ChipSelector } from "../ui/chipSelector";
 import { SuccessStep } from "./succesStep";
-import { getTravelerProfile } from "@/app/api/traveler/route";
+// import { getTravelerProfile } from "@/app/api/traveler/route";
 
 const predefinedTransport = [
   "Plane",
@@ -70,14 +70,28 @@ export default function TravelerProfileModal({
   );
 
   useEffect(() => {
-    if (state?.success && onProfileUpdate) {
-      // Fetch the latest data from server to ensure client state is in sync
-      getTravelerProfile().then((newData) => {
-        if (newData) {
-          onProfileUpdate(newData);
+    async function loadData() {
+      try {
+        const res = await fetch(`/api/traveler`, { cache: "no-store" });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (onProfileUpdate) {
+            onProfileUpdate(data);
+          }
         }
-      });
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+      }
     }
+
+
+    if (state?.success) {
+      // Fetch the latest data from server to ensure client state is in sync
+      // getTravelerProfile().then((newData) => {
+      loadData();
+    }
+    // }
   }, [state?.success, onProfileUpdate]);
 
   // Initialize form with initialData or defaults
@@ -189,7 +203,8 @@ export default function TravelerProfileModal({
     >
       {/* ...existing JSX for steps... */}
       <div className="mb-3 text-secondary small">
-        Help us personalize your travel experience with AI suggestions by answering a few questions about your preferences, needs, and interests.
+        Help us personalize your travel experience with AI suggestions by
+        answering a few questions about your preferences, needs, and interests.
       </div>
 
       {step === 1 && (
