@@ -3,6 +3,7 @@
 import TripCard from "@/app/components/trip/tripCard";
 import TripsGrid from "@/app/components/trip/tripsGrid";
 import { Loading } from "@/app/components/ui/loading";
+import { PageHeader } from "@/app/components/ui/pageHeader";
 import { useAuth } from "@/lib/hook/useAuth";
 import { Trip } from "@/types/trip/types";
 import { useRouter } from "next/navigation";
@@ -58,9 +59,12 @@ export default function SavedTripsPage() {
   };
 
   return (
-    <div className="container py-5">
-      <h1 className="mb-4">Saved Trips</h1>
+    <>
+      <PageHeader
+        title="Saved Trips"
+        subtitle="Your personal list of saved destinations."
+      />
       {loading ? <Loading /> : renderTripGrid(savedTrips)}
-    </div>
+    </>
   );
 }

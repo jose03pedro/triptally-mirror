@@ -12,6 +12,7 @@ export interface Trip {
   endDate: string;
   cities?: City[];
   isPublic?: boolean;
+  coverImage?: string;
   owner: User;
 }
 

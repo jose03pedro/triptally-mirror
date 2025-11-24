@@ -19,7 +19,7 @@ export function Expenses({
   return (
     <>
       {expenses.length === 0 ? (
-        <p className="text-xs md:text-sm text-slate-500">
+        <p className="text-muted text-xs md:text-sm text-slate-500">
           No expenses added yet.
         </p>
       ) : (

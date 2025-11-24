@@ -17,7 +17,7 @@ export default function SavedTripsLayout({
         style={{
           maxWidth: "1400px",
           margin: "auto",
-          marginTop: "7rem",
+          marginTop: "4rem",
         }}
         className="container position-relative"
       >
