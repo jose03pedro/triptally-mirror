@@ -8,17 +8,17 @@ interface TripCardProps {
   loggedUserId?: string;
   trip: Trip;
   userSavedTrips?: string[];
+  onRemoved?: (tripId: string) => void;
 }
 
 export default function TripCard({
   loggedUserId,
   trip,
   userSavedTrips,
+  onRemoved,
 }: TripCardProps) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  console.log(userSavedTrips);
 
   useEffect(() => {
     if (userSavedTrips?.includes(trip._id)) {
@@ -52,6 +52,33 @@ export default function TripCard({
     }
   };
 
+  const handleUnsaveTrip = async () => {
+    if (!saved || saving) return;
+    if (!loggedUserId) return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/users/${loggedUserId}/saved-trips`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tripId: trip._id }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || "Failed to remove saved trip");
+      }
+
+      setSaved(false);
+      if (onRemoved) onRemoved(trip._id);
+    } catch (err) {
+      console.error(err);
+      alert("Unable to remove saved trip. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="card h-100 trip-card shadow-sm">
       <div className="trip-thumb rounded-top" />
@@ -61,25 +88,23 @@ export default function TripCard({
         </h5>
 
         <button
-          onClick={handleSaveTrip}
+          onClick={saved ? handleUnsaveTrip : handleSaveTrip}
           className={`btn btn-sm mb-2 ${
-            saved ? "btn-success" : "btn-outline-primary"
+            saved ? "btn-danger" : "btn-outline-primary"
           }`}
-          disabled={saved || saving}
+          disabled={saving}
         >
-          {saved ? "Saved" : saving ? "Saving..." : "Save"}
+          {saving ? "..." : saved ? "Remove" : "Save"}
         </button>
 
         <p className="card-text mb-1 text-muted small">
           {trip.cities?.map((c) => `${c.name}, ${c.country}`).join(" · ") ||
             "—"}
         </p>
-
         <p className="card-text mb-2 text-muted small">
           {new Date(trip.startDate).toLocaleDateString()} –{" "}
           {new Date(trip.endDate).toLocaleDateString()}
         </p>
-
         <div className="mt-auto d-flex justify-content-between align-items-center pt-2">
           <span className="text-muted small">
             Created by{" "}

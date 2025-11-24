@@ -23,6 +23,10 @@ export default function SavedTripsPage() {
   const [savedTrips, setSavedTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleRemoveFromSaved = (tripId: string) => {
+    setSavedTrips((prev) => prev.filter((t) => t._id !== tripId));
+  };
+
   useEffect(() => {
     const fetchSavedTrips = async () => {
       if (!user?.id) return;
@@ -50,7 +54,7 @@ export default function SavedTripsPage() {
       return <div className="text-muted">You haven't saved any trips yet.</div>;
     }
 
-    return <TripsGrid trips={trips} />;
+    return <TripsGrid trips={trips} onRemovedTrip={handleRemoveFromSaved} />;
   };
 
   return (

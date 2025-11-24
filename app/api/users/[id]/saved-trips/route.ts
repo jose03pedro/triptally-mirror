@@ -119,3 +119,44 @@ export async function POST(
     return NextResponse.json({ error: "Failed to save trip" }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    await connectionToDB();
+
+    const { id: userId } = await context.params;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const body: Body = await request.json();
+    const { tripId } = body;
+
+    if (!userId || !tripId) {
+      return NextResponse.json(
+        { error: "User ID and trip ID required" },
+        { status: 400 }
+      );
+    }
+
+    // Remove from savedTrips
+    await User.findByIdAndUpdate(userId, {
+      $pull: { savedTrips: tripId },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Failed to remove saved trip" },
+      { status: 500 }
+    );
+  }
+}

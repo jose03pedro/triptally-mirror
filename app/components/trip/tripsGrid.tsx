@@ -3,7 +3,12 @@ import { useAuth } from "@/lib/hook/useAuth";
 import TripCard from "@/app/components/trip/tripCard";
 import { Trip } from "@/types/trip/types";
 
-export default function TripsGrid({ trips }: { trips: Trip[] }) {
+interface TripsGridProps {
+  trips: Trip[];
+  onRemovedTrip?: (tripId: string) => void;
+}
+
+export default function TripsGrid({ trips, onRemovedTrip }: TripsGridProps) {
   const session = useAuth();
   const userId = session?.user?.id;
   const [savedTripIds, setSavedTripIds] = useState<string[]>([]);
@@ -37,6 +42,7 @@ export default function TripsGrid({ trips }: { trips: Trip[] }) {
               loggedUserId={userId}
               trip={t}
               userSavedTrips={savedTripIds}
+              onRemoved={onRemovedTrip}
             />
           </div>
         ))}
