@@ -28,23 +28,49 @@ export function Navbar() {
         </Link>
 
         <div className="d-flex align-items-center">
-          <Link href="/trips" className="nav-link d-none d-sm-inline me-3">Trips</Link>
+          {/* Trips navigation */}
+          <Link href="/trips" className="nav-link d-none d-sm-inline me-3">
+            Trips
+          </Link>
+
+          {/* Saved trips navigation */}
+          <Link
+            href="/profile/saved-trips"
+            className="nav-link d-none d-sm-inline me-3"
+          >
+            Saved
+          </Link>
 
           {/* Mobile CTA visible only on small screens */}
-          <Link href="/trips" className="btn btn-primary d-sm-none me-2">My Trips</Link>
+          <Link href="/trips" className="btn btn-primary d-sm-none me-2">
+            My Trips
+          </Link>
 
           {session === undefined ? (
             <div className="d-flex align-items-center gap-2">
-              <span className="placeholder col-4 me-2" style={{ height: 28, display: 'inline-block' }} />
-              <span className="placeholder col-6 d-none d-md-inline-block" style={{ height: 36, display: 'inline-block' }} />
+              <span
+                className="placeholder col-4 me-2"
+                style={{ height: 28, display: "inline-block" }}
+              />
+              <span
+                className="placeholder col-6 d-none d-md-inline-block"
+                style={{ height: 36, display: "inline-block" }}
+              />
             </div>
           ) : !user ? (
             <>
-              <Link href="/login" className="btn btn-link me-2">Log in</Link>
-              <Link href="/signup" className="btn btn-primary">Get started</Link>
+              <Link href="/login" className="btn btn-link me-2">
+                Log in
+              </Link>
+              <Link href="/signup" className="btn btn-primary">
+                Get started
+              </Link>
             </>
           ) : (
-            <NavDropdown firstName={user.first_name} lastName={user.last_name} />
+            <NavDropdown
+              firstName={user.first_name}
+              lastName={user.last_name}
+            />
           )}
         </div>
       </div>
