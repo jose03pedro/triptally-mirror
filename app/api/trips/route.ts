@@ -13,8 +13,7 @@ export async function GET(req: NextRequest) {
 
     const q = (searchParams.get("q") || "").trim();
     const userId = searchParams.get("userId");
-    const rawStatus = (searchParams.get("status") ||
-      "all") as StatusFilter;
+    const rawStatus = (searchParams.get("status") || "all") as StatusFilter;
 
     const page = Math.max(
       1,
@@ -130,11 +129,6 @@ export async function GET(req: NextRequest) {
       const anyTrip: any = t;
       const u: any = anyTrip.user;
 
-      const createdByName =
-        u && (u.first_name || u.last_name)
-          ? `${u.first_name || ""} ${u.last_name || ""}`.trim()
-          : "Unknown traveler";
-
       return {
         _id: anyTrip._id,
         title: anyTrip.title,
@@ -144,7 +138,7 @@ export async function GET(req: NextRequest) {
         isPublic: anyTrip.isPublic,
         coverImage: anyTrip.coverImage,
         privacy: anyTrip.privacy,
-        createdByName,
+        owner: anyTrip.user,
       };
     });
 
