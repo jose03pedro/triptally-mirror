@@ -3,6 +3,7 @@
 import { Trip } from "@/types/trip/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Tooltip from "@mui/material/Tooltip";
 
 interface TripCardProps {
   loggedUserId?: string;
@@ -84,24 +85,65 @@ export default function TripCard({
 
   return (
     <div className="card h-100 trip-card shadow-sm">
-      <div className="trip-thumb rounded-top" />
+      <div
+        className="trip-thumb rounded-top"
+        style={{
+          height: "150px", // adjust as needed
+          backgroundImage: trip.coverImage
+            ? `url(${trip.coverImage})`
+            : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundColor: trip.coverImage ? undefined : "#e9ecef", // fallback gray color
+        }}
+      />
+
       <div className="card-body d-flex flex-column">
-        <h5 className="card-title mb-2">
-          <Link href={`/trips/${trip._id}`}>{trip.title}</Link>
-        </h5>
+        <div className="d-flex align-items-center justify-content-between mb-2">
+          <h5 className="card-title ">
+            <Link href={`/trips/${trip._id}`}>{trip.title}</Link>
+          </h5>
 
-        {loggedUserId !== trip.owner._id && (
-          <button
-            onClick={saved ? handleUnsaveTrip : handleSaveTrip}
-            className={`btn btn-sm mb-2 ${
-              saved ? "btn-danger" : "btn-outline-primary"
-            }`}
-            disabled={saving}
-          >
-            {saving ? "..." : saved ? "Remove" : "Save"}
-          </button>
-        )}
-
+          {loggedUserId !== trip.owner._id && (
+            <Tooltip
+              title={saved ? `Remove from saved list` : `Save to your list`}
+              slotProps={{
+                popper: {
+                  modifiers: [
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, -14],
+                      },
+                    },
+                  ],
+                },
+              }}
+            >
+              <button
+                onClick={saved ? handleUnsaveTrip : handleSaveTrip}
+                className={`btn btn-sm p-0`}
+                disabled={saving}
+                style={{
+                  outline: "none",
+                  boxShadow: "none",
+                  border: "none",
+                  background: "transparent",
+                }}
+              >
+                <span
+                  className={
+                    saved ? "material-icons" : "material-symbols-outlined"
+                  }
+                  style={{ color: "#212529bf" }}
+                >
+                  bookmark
+                </span>
+              </button>
+            </Tooltip>
+          )}
+        </div>
         <p className="card-text mb-1 text-muted small">
           {trip.cities?.map((c) => `${c.name}, ${c.country}`).join(" · ") ||
             "—"}

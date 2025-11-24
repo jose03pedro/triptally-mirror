@@ -35,6 +35,13 @@ export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
 
   const total = groupedData.reduce((sum, cat) => sum + cat.value, 0);
 
+  if (groupedData.length === 0)
+    return (
+      <div className="text-muted">
+        Start adding your expenses to see your spending overview.
+      </div>
+    );
+
   return (
     <div className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-5">
       <div className="d-flex justify-content-center">

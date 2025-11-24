@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
 import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
+import Tooltip from "@mui/material/Tooltip";
 
 export function Navbar() {
   const session = useAuth();
@@ -28,17 +29,33 @@ export function Navbar() {
         </Link>
 
         <div className="d-flex align-items-center">
-          {/* Trips navigation */}
-          <Link href="/trips" className="nav-link d-none d-sm-inline me-3">
-            Trips
-          </Link>
-
           {/* Saved trips navigation */}
           <Link
             href="/profile/saved-trips"
-            className="nav-link d-none d-sm-inline me-3"
+            className="d-inline-block me-3 nav-link"
           >
-            Saved
+            <Tooltip
+              title="Your saved trips"
+              slotProps={{
+                popper: {
+                  modifiers: [
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, -10],
+                      },
+                    },
+                  ],
+                },
+              }}
+            >
+              <button
+                type="button"
+                className="btn btn-outline-secondary  p-1 d-flex align-items-center justify-content-center"
+              >
+                <span className="material-symbols-outlined">bookmark</span>
+              </button>
+            </Tooltip>
           </Link>
 
           {/* Mobile CTA visible only on small screens */}
