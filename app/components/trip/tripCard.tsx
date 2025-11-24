@@ -79,6 +79,9 @@ export default function TripCard({
     }
   };
 
+  console.log("loggeduser:", loggedUserId);
+  console.log("trip user id:", trip.owner._id);
+
   return (
     <div className="card h-100 trip-card shadow-sm">
       <div className="trip-thumb rounded-top" />
@@ -87,15 +90,17 @@ export default function TripCard({
           <Link href={`/trips/${trip._id}`}>{trip.title}</Link>
         </h5>
 
-        <button
-          onClick={saved ? handleUnsaveTrip : handleSaveTrip}
-          className={`btn btn-sm mb-2 ${
-            saved ? "btn-danger" : "btn-outline-primary"
-          }`}
-          disabled={saving}
-        >
-          {saving ? "..." : saved ? "Remove" : "Save"}
-        </button>
+        {loggedUserId !== trip.owner._id && (
+          <button
+            onClick={saved ? handleUnsaveTrip : handleSaveTrip}
+            className={`btn btn-sm mb-2 ${
+              saved ? "btn-danger" : "btn-outline-primary"
+            }`}
+            disabled={saving}
+          >
+            {saving ? "..." : saved ? "Remove" : "Save"}
+          </button>
+        )}
 
         <p className="card-text mb-1 text-muted small">
           {trip.cities?.map((c) => `${c.name}, ${c.country}`).join(" · ") ||
