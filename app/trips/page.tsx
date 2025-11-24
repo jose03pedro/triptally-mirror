@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/hook/useAuth";
 import { useRouter } from "next/navigation";
 import TripCard from "../components/trip/tripCard";
 import { Trip, TripsResponse } from "@/types/trip/types";
+import TripsGrid from "../components/trip/tripsGrid";
 
 type StatusFilter = "all" | "upcoming" | "past" | "ongoing";
 type Tab = "ongoing" | "upcoming" | "past";
@@ -184,15 +185,7 @@ export default function TripsPage() {
       return <div className="text-muted">No trips in this category yet.</div>;
     }
 
-    return (
-      <div className="row g-3 mb-3">
-        {trips.map((t) => (
-          <div className="col-12 col-md-6 col-lg-4 ">
-            <TripCard key={t._id} trip={t} />
-          </div>
-        ))}
-      </div>
-    );
+    return <TripsGrid trips={trips} />;
   };
 
   return (

@@ -6,6 +6,7 @@ import { Navbar } from "@/app/components/navigation/navbar";
 import { useAuth } from "@/lib/hook/useAuth";
 import TripCard from "./components/trip/tripCard";
 import { Trip } from "@/types/trip/types";
+import TripsGrid from "./components/trip/tripsGrid";
 
 type City = { name: string; country: string };
 
@@ -106,15 +107,7 @@ export default function Home() {
               </p>
             )}
 
-            {!loading && trips.length > 0 && (
-              <div className="row g-4">
-                {trips.map((t) => (
-                  <div key={t._id} className="col-12 col-sm-6 col-lg-4">
-                    <TripCard trip={t} loggedUserId={user?.id} />
-                  </div>
-                ))}
-              </div>
-            )}
+            {!loading && trips.length > 0 && <TripsGrid trips={trips} />}
           </section>
         </div>
       </main>

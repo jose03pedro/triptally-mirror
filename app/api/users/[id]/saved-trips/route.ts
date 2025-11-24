@@ -27,7 +27,7 @@ export async function GET(
     // Fetch the user and populate savedTrips and the user of each trip
     const userDoc = await User.findById(id).populate({
       path: "savedTrips",
-      populate: { path: "user", select: "first_name last_name" }, // nested populate
+      populate: { path: "user", select: "first_name last_name" },
     });
 
     if (!userDoc) {

@@ -1,6 +1,7 @@
 "use client";
 
 import TripCard from "@/app/components/trip/tripCard";
+import TripsGrid from "@/app/components/trip/tripsGrid";
 import { Loading } from "@/app/components/ui/loading";
 import { useAuth } from "@/lib/hook/useAuth";
 import { Trip } from "@/types/trip/types";
@@ -29,6 +30,7 @@ export default function SavedTripsPage() {
         const res = await fetch(`/api/users/${user.id}/saved-trips`);
         if (res.ok) {
           const data = await res.json();
+
           setSavedTrips(data || []);
         } else {
           console.error("Failed to fetch saved trips, status:", res.status);
@@ -48,15 +50,7 @@ export default function SavedTripsPage() {
       return <div className="text-muted">You haven't saved any trips yet.</div>;
     }
 
-    return (
-      <div className="row g-3 mb-3">
-        {trips.map((t) => (
-          <div key={t._id} className="col-12 col-md-6 col-lg-4">
-            <TripCard loggedUserId={user?.id} trip={t} />
-          </div>
-        ))}
-      </div>
-    );
+    return <TripsGrid trips={trips} />;
   };
 
   return (

@@ -2,16 +2,29 @@
 
 import { Trip } from "@/types/trip/types";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TripCardProps {
   loggedUserId?: string;
   trip: Trip;
+  userSavedTrips?: string[];
 }
 
-export default function TripCard({ loggedUserId, trip }: TripCardProps) {
+export default function TripCard({
+  loggedUserId,
+  trip,
+  userSavedTrips,
+}: TripCardProps) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  console.log(userSavedTrips);
+
+  useEffect(() => {
+    if (userSavedTrips?.includes(trip._id)) {
+      setSaved(true);
+    }
+  }, [trip._id, userSavedTrips]);
 
   const handleSaveTrip = async () => {
     if (saved || saving) return;
@@ -38,7 +51,6 @@ export default function TripCard({ loggedUserId, trip }: TripCardProps) {
       setSaving(false);
     }
   };
-  console.log("Trip owner:", trip.owner);
 
   return (
     <div className="card h-100 trip-card shadow-sm">
