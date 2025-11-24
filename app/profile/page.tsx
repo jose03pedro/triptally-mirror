@@ -9,16 +9,7 @@ import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
 // import { getTravelerProfile } from "@/app/api/traveler/getTravelerProfile";
 import { TravelerCard } from "../components/traveler/TravelerCard";
-
-type City = { name: string; country?: string };
-type Trip = {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate?: string;
-  cities?: City[];
-  userId?: string;
-};
+import { Trip } from "@/types/trip/types";
 
 export default function ProfilePage() {
   const session = useAuth();

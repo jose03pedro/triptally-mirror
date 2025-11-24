@@ -4,17 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
 import { useAuth } from "@/lib/hook/useAuth";
+import TripCard from "./components/trip/tripCard";
+import { Trip } from "@/types/trip/types";
+import TripsGrid from "./components/trip/tripsGrid";
 
 type City = { name: string; country: string };
-
-type Trip = {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  cities: City[];
-  createdByName?: string;
-};
 
 type TripsResponse = {
   items: Trip[];
@@ -79,12 +73,11 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-slate-600 max-w-2xl text-sm md:text-base">
-              Explore public trips created by other travelers and get inspired for your next adventure.
+              Explore public trips created by other travelers and get inspired
+              for your next adventure.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-3 mt-2">
-              
-            </div>
+            <div className="flex flex-wrap justify-center gap-3 mt-2"></div>
           </section>
 
           {/* PUBLIC TRIPS GRID */}
@@ -94,7 +87,9 @@ export default function Home() {
                 Public trips
               </h2>
               <span className="text-xs text-slate-500">
-                {trips.length > 0 ? `${trips.length} trips loaded` : "No public trips yet"}
+                {trips.length > 0
+                  ? `${trips.length} trips loaded`
+                  : "No public trips yet"}
               </span>
             </div>
 
@@ -112,43 +107,7 @@ export default function Home() {
               </p>
             )}
 
-            {!loading && trips.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {trips.map((t, idx) => (
-                  <article
-                    key={t._id}
-                    className={`group rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 fade-up fade-up-delay-${idx +
-                      2}`}
-                  >
-                    <div className="p-4 flex flex-col h-full">
-                      <h3 className="text-sm font-semibold text-slate-900 mb-1">
-                        <Link
-                          href={`/trips/${t._id}`}
-                          className="hover:text-blue-600 hover:underline"
-                        >
-                          {t.title}
-                        </Link>
-                      </h3>
-                      <p className="text-xs text-slate-500 mb-1">
-                        {t.cities
-                          ?.map((c) => `${c.name}, ${c.country}`)
-                          .join(" · ") || "—"}
-                      </p>
-                      <p className="text-xs text-slate-500 mb-2">
-                        {new Date(t.startDate).toLocaleDateString()} –{" "}
-                        {new Date(t.endDate).toLocaleDateString()}
-                      </p>
-                      <p className="mt-auto text-[11px] text-slate-400">
-                        by{" "}
-                        <span className="font-medium text-slate-600">
-                          {t.createdByName || "Unknown traveler"}
-                        </span>
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
+            {!loading && trips.length > 0 && <TripsGrid trips={trips} />}
           </section>
         </div>
       </main>

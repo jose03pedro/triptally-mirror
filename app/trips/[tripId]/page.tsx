@@ -128,7 +128,7 @@ export default function TripPage() {
   // otherwise fall back to populated `trip.user` or unknown.
   const creatorName =
     // @ts-ignore -- createdByName may be present on API response
-    (trip as any).createdByName ||
+    (trip as any).owner ||
     (typeof trip.user === "object"
       ? `${trip.user.first_name || ""} ${trip.user.last_name || ""}`.trim() ||
         "Unknown traveler"

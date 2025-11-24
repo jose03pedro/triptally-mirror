@@ -24,6 +24,7 @@
     "googleapis": "^164.1.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "material-symbols": "^0.40.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.2",
     "next": "16.0.0",
