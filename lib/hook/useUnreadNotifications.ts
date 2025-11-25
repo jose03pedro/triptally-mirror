@@ -1,34 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export function useUnreadNotifications(userId?: string) {
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
+  const fetchUnread = useCallback(async () => {
     if (!userId) {
       setCount(0);
       return;
     }
 
-    const fetchCount = async () => {
-      try {
-        const res = await fetch(
-          `/api/users/${userId}/notifications/unread-count`
-        );
-        const data = await res.json();
-        setCount(data.unreadCount || 0);
-      } catch (err) {
-        console.error("Failed to fetch unread notifications:", err);
-      }
-    };
-
-    fetchCount();
-
-    // Optional: auto-refresh every 30 seconds
-    const interval = setInterval(fetchCount, 30000);
-    return () => clearInterval(interval);
+    try {
+      const res = await fetch(
+        `/api/users/${userId}/notifications/unread-count`
+      );
+      const data = await res.json();
+      setCount(data.unreadCount || 0);
+    } catch (err) {
+      console.error("Failed to fetch unread notifications:", err);
+    }
   }, [userId]);
 
-  return count;
+  useEffect(() => {
+    fetchUnread();
+
+    // Optional: auto-refresh every 30 seconds
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [fetchUnread]);
+
+  return { count, refetch: fetchUnread };
 }

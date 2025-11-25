@@ -1,6 +1,9 @@
+"use client";
+
 import { Notification } from "@/types/user/types";
 import { UnreadIndicator } from "./unreadIndicator";
 import { RoundIcon } from "../components/ui/roundIcon";
+import { useNotificationStore } from "@/lib/store/notificationStore";
 
 interface NotificationElementProps {
   notification: Notification;
@@ -10,6 +13,8 @@ export function NotificationElement({
   notification,
 }: NotificationElementProps) {
   const dayjs = require("dayjs");
+
+  const { markAsRead, setNotifications } = useNotificationStore();
 
   const formatNotificationDate = (date: string | Date) => {
     const d = dayjs(date);
@@ -22,10 +27,34 @@ export function NotificationElement({
     return d.format("DD MMM YYYY [at] HH:mm");
   };
 
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      const res = await fetch(`/api/notifications/${notificationId}/read`, {
+        method: "PATCH",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to mark notification as read");
+      }
+
+      return await res.json();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleReadNotification = async () => {
+    const data = await markNotificationAsRead(notification._id);
+    if (data.success) {
+      markAsRead(notification._id);
+    }
+  };
+
   return (
     <div
       className="card mb-3 shadow-sm border-0"
       style={{ borderRadius: "12px" }}
+      onClick={handleReadNotification}
     >
       <div className="card-body d-flex justify-content-between align-items-start">
         {/* Icon */}

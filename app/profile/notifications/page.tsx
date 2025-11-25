@@ -6,6 +6,7 @@ import { Loading } from "@/app/components/ui/loading";
 import { PageHeader } from "@/app/components/ui/pageHeader";
 import { NotificationElement } from "@/app/notification/notificationElement";
 import { useAuth } from "@/lib/hook/useAuth";
+import { useNotificationStore } from "@/lib/store/notificationStore";
 import { Notification } from "@/types/user/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,7 +23,10 @@ export default function SavedTripsPage() {
     }
   }, [session, router]);
 
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const setNotifications = useNotificationStore(
+    (state) => state.setNotifications
+  );
+  const notifications = useNotificationStore((state) => state.notifications);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,8 +67,6 @@ export default function SavedTripsPage() {
       </>
     );
   };
-
-  console.log(notifications);
 
   return (
     <>

@@ -7,13 +7,15 @@ import Tooltip from "@mui/material/Tooltip";
 import { NavbarButton } from "./navbarButton";
 import { UnreadIndicator } from "@/app/notification/unreadIndicator";
 import { useUnreadNotifications } from "@/lib/hook/useUnreadNotifications";
+import { useNotificationStore } from "@/lib/store/notificationStore";
 
 export function Navbar() {
   const session = useAuth();
   const user = session?.user;
 
-  const unreadCount = useUnreadNotifications(user?.id);
-
+  const unreadCount = useNotificationStore(
+    (state) => state.notifications.filter((n) => !n.read).length
+  );
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
       <div className="container-fluid px-4">
