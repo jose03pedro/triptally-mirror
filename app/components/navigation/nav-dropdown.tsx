@@ -3,7 +3,7 @@
 import { UserNameImage } from "@/app/components/user/userNameImage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logoutHandler } from "@/app/actions/logout";
+import { logoutHandler } from "@/app/actions/auth/logout";
 import IconText from "@/app/components/ui/icon-text";
 
 type NavDropdownProps = {

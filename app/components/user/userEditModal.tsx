@@ -1,6 +1,6 @@
 "use client";
 
-import { editUser } from "@/app/actions/editUser";
+import { editUser } from "@/app/actions/user/editUser";
 import { useActionState, useEffect, useState } from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import FormModal from "../ui/formModal";

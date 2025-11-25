@@ -1,7 +1,7 @@
 process.env.JWT_SECRET = "test_secret_key";
 
-import { signup } from "../actions/signup";
-import User from "../models/User";
+import { signup } from "./signup";
+import User from "../../models/User";
 import { hash } from "bcrypt";
 
 jest.mock("bcrypt");
@@ -11,7 +11,7 @@ jest.mock("@/lib/mongoose", () => ({
   default: jest.fn(() => Promise.resolve()),
 }));
 
-jest.mock("../models/User", () => ({
+jest.mock("../../models/User", () => ({
   __esModule: true,
   default: {
     findOne: jest.fn(),

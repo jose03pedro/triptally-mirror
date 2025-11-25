@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useActionState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { updateTrip } from "@/app/actions/updateTrip";
+import { updateTrip } from "@/app/actions/trip/updateTrip";
 import { useAuth } from "@/lib/hook/useAuth";
 import { Loading } from "@/app/components/ui/loading";
 import TripCitiesInput, { City } from "@/app/components/trip/tripCitiesInput";
