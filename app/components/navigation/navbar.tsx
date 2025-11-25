@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
 import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
 import Tooltip from "@mui/material/Tooltip";
+import { NavbarButton } from "./navbarButton";
 
 export function Navbar() {
   const session = useAuth();
@@ -30,38 +31,22 @@ export function Navbar() {
 
         <div className="d-flex align-items-center">
           {/* Saved trips navigation */}
-          <Link
-            href="/profile/saved-trips"
-            className="d-inline-block me-3 nav-link"
-          >
-            <Tooltip
-              title="Your saved trips"
-              slotProps={{
-                popper: {
-                  modifiers: [
-                    {
-                      name: "offset",
-                      options: {
-                        offset: [0, -10],
-                      },
-                    },
-                  ],
-                },
-              }}
-            >
-              <button
-                type="button"
-                className="btn btn-outline-secondary  p-1 d-flex align-items-center justify-content-center"
-              >
-                <span className="material-symbols-outlined">bookmark</span>
-              </button>
-            </Tooltip>
-          </Link>
+          {user && (
+            <NavbarButton
+              navigateTo="/profile/saved-trips"
+              tooltip="Your saved trips"
+              icon="bookmark"
+            />
+          )}
 
-          {/* Mobile CTA visible only on small screens */}
-          <Link href="/trips" className="btn btn-primary d-sm-none me-2">
-            My Trips
-          </Link>
+          {/* Notifications navigation */}
+          {user && (
+            <NavbarButton
+              navigateTo="/profile/notifications"
+              tooltip="Your notifications"
+              icon="notifications"
+            />
+          )}
 
           {session === undefined ? (
             <div className="d-flex align-items-center gap-2">

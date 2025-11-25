@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, trim: true },
@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   provider: { type: String, default: "local" }, // track auth method
   savedTrips: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "Trip",
     },
   ],
