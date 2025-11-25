@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "@/app/actions/auth/resetPassword";
 import Link from "next/link";
@@ -8,21 +8,18 @@ import Link from "next/link";
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<{ password?: string[]; token?: string[] }>({});
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const tokenParam = searchParams.get("token");
-    if (tokenParam) {
-      setToken(tokenParam);
-    } else {
-      setErrors({ token: ["Invalid reset link"] });
-    }
-  }, [searchParams]);
+  // Get token directly from searchParams - no useEffect needed
+  const token = useMemo(() => searchParams.get("token") || "", [searchParams]);
+  const tokenError = useMemo(() => 
+    token ? null : "Invalid reset link", 
+    [token]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +49,7 @@ function ResetPasswordForm() {
   };
 
   return (
+    <div className="container d-flex justify-content-center align-items-center min-vh-100">
       <div style={{ maxWidth: "380px" }} className="w-100">
         <div className="text-center mb-4">
           <h1 className="h3 mb-2">Reset Password</h1>
@@ -72,7 +70,7 @@ function ResetPasswordForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={loading || !!errors.token}
+              disabled={loading || !!tokenError}
               placeholder="Enter new password"
             />
             {errors.password && (
@@ -91,7 +89,7 @@ function ResetPasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              disabled={loading || !!errors.token}
+              disabled={loading || !!tokenError}
               placeholder="Confirm new password"
             />
           </div>
@@ -102,16 +100,16 @@ function ResetPasswordForm() {
             </div>
           )}
 
-          {errors.token && (
+          {(errors.token || tokenError) && (
             <div className="alert alert-danger small" role="alert">
-              {errors.token.join(", ")}
+              {errors.token?.join(", ") || tokenError}
             </div>
           )}
 
           <button
             type="submit"
             className="btn btn-primary w-100 mb-3"
-            disabled={loading || !!errors.token}
+            disabled={loading || !!tokenError}
           >
             {loading ? "Resetting..." : "Reset Password"}
           </button>
@@ -123,6 +121,7 @@ function ResetPasswordForm() {
           </div>
         </form>
       </div>
+    </div>
   );
 }
 
