@@ -3,7 +3,7 @@
 import connectionToDB from "@/lib/mongoose";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { TravelerProfileSchema } from "@/lib/definitions"; // New schema import
-import { TravelerProfile } from "../models/TravelerProfile"; // New model import
+import { TravelerProfile } from "../../models/TravelerProfile"; // New model import
 import { revalidatePath } from "next/cache";
 
 // Define the result type for clarity, using generic message errors

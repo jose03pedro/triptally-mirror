@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
 import { useAuth } from "@/lib/hook/useAuth";
-import TripCard from "./components/trip/tripCard";
 import { Trip } from "@/types/trip/types";
 import TripsGrid from "./components/trip/tripsGrid";
 
@@ -22,6 +21,7 @@ export default function Home() {
   const user = session?.user;
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     let ignore = false;

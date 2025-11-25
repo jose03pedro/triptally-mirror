@@ -1,7 +1,7 @@
 import { JSX, useState } from "react";
 import IconText from "@/app/components/ui/icon-text";
 import { ExpenseIcon } from "@/app/expenses/expenseIcon";
-import { deleteExpense } from "../actions/deleteExpense";
+import { deleteExpense } from "../actions/expense/deleteExpense";
 import { ActionBtn } from "../components/ui/actionBtn";
 import { Portal } from "../components/ui/portal";
 import { CreateExpenseModal } from "../components/trip/createExpenseModal";

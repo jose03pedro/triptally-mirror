@@ -1,7 +1,7 @@
 "use server";
 
 import connectionToDB from "@/lib/mongoose";
-import Expense from "../models/Expense";
+import Expense from "../../models/Expense";
 
 export async function deleteExpense(expenseId: string) {
   try {
