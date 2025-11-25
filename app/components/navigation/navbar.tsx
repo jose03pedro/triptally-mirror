@@ -5,10 +5,14 @@ import Link from "next/link";
 import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
 import Tooltip from "@mui/material/Tooltip";
 import { NavbarButton } from "./navbarButton";
+import { UnreadIndicator } from "@/app/notification/unreadIndicator";
+import { useUnreadNotifications } from "@/lib/hook/useUnreadNotifications";
 
 export function Navbar() {
   const session = useAuth();
   const user = session?.user;
+
+  const unreadCount = useUnreadNotifications(user?.id);
 
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
@@ -41,11 +45,18 @@ export function Navbar() {
 
           {/* Notifications navigation */}
           {user && (
-            <NavbarButton
-              navigateTo="/profile/notifications"
-              tooltip="Your notifications"
-              icon="notifications"
-            />
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <NavbarButton
+                navigateTo="/profile/notifications"
+                tooltip="Your notifications"
+                icon="notifications"
+              />
+              {unreadCount > 0 && (
+                <UnreadIndicator
+                  style={{ position: "absolute", top: "-2px", right: "0" }}
+                />
+              )}
+            </div>
           )}
 
           {session === undefined ? (

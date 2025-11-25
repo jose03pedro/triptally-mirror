@@ -1,13 +1,16 @@
-export function UnreadIndicator() {
+interface UnreadIndicatorProps {
+  style?: React.CSSProperties;
+}
+
+export function UnreadIndicator({ style }: UnreadIndicatorProps) {
   return (
     <span
       style={{
-        display: "inline-block",
         width: 8,
         height: 8,
         backgroundColor: "#0d6efd",
         borderRadius: "50%",
-        flexShrink: 0,
+        ...style,
       }}
     ></span>
   );
