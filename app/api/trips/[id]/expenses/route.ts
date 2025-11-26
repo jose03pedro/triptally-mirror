@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const trip = await Trip.findById(id).populate("currency");
-    const tripCurrencyCode = trip.currency.code;
+    const tripCurrencyCode = trip?.currency?.code;
 
     const expenses = await Expense.find({ trip: id })
       .populate({ path: "category", model: "ExpenseCategory" })

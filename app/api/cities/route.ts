@@ -12,11 +12,26 @@ export async function GET(request: Request) {
   const GEODB_API_KEY = process.env.GEODB_API_KEY;
   const GEODB_API_HOST = process.env.GEODB_API_HOST;
 
+  const staticCities = [
+    { id: "1", name: "Budapest", country: "Hungary" },
+    { id: "2", name: "London", country: "United Kingdom" },
+    { id: "3", name: "New York City", country: "USA" },
+    { id: "4", name: "Paris", country: "France" },
+    { id: "5", name: "Tokyo", country: "Japan" },
+    { id: "6", name: "Berlin", country: "Germany" },
+    { id: "7", name: "Barcelona", country: "Spain" },
+    { id: "8", name: "Lisbon", country: "Portugal" },
+    { id: "9", name: "Prague", country: "Czechia" },
+    { id: "10", name: "Amsterdam", country: "Netherlands" },
+    { id: "11", name: "Melbourne", country: "Australia" },
+  ];
+
+  let cities = staticCities.filter((c) =>
+    c.name.toLowerCase().startsWith(namePrefix)
+  );
+
   if (!GEODB_API_KEY || !GEODB_API_HOST) {
-    return Response.json(
-      { error: "GeoDB API key/host not configured on the server." },
-      { status: 500 }
-    );
+    return Response.json(cities);
   }
 
   const url = `https://${GEODB_API_HOST}/v1/geo/cities?namePrefix=${namePrefix}&type=CITY&limit=10`;
@@ -27,23 +42,6 @@ export async function GET(request: Request) {
       "X-RapidAPI-Host": GEODB_API_HOST,
     },
   });
-
-  const staticCities = [
-    { id: "1", name: "Budapest", country: "Hungary" },
-    { id: "2", name: "London", country: "United Kingdom" },
-    { id: "3", name: "New York", country: "USA" },
-    { id: "4", name: "Paris", country: "France" },
-    { id: "5", name: "Tokyo", country: "Japan" },
-    { id: "6", name: "Berlin", country: "Germany" },
-    { id: "7", name: "Barcelona", country: "Spain" },
-    { id: "8", name: "Lisbon", country: "Portugal" },
-    { id: "9", name: "Prague", country: "Czechia" },
-    { id: "10", name: "Amsterdam", country: "Netherlands" },
-  ];
-
-  let cities = staticCities.filter((c) =>
-    c.name.toLowerCase().startsWith(namePrefix)
-  );
 
   if (!res.ok) {
     console.error("GeoDB API error:", res.status, await res.text());

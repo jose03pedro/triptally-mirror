@@ -116,8 +116,6 @@ export function CreateExpenseModal({
 
       setFormValues(initialFormValues);
 
-      console.log(state);
-
       if (state.expense && onExpensesUpdated && !isUpdated) {
         onExpensesUpdated(state.expense);
         setIsUpdated(true);
