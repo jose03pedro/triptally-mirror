@@ -9,23 +9,7 @@ import { useAuth } from "@/lib/hook/useAuth";
 import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { Trip } from "@/types/trip/types";
-
-export type ExpenseType = {
-  _id: string;
-  description: string;
-  value: number;
-  currency?: {
-    _id: string;
-    code: string;
-    name: string;
-    symbol: string;
-  };
-  category?: {
-    _id: string;
-    name: string;
-    color: string;
-  };
-};
+import { ExpenseWithConverted } from "@/types/expense/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -35,7 +19,7 @@ export default function TripPage() {
   const currentUser = session?.user;
 
   const [trip, setTrip] = useState<Trip | null>(null);
-  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [currencies, setCurrencies] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,7 +48,7 @@ export default function TripPage() {
 
         if (!ignore) {
           setTrip(tripData);
-          setExpenses(expData || []);
+          setExpenses(expData.expenses || []);
           setCurrencies(currData || []);
           setCategories(catData || []);
         }
@@ -110,7 +94,7 @@ export default function TripPage() {
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
 
-  console.log(trip);
+  console.log(expenses);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">

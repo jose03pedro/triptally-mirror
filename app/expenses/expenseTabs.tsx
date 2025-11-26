@@ -1,20 +1,20 @@
 import React from "react";
 import { Expenses } from "./expenses";
 import { ExpensesDashboard } from "./expensesDashboard";
-import { ExpenseType } from "../trips/[tripId]/page";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { Currency } from "@/types/currency/types";
+import { ExpenseType, ExpenseWithConverted } from "@/types/expense/types";
 
 interface ExpenseTabsProps {
   tripCurrency: Currency | undefined;
-  expenses: Array<ExpenseType>;
+  expenses: Array<ExpenseWithConverted>;
   currencies: Array<any>;
   categories: Array<any>;
-  setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+  setExpenses: React.Dispatch<React.SetStateAction<ExpenseWithConverted[]>>;
   onExpensesUpdated?: (expense: any) => void;
 }
 
@@ -51,7 +51,7 @@ export default function ExpenseTabs({
         />
       </TabPanel>
       <TabPanel value="2">
-        <ExpensesDashboard expenses={expenses} />
+        <ExpensesDashboard tripCurrency={tripCurrency} expenses={expenses} />
       </TabPanel>
     </TabContext>
   );

@@ -1,13 +1,13 @@
 import { Currency } from "@/types/currency/types";
-import { ExpenseType } from "../trips/[tripId]/page";
 import { SingleExpense } from "./singleExpense";
+import { ExpenseType, ExpenseWithConverted } from "@/types/expense/types";
 
 interface ExpensesProps {
   tripCurrency: Currency | undefined;
-  expenses: Array<ExpenseType>;
+  expenses: Array<ExpenseWithConverted>;
   currencies: Array<any>;
   categories: Array<any>;
-  setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+  setExpenses: React.Dispatch<React.SetStateAction<ExpenseWithConverted[]>>;
   onExpensesUpdated?: (expense: any) => void;
 }
 
@@ -31,13 +31,8 @@ export function Expenses({
             {expenses.map((expense) => (
               <div key={expense._id} className="col-12 col-sm-6 col-md-4 mb-3">
                 <SingleExpense
-                  {...expense}
-                  id={expense._id}
+                  expense={expense}
                   tripCurrency={tripCurrency}
-                  description={expense.description}
-                  amount={expense.value}
-                  currency={expense.currency}
-                  category={expense.category}
                   currencies={currencies}
                   categories={categories}
                   onExpensesUpdated={onExpensesUpdated}
