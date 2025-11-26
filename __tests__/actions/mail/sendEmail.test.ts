@@ -5,7 +5,7 @@ jest.mock("nodemailer", () => ({
   createTransport: jest.fn(() => ({
     get sendMail() {
       return mockSendMail;
-    }
+    },
   })),
 }));
 
@@ -68,11 +68,7 @@ describe("sendEmail", () => {
   it("should use HTML template for email body", async () => {
     mockSendMail.mockResolvedValue({ messageId: "123" });
 
-    await sendEmail(
-      "test@example.com",
-      "Subject",
-      "Message content"
-    );
+    await sendEmail("test@example.com", "Subject", "Message content");
 
     expect(HTML_TEMPLATE).toHaveBeenCalledWith("Message content");
   });
