@@ -7,7 +7,7 @@ import { PageHeader } from "@/app/components/ui/pageHeader";
 import { NotificationElement } from "@/app/notification/notificationElement";
 import { useAuth } from "@/lib/hook/useAuth";
 import { useNotificationStore } from "@/lib/store/notificationStore";
-import { Notification } from "@/types/user/types";
+import { Notification } from "@/types/notification/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

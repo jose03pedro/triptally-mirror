@@ -24,7 +24,7 @@ export async function PATCH(
       { _id: id },
       { read: true },
       { new: true }
-    );
+    ).populate({ path: "type", model: "NotificationType" });
 
     if (!updated) {
       return NextResponse.json(

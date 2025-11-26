@@ -20,9 +20,12 @@ export async function GET(
     }
 
     // Fetch the user and populate notifications
-    const notifications = await Notification.find({ user: id }).sort({
-      createdAt: -1,
-    });
+    const notifications = await Notification.find({ user: id })
+
+      .populate({ path: "type", model: "NotificationType" })
+      .sort({
+        createdAt: -1,
+      });
 
     // Return only the notifications
     return NextResponse.json(notifications || [], { status: 200 });

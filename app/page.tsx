@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/hook/useAuth";
 import TripCard from "./components/trip/tripCard";
 import { Trip } from "@/types/trip/types";
 import TripsGrid from "./components/trip/tripsGrid";
+import { Loading } from "./components/ui/loading";
 
 type City = { name: string; country: string };
 
@@ -21,17 +22,15 @@ export default function Home() {
   const session = useAuth();
   const user = session?.user;
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let ignore = false;
-
     async function fetchPublicTrips() {
       setLoading(true);
       try {
         const params = new URLSearchParams({
           page: "1",
-          limit: "6",
+          limit: "9",
         });
 
         const res = await fetch(`/api/trips?${params.toString()}`, {
@@ -41,19 +40,16 @@ export default function Home() {
         if (!res.ok) throw new Error("Failed to load trips");
 
         const data: TripsResponse = await res.json();
-        if (!ignore) setTrips(data.items || []);
+        setTrips(data.items || []);
       } catch (err) {
         console.error("Error loading public trips:", err);
-        if (!ignore) setTrips([]);
+        setTrips([]);
       } finally {
-        if (!ignore) setLoading(false);
+        setLoading(false);
       }
     }
 
     fetchPublicTrips();
-    return () => {
-      ignore = true;
-    };
   }, []);
 
   return (
@@ -84,18 +80,11 @@ export default function Home() {
           <section className="space-y-3 fade-up fade-up-delay-1">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                Public trips
+                Browse trips
               </h2>
-              <span className="text-xs text-slate-500">
-                {trips.length > 0
-                  ? `${trips.length} trips loaded`
-                  : "No public trips yet"}
-              </span>
             </div>
 
-            {loading && (
-              <p className="text-xs text-slate-500">Loading trips...</p>
-            )}
+            {loading && <Loading />}
 
             {!loading && trips.length === 0 && (
               <p className="text-xs md:text-sm text-slate-500">

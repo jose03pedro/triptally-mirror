@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface NotificationDocument extends Document {
   user: Types.ObjectId; // The user who receives the notification
-  type: string;
+  type: Types.ObjectId;
   title: string;
   message: string;
   link?: string;
@@ -14,7 +14,11 @@ export interface NotificationDocument extends Document {
 const NotificationSchema = new Schema<NotificationDocument>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    type: { type: String, required: true },
+    type: {
+      type: Schema.Types.ObjectId,
+      ref: "NotificationType",
+      required: true,
+    },
     title: { type: String, required: true },
     message: { type: String, required: true },
     link: { type: String },
