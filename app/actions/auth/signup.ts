@@ -1,11 +1,11 @@
 "use server";
 
 import connectionToDB from "@/lib/mongoose";
-import User from "../models/User";
+import User from "../../models/User";
 import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthResponse, SignupFormSchema } from "@/lib/definitions";
-import {loginHandler} from "@/app/actions/login";
+import {loginHandler} from "@/app/actions/auth/login";
 
 export async function signup(formData: FormData): Promise<AuthResponse> {
   try {

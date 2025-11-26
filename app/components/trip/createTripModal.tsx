@@ -1,4 +1,4 @@
-import { createTrip } from "@/app/actions/createTrip";
+import { createTrip } from "@/app/actions/trip/createTrip";
 import TripDateRangePicker from "@/app/components/trip/tripDateRangePicker";
 import TripCitiesInput from "@/app/components/trip/tripCitiesInput";
 import { useActionState, useEffect, useState } from "react";

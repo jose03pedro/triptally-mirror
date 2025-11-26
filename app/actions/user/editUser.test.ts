@@ -1,10 +1,10 @@
 process.env.JWT_SECRET = "test_secret_key";
 
 import { editUser } from "./editUser";
-import User from "../models/User";
+import User from "../../models/User";
 import { compare, hash } from "bcrypt";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import { logoutHandler } from "./logout";
+import { logoutHandler } from "../auth/logout";
 
 jest.mock("@/lib/mongoose", () => ({
   __esModule: true,

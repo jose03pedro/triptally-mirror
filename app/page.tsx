@@ -63,7 +63,7 @@ export default function Home() {
     }
   }
 
-  // Load first page
+
   useEffect(() => {
     fetchPublicTrips(1);
   }, []);

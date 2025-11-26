@@ -1,7 +1,7 @@
 "use server";
 
 import connectionToDB from "@/lib/mongoose";
-import User from "../models/User";
+import User from "../../models/User";
 import { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthResponse } from "@/lib/definitions";

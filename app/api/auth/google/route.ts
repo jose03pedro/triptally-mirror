@@ -5,7 +5,7 @@ import { OAuth2Client } from "google-auth-library";
 import connectionToDB from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import {loginHandler} from "@/app/actions/login";
+import {loginHandler} from "@/app/actions/auth/login";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET!;

@@ -1,11 +1,11 @@
 "use server";
 
 import connectionToDB from "@/lib/mongoose";
-import User from "../models/User";
+import User from "../../models/User";
 import { compare, hash } from "bcrypt";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { EditUserSchema, ChangePasswordSchema } from "@/lib/definitions";
-import { logoutHandler } from "./logout";
+import { logoutHandler } from "../auth/logout";
 
 type EditResult = {
   success: boolean;
@@ -18,7 +18,7 @@ type EditResult = {
   };
 };
 
-export async function editUser(_prev: any, formData: FormData): Promise<EditResult> {
+export async function editUser(_prev: unknown, formData: FormData): Promise<EditResult> {
   try {
     await connectionToDB();
     const currentUser = await getCurrentUser();
