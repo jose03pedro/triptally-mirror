@@ -80,9 +80,6 @@ export default function TripCard({
     }
   };
 
-  console.log("loggeduser:", loggedUserId);
-  console.log("trip user id:", trip.owner._id);
-
   return (
     <div className="card h-100 trip-card shadow-sm">
       <div

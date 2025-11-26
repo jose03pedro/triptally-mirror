@@ -2,7 +2,7 @@ import { User } from "../user/types";
 
 export interface NotificationType {
   _id: string;
-  type: string;
+  name: string;
   icon: string;
 }
 

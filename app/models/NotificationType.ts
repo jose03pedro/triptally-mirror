@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface NotificationTypeDocument extends Document {
-  type: string;
+  name: string;
   icon: string;
 }
 
 const NotificationTypeSchema = new Schema<NotificationTypeDocument>({
-  type: { type: String, required: true },
+  name: { type: String, required: true, unique: true },
   icon: { type: String, required: true },
 });
 

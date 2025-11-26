@@ -91,7 +91,7 @@ export function NotificationElement({
           <RoundIcon
             url={notification.type.icon}
             size={40}
-            description={`${notification.type.type} notification`}
+            description={`${notification.type.name} notification`}
           />
         </div>
 

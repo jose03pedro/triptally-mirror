@@ -3,19 +3,40 @@
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
 import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
-import Tooltip from "@mui/material/Tooltip";
 import { NavbarButton } from "./navbarButton";
 import { UnreadIndicator } from "@/app/notification/unreadIndicator";
-import { useUnreadNotifications } from "@/lib/hook/useUnreadNotifications";
 import { useNotificationStore } from "@/lib/store/notificationStore";
+import { useEffect } from "react";
 
 export function Navbar() {
   const session = useAuth();
   const user = session?.user;
 
-  const unreadCount = useNotificationStore(
-    (state) => state.notifications.filter((n) => !n.read).length
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotifications = useNotificationStore(
+    (state) => state.setNotifications
   );
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(`/api/users/${user.id}/notifications`);
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+
+        const data = await res.json();
+        setNotifications(data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchNotifications();
+  }, [user?.id, setNotifications]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
       <div className="container-fluid px-4">
