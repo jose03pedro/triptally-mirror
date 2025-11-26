@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
 import { useAuth } from "@/lib/hook/useAuth";
-import { Trip } from "@/types/trip/types";
 import TripsGrid from "./components/trip/tripsGrid";
-
-type City = { name: string; country: string };
+import { Trip } from "@/types/trip/types";
+import { Loading } from "./components/ui/loading";
 
 type TripsResponse = {
   items: Trip[];
@@ -17,44 +16,79 @@ type TripsResponse = {
 };
 
 export default function Home() {
-  const session = useAuth();
-  const user = session?.user;
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingNext, setIsFetchingNext] = useState(false);
+
+  async function fetchPublicTrips(pageToLoad: number) {
+    try {
+      if (pageToLoad === 1) setLoading(true);
+      else setIsFetchingNext(true);
+
+      const params = new URLSearchParams({
+        page: pageToLoad.toString(),
+        limit: "9",
+      });
+
+      const res = await fetch(`/api/trips?${params.toString()}`, {
+        cache: "no-store",
+      });
+
+      if (!res.ok) throw new Error("Failed to load trips");
+
+      const data: TripsResponse = await res.json();
+
+      if (pageToLoad === 1) {
+        setTrips(data.items);
+      } else {
+        setTrips((prev) => {
+          const existingIds = new Set(prev.map((t) => t._id));
+          const newTrips = data.items.filter((t) => !existingIds.has(t._id));
+          return [...prev, ...newTrips];
+        });
+      }
+
+      // No more pages
+      if (data.items.length < 9) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Error loading public trips:", err);
+      if (pageToLoad === 1) setTrips([]);
+    } finally {
+      if (pageToLoad === 1) setLoading(false);
+      else setIsFetchingNext(false);
+    }
+  }
 
 
   useEffect(() => {
-    let ignore = false;
-
-    async function fetchPublicTrips() {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams({
-          page: "1",
-          limit: "6",
-        });
-
-        const res = await fetch(`/api/trips?${params.toString()}`, {
-          cache: "no-store",
-        });
-
-        if (!res.ok) throw new Error("Failed to load trips");
-
-        const data: TripsResponse = await res.json();
-        if (!ignore) setTrips(data.items || []);
-      } catch (err) {
-        console.error("Error loading public trips:", err);
-        if (!ignore) setTrips([]);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-
-    fetchPublicTrips();
-    return () => {
-      ignore = true;
-    };
+    fetchPublicTrips(1);
   }, []);
+
+  // Infinite scroll trigger
+  useEffect(() => {
+    if (!hasMore) return;
+
+    const handleScroll = () => {
+      const nearBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+      if (nearBottom && !isFetchingNext) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, isFetchingNext]);
+
+  // Fetch next pages
+  useEffect(() => {
+    if (page > 1) fetchPublicTrips(page);
+  }, [page]);
 
   return (
     <>
@@ -76,26 +110,17 @@ export default function Home() {
               Explore public trips created by other travelers and get inspired
               for your next adventure.
             </p>
-
-            <div className="flex flex-wrap justify-center gap-3 mt-2"></div>
           </section>
 
           {/* PUBLIC TRIPS GRID */}
           <section className="space-y-3 fade-up fade-up-delay-1">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                Public trips
+                Browse trips
               </h2>
-              <span className="text-xs text-slate-500">
-                {trips.length > 0
-                  ? `${trips.length} trips loaded`
-                  : "No public trips yet"}
-              </span>
             </div>
 
-            {loading && (
-              <p className="text-xs text-slate-500">Loading trips...</p>
-            )}
+            {loading && <Loading />}
 
             {!loading && trips.length === 0 && (
               <p className="text-xs md:text-sm text-slate-500">
@@ -108,6 +133,13 @@ export default function Home() {
             )}
 
             {!loading && trips.length > 0 && <TripsGrid trips={trips} />}
+
+            {/* Loading indicator for next pages */}
+            {isFetchingNext && (
+              <div className="flex justify-center py-4">
+                <Loading />
+              </div>
+            )}
           </section>
         </div>
       </main>

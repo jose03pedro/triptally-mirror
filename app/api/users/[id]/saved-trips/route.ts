@@ -1,3 +1,5 @@
+import { createNotification } from "@/app/actions/createNotification";
+import NotificationType from "@/app/models/NotificationType";
 import Trip from "@/app/models/Trip";
 import User from "@/app/models/User";
 import connectionToDB from "@/lib/mongoose";
@@ -74,7 +76,6 @@ export async function POST(
   try {
     await connectionToDB();
 
-    // Await params to unwrap the promise
     const { id: userId } = await context.params;
 
     if (!userId) {
@@ -109,6 +110,24 @@ export async function POST(
       userDoc.savedTrips.push(tripDoc._id);
       await userDoc.save();
     }
+
+    // Get the NotificationType for “trip_saved”
+    const savedType = await NotificationType.findOne({ name: "tripsaved" });
+
+    // 3. Create notification
+    await createNotification({
+      userId: tripDoc.user._id,
+      typeId: savedType._id,
+      title: "Trip Saved",
+      message:
+        userDoc.first_name +
+        " " +
+        userDoc.last_name +
+        " saved your trip: " +
+        tripDoc.title +
+        ".",
+      link: `/trips/${tripId}`,
+    });
 
     return NextResponse.json(
       { message: "Trip saved successfully" },

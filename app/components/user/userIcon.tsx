@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { RoundIcon } from "../ui/roundIcon";
 
 type UserIconProps = {
   url?: string;
@@ -8,12 +9,5 @@ type UserIconProps = {
 export function UserIcon({ url, size }: UserIconProps) {
   const src = url ? url : "/default-profile.png";
 
-  return (
-    <div
-      className="user-icon rounded-circle overflow-hidden"
-      style={{ width: size, height: size }}
-    >
-      <Image src={src} alt="Profile" width={size} height={size} />
-    </div>
-  );
+  return <RoundIcon url={src} size={size} description="Profile" />;
 }

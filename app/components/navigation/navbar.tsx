@@ -3,11 +3,39 @@
 import { useAuth } from "@/lib/hook/useAuth";
 import Link from "next/link";
 import { NavDropdown } from "@/app/components/navigation/nav-dropdown";
-import Tooltip from "@mui/material/Tooltip";
+import { NavbarButton } from "./navbarButton";
+import { UnreadIndicator } from "@/app/notification/unreadIndicator";
+import { useNotificationStore } from "@/lib/store/notificationStore";
+import { useEffect } from "react";
 
 export function Navbar() {
   const session = useAuth();
   const user = session?.user;
+
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotifications = useNotificationStore(
+    (state) => state.setNotifications
+  );
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(`/api/users/${user.id}/notifications`);
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+
+        const data = await res.json();
+        setNotifications(data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchNotifications();
+  }, [user?.id, setNotifications]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
@@ -30,38 +58,29 @@ export function Navbar() {
 
         <div className="d-flex align-items-center">
           {/* Saved trips navigation */}
-          <Link
-            href="/profile/saved-trips"
-            className="d-inline-block me-3 nav-link"
-          >
-            <Tooltip
-              title="Your saved trips"
-              slotProps={{
-                popper: {
-                  modifiers: [
-                    {
-                      name: "offset",
-                      options: {
-                        offset: [0, -10],
-                      },
-                    },
-                  ],
-                },
-              }}
-            >
-              <button
-                type="button"
-                className="btn btn-outline-secondary  p-1 d-flex align-items-center justify-content-center"
-              >
-                <span className="material-symbols-outlined">bookmark</span>
-              </button>
-            </Tooltip>
-          </Link>
+          {user && (
+            <NavbarButton
+              navigateTo="/profile/saved-trips"
+              tooltip="Your saved trips"
+              icon="bookmark"
+            />
+          )}
 
-          {/* Mobile CTA visible only on small screens */}
-          <Link href="/trips" className="btn btn-primary d-sm-none me-2">
-            My Trips
-          </Link>
+          {/* Notifications navigation */}
+          {user && (
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <NavbarButton
+                navigateTo="/profile/notifications"
+                tooltip="Your notifications"
+                icon="notifications"
+              />
+              {unreadCount > 0 && (
+                <UnreadIndicator
+                  style={{ position: "absolute", top: "-2px", right: "0" }}
+                />
+              )}
+            </div>
+          )}
 
           {session === undefined ? (
             <div className="d-flex align-items-center gap-2">

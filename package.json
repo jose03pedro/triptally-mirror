@@ -21,6 +21,7 @@
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
+    "dayjs": "^1.11.19",
     "dns": "^0.2.2",
     "fs": "^0.0.1-security",
     "googleapis": "^164.1.0",
@@ -37,6 +38,7 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "19.2.0",
     "react-loader-spinner": "^8.0.0",
+    "zustand": "^5.0.8"
     "tls": "^0.0.1"
   },
   "devDependencies": {

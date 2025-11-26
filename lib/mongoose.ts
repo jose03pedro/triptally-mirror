@@ -1,8 +1,10 @@
-import "@/app/models/User"
-import "@/app/models/Trip"
-import "@/app/models/Currency"
-import "@/app/models/Expense"
-import "@/app/models/ExpenseCategory"
+import "@/app/models/User";
+import "@/app/models/Notification";
+import "@/app/models/NotificationType";
+import "@/app/models/Trip";
+import "@/app/models/Currency";
+import "@/app/models/Expense";
+import "@/app/models/ExpenseCategory";
 
 import mongoose from "mongoose";
 
