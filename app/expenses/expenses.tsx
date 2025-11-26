@@ -1,7 +1,9 @@
+import { Currency } from "@/types/currency/types";
 import { ExpenseType } from "../trips/[tripId]/page";
 import { SingleExpense } from "./singleExpense";
 
 interface ExpensesProps {
+  tripCurrency: Currency | undefined;
   expenses: Array<ExpenseType>;
   currencies: Array<any>;
   categories: Array<any>;
@@ -10,6 +12,7 @@ interface ExpensesProps {
 }
 
 export function Expenses({
+  tripCurrency,
   expenses,
   currencies,
   categories,
@@ -30,6 +33,7 @@ export function Expenses({
                 <SingleExpense
                   {...expense}
                   id={expense._id}
+                  tripCurrency={tripCurrency}
                   description={expense.description}
                   amount={expense.value}
                   currency={expense.currency}

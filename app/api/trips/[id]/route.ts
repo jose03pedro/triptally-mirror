@@ -20,34 +20,25 @@ export async function GET(
       );
     }
 
-    const tripDoc = await Trip.findById(id).populate(
-      "user",
-      "first_name last_name"
-    );
+    const tripDoc = await Trip.findById(id)
+      .populate("user", "first_name last_name")
+      .populate("currency");
 
     if (!tripDoc) {
       return NextResponse.json({ error: "Trip not found" }, { status: 404 });
     }
 
-    // Build response similar to list endpoint: include createdByName for consistency
-    const anyTrip: any = tripDoc;
-    const u: any = anyTrip.user;
-    const owner =
-      u && (u.first_name || u.last_name)
-        ? `${u.first_name || ""} ${u.last_name || ""}`.trim()
-        : "Unknown traveler";
-
     const trip = {
-      _id: anyTrip._id,
-      title: anyTrip.title,
-      startDate: anyTrip.startDate,
-      endDate: anyTrip.endDate,
-      cities: anyTrip.cities,
-      isPublic: anyTrip.isPublic,
-      coverImage: anyTrip.coverImage,
-      privacy: anyTrip.privacy,
-      user: anyTrip.user,
-      owner,
+      _id: tripDoc._id,
+      title: tripDoc.title,
+      startDate: tripDoc.startDate,
+      endDate: tripDoc.endDate,
+      cities: tripDoc.cities,
+      isPublic: tripDoc.isPublic,
+      coverImage: tripDoc.coverImage,
+      privacy: tripDoc.privacy,
+      currency: tripDoc.currency,
+      owner: tripDoc.user,
     };
 
     return NextResponse.json(trip, { status: 200 });

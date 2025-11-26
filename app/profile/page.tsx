@@ -133,7 +133,7 @@ export default function ProfilePage() {
               <div className="mt-4 pt-3">
                 <TravelerCard
                   travelerProfile={travelerProfile}
-                  onProfileUpdate={setTravelerProfile} // <--- Pass the setter here
+                  onProfileUpdate={setTravelerProfile}
                 />
               </div>
             </div>

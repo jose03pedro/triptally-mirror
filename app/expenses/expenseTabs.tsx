@@ -7,8 +7,10 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import { Currency } from "@/types/currency/types";
 
 interface ExpenseTabsProps {
+  tripCurrency: Currency | undefined;
   expenses: Array<ExpenseType>;
   currencies: Array<any>;
   categories: Array<any>;
@@ -17,6 +19,7 @@ interface ExpenseTabsProps {
 }
 
 export default function ExpenseTabs({
+  tripCurrency,
   expenses,
   currencies,
   categories,
@@ -39,6 +42,7 @@ export default function ExpenseTabs({
       </Box>
       <TabPanel value="1">
         <Expenses
+          tripCurrency={tripCurrency}
           expenses={expenses}
           setExpenses={setExpenses}
           currencies={currencies}
