@@ -1,45 +1,63 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import IconText from "@/app/components/ui/icon-text";
 import { ExpenseIcon } from "@/app/expenses/expenseIcon";
 import { deleteExpense } from "../actions/expense/deleteExpense";
 import { ActionBtn } from "../components/ui/actionBtn";
 import { Portal } from "../components/ui/portal";
 import { CreateExpenseModal } from "../components/trip/createExpenseModal";
-import Expense from "../models/Expense";
+import { Currency } from "@/types/currency/types";
+import { formatMoney } from "@/lib/utils/helperFunctions";
+import { ExpenseWithConverted } from "@/types/expense/types";
 
 interface ExpenseProps {
-  id: string;
-  description: string;
-  amount: number;
-  currency: any;
-  category: any;
+  expense: ExpenseWithConverted;
+  tripCurrency: Currency | undefined;
   categories: any[];
-  currencies: any[];
+  currencies: Currency[];
   onDeleted?: (id: string) => void;
   onExpensesUpdated?: (expense: any) => void;
 }
 
-export function formatMoney(amount: number) {
-  return amount.toFixed(2);
-}
-
 export function SingleExpense({
-  id,
-  description,
-  amount,
-  currency,
-  category,
-  categories,
+  expense,
+  tripCurrency,
   currencies,
+  categories,
   onDeleted,
   onExpensesUpdated,
 }: ExpenseProps): JSX.Element {
   const [showModal, setShowModal] = useState(false);
+  const [convertedAmount, setConvertedAmount] = useState<string | null>(null);
 
   const onDelete = async () => {
-    const response = await deleteExpense(id);
-    response.success && onDeleted && onDeleted(id);
+    const response = await deleteExpense(expense._id);
+    response.success && onDeleted && onDeleted(expense._id);
   };
+
+  const displayAmount = () => {
+    if (tripCurrency?.code !== expense.currency?.code) {
+      return (
+        <>
+          <p className="mb-0 text-end">
+            {formatMoney(expense.convertedValue) ?? "…"} {tripCurrency?.symbol}
+          </p>
+          <p
+            className="mb-0 text-muted"
+            style={{ fontSize: "0.8rem", textAlign: "right" }}
+          >
+            {formatMoney(expense.value)} {expense.currency?.symbol}
+          </p>
+        </>
+      );
+    }
+
+    return (
+      <p className="mb-0 text-end">
+        {formatMoney(expense.value)} {expense.currency?.symbol}
+      </p>
+    );
+  };
+
   return (
     <>
       {
@@ -47,7 +65,7 @@ export function SingleExpense({
           <CreateExpenseModal
             currencies={currencies}
             categories={categories}
-            expenseId={id}
+            expenseId={expense._id}
             onExpensesUpdated={onExpensesUpdated}
           />
         </Portal>
@@ -56,12 +74,12 @@ export function SingleExpense({
       <article className="expense w-100 position-relative">
         <div className="d-flex flex-wrap justify-content-between align-items-center">
           <div className="d-flex gap-2 align-items-center flex-grow-1 min-width-0">
-            <ExpenseIcon color={category.color} size="40px" />
+            <ExpenseIcon color={expense.category?.color} size="40px" />
             <div className="text-truncate" style={{ minWidth: 0 }}>
-              <p className="fw-bolder mb-0">{description}</p>
+              <p className="fw-bolder mb-0">{expense.description}</p>
               <IconText
                 icon={"sell"}
-                text={category.name}
+                text={expense.category?.name as string}
                 size={18}
                 color={"#909090"}
               />
@@ -69,14 +87,12 @@ export function SingleExpense({
           </div>
 
           <div className="d-flex align-items-center gap-1 mt-2 mt-md-0">
-            <p className="mb-0">
-              {formatMoney(amount)} {currency?.symbol}
-            </p>
+            <div>{displayAmount()}</div>
             <div className="expense-actions d-flex gap-0">
               <span
                 className="expense-btn"
                 data-bs-toggle="modal"
-                data-bs-target={`#createExpense-${id}Modal`}
+                data-bs-target={`#createExpense-${expense._id}Modal`}
               >
                 <ActionBtn action="edit" size={15} color="#909090" />
               </span>

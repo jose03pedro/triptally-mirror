@@ -7,48 +7,9 @@ import { Loading } from "@/app/components/ui/loading";
 import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
 import ExpenseTabs from "@/app/expenses/expenseTabs";
-
-type City = { name: string; country?: string };
-
-type TripUser = {
-  _id: string;
-  first_name?: string;
-  last_name?: string;
-};
-
-type Trip = {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  cities: City[];
-  isPublic?: boolean;
-  coverImage?: string;
-  privacy?: {
-    showCities?: boolean;
-    showExpenses?: boolean;
-    showItinerary?: boolean;
-    showCover?: boolean;
-  };
-  user?: TripUser | string;
-};
-
-export type ExpenseType = {
-  _id: string;
-  description: string;
-  value: number;
-  currency?: {
-    _id: string;
-    code: string;
-    name: string;
-    symbol: string;
-  };
-  category?: {
-    _id: string;
-    name: string;
-    color: string;
-  };
-};
+import { TripOverview } from "@/app/components/trip/tripOverview";
+import { Trip } from "@/types/trip/types";
+import { ExpenseWithConverted } from "@/types/expense/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -58,7 +19,7 @@ export default function TripPage() {
   const currentUser = session?.user;
 
   const [trip, setTrip] = useState<Trip | null>(null);
-  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [currencies, setCurrencies] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -87,7 +48,7 @@ export default function TripPage() {
 
         if (!ignore) {
           setTrip(tripData);
-          setExpenses(expData || []);
+          setExpenses(expData.expenses || []);
           setCurrencies(currData || []);
           setCategories(catData || []);
         }
@@ -123,18 +84,17 @@ export default function TripPage() {
   const showExpenses = privacy.showExpenses !== false;
   const showCover = privacy.showCover !== false;
 
-  const ownerId = typeof trip.user === "string" ? trip.user : trip.user?._id;
-  // Prefer `createdByName` returned by the API (consistent with the list endpoint),
-  // otherwise fall back to populated `trip.user` or unknown.
-  const creatorName =
-    // @ts-ignore -- createdByName may be present on API response
-    (trip as any).owner ||
-    (typeof trip.user === "object"
-      ? `${trip.user.first_name || ""} ${trip.user.last_name || ""}`.trim() ||
-        "Unknown traveler"
-      : "Unknown traveler");
+  const ownerId = trip.owner._id;
+
+  const creatorName = `${
+    currentUser?.id === trip?.owner._id
+      ? "You"
+      : `${trip?.owner?.first_name} ${trip?.owner?.last_name}`
+  }`;
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
+
+  console.log(expenses);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
@@ -170,9 +130,9 @@ export default function TripPage() {
               )}
               <p className="text-[11px] text-slate-400 mt-1">
                 Created by{" "}
-                <span className="font-medium text-slate-600">
+                <strong className="font-medium text-slate-600">
                   {creatorName}
-                </span>
+                </strong>
               </p>
             </div>
 
@@ -208,36 +168,9 @@ export default function TripPage() {
 
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Overview & itinerary area */}
           <section className="lg:col-span-2 space-y-4">
-            <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-2">
-              <h2 className="text-sm md:text-base font-semibold text-slate-900 mb-2">
-                Overview
-              </h2>
-              <p className="text-xs md:text-sm text-slate-600 mb-3">
-                Here you will later see itinerary, key highlights and
-                AI-generated suggestions for this trip. For now this section is
-                a simple overview of your dates and destinations.
-              </p>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 text-xs md:text-sm text-slate-700">
-                <div>
-                  <dt className="font-medium">Start</dt>
-                  <dd>{new Date(trip.startDate).toLocaleString()}</dd>
-                </div>
-                <div>
-                  <dt className="font-medium">End</dt>
-                  <dd>{new Date(trip.endDate).toLocaleString()}</dd>
-                </div>
-                <div className="sm:col-span-2">
-                  <dt className="font-medium">Cities</dt>
-                  <dd>
-                    {trip.cities
-                      ?.map((c) => `${c.name}, ${c.country ?? ""}`)
-                      .join(" · ") || "No cities added"}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+            {/* Overview area */}
+            <TripOverview trip={trip} />
 
             {/* Expenses dashboard */}
             {showExpenses && (
@@ -249,11 +182,7 @@ export default function TripPage() {
                     </h2>
                     <AddExpense
                       tripId={tripId as string}
-                      userId={
-                        typeof trip.user === "string"
-                          ? trip.user
-                          : (trip.user?._id as string)
-                      }
+                      userId={trip.owner._id as string}
                       onExpenseCreated={(newExpense) => {
                         setExpenses((prev) => {
                           if (prev.some((e) => e._id === newExpense._id))
@@ -269,6 +198,7 @@ export default function TripPage() {
                 </div>
 
                 <ExpenseTabs
+                  tripCurrency={trip.currency}
                   expenses={expenses}
                   setExpenses={setExpenses}
                   currencies={currencies}

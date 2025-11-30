@@ -1,3 +1,4 @@
+import { Currency } from "../currency/types";
 import { User } from "../user/types";
 
 export interface City {
@@ -14,6 +15,13 @@ export interface Trip {
   isPublic?: boolean;
   coverImage?: string;
   owner: User;
+  currency?: Currency;
+  privacy?: {
+    showCities?: boolean;
+    showExpenses?: boolean;
+    showItinerary?: boolean;
+    showCover?: boolean;
+  };
 }
 
 export type TripsResponse = {

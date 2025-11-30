@@ -41,6 +41,13 @@ const tripSchema = new mongoose.Schema({
   coverImage: { type: String, required: false },
   // Simple collaborative structure for future expansion
   collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  // Currency of the trip
+  currency: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Currency",
+    required: true,
+  },
+
   participants: [participantSchema],
   // Fine‑grained privacy controls for what gets exposed publicly
   privacy: {

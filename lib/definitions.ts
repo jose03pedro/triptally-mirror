@@ -20,6 +20,7 @@ export const SignupFormSchema = z.object({
 export const CreateTripSchema = z
   .object({
     title: z.string().trim().nonempty("Title is required"),
+    currency: z.string().trim().nonempty("Currency is required"),
     startDate: z.string().trim().nonempty("Start date is required"),
     endDate: z.string().trim().nonempty("End date is required"),
     cities: z
