@@ -18,17 +18,19 @@ export default function UploadAvatars() {
         reader.readAsDataURL(selectedFile);
     };
 
-    return (<>
-        <ButtonBase component="label" sx={{ display: "flex", alignItems: "center" }}>
-            <Avatar alt="Upload new avatar" src={avatarSrc} sx={{ width: 100, height: 100 }} />
-            <input
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleAvatarChange}
-            />
-        </ButtonBase>
-        <input type="hidden" name="avatar" value={avatarSrc} /></>
+    return (
+        <>
+            <ButtonBase component="label" sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar alt="Upload new avatar" src={avatarSrc} sx={{ width: 100, height: 100 }} />
+                <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleAvatarChange}
+                />
+            </ButtonBase>
+            <input type="hidden" name="avatar" value={avatarSrc} />
+        </>
     );
 }
 

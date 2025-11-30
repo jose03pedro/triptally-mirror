@@ -1,4 +1,5 @@
 import * as z from "zod";
+import {User} from "@/types/user/types";
 
 // -------------------- Signup Schema --------------------
 export const SignupFormSchema = z.object({
@@ -132,6 +133,7 @@ export type AuthErrors = {
 };
 
 export type AuthResponse = {
+  user?: User | null;
   success: boolean;
   token?: string;
   errors?: AuthErrors;

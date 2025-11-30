@@ -1,6 +1,7 @@
 import { UserIcon } from "@/app/components/user/userIcon";
 import { UserEditButton } from "@/app/components/user/userEditButton";
 import Tooltip from "@mui/material/Tooltip";
+import {useUserStore} from "@/lib/store/userStore";
 
 type UserCardProps = {
   firstName?: string;
@@ -22,7 +23,7 @@ export function UserCard({ firstName, lastName, avatar }: UserCardProps) {
                     style={{ opacity: 0.2 }}
                 />
                 <div className="position-relative">
-                    <UserIcon url={avatar ? `url(${avatar})` : ""}  size={72} />
+                    <UserIcon size={72} />
                 </div>
             </div>
 

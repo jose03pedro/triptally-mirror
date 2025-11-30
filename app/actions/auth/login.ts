@@ -6,6 +6,8 @@ import { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthResponse } from "@/lib/definitions";
 import {cookies} from "next/headers";
+import {useUserStore} from "@/lib/store/userStore";
+import {Trip} from "@/types/trip/types";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -62,16 +64,30 @@ export async function login(formData: FormData): Promise<AuthResponse> {
     // Generate JWT token
     const token = await loginHandler(user._id, user.email, user.first_name, user.last_name);
 
-    return {
-      success: true,
-      token,
-      errors: {
-        email: [],
-        password: [],
-        first_name: [],
-        last_name: [],
-      },
-    };
+      return {
+          success: true,
+          user: {
+              _id: user._id.toString(),
+              email: user.email || "",
+              first_name: user.first_name,
+              last_name: user.last_name,
+              avatar: user.avatar || "",
+              savedTrips: (user.savedTrips || []).map((trip: Trip) => ({
+                  _id: trip._id.toString(),       // convert each trip _id
+                  title: trip.title,
+                  startDate: trip.startDate,
+                  endDate: trip.endDate,
+                  cities: trip.cities,
+              })),
+          },
+          token,
+          errors: {
+              email: [],
+              password: [],
+              first_name: [],
+              last_name: [],
+          },
+      };
   } catch (error: any) {
     console.error("Login error:", error);
     return {
