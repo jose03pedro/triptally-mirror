@@ -25,11 +25,9 @@ export const useUserStore = create<UserState>()(
             },
 
             updateUser: (partialUser) => {
-                console.log("📌 updateUser called with:", partialUser);
                  set((state) => ({
                     user: state.user ? { ...state.user, ...partialUser } : null,
                 }));
-                console.log("👉 state after updateUser:", get().user);
             },
         }),
         {

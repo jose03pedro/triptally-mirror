@@ -52,13 +52,16 @@ export default function UserEditModal({ onClose, updateUser }: UserEditModalProp
         const modal = bootstrap.Modal.getInstance(modalEl);
         modal?.hide();
 
-        // Update user in Zustand
         if (state.user) updateUser(state.user);
 
-        // Reset form
-        setFormValues(formInitialState);
+        setFormValues({
+            ...formInitialState,
+            first_name: state.user?.first_name || "",
+            last_name: state.user?.last_name || "",
+            avatar: state.user?.avatar || "",
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state?.success]);
+    }, [state?.success, state.user]);
 
     const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 
