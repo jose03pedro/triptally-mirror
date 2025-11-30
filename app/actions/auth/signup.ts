@@ -6,6 +6,7 @@ import { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthResponse, SignupFormSchema } from "@/lib/definitions";
 import {loginHandler} from "@/app/actions/auth/login";
+import {useUserStore} from "@/lib/store/userStore";
 
 export async function signup(formData: FormData): Promise<AuthResponse> {
   try {
@@ -57,6 +58,8 @@ export async function signup(formData: FormData): Promise<AuthResponse> {
 
     // Generate token
     const token = await loginHandler(user._id, user.email, user.first_name, user.last_name);
+
+    useUserStore.getState().setUser(user);
 
     return { success: true, token };
   } catch (error: any) {

@@ -51,7 +51,6 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
   }, []); // run once
 
   useEffect(() => {
-    console.log(state);
     if (state?.success && state?.id) {
       if (onClose) onClose();
 

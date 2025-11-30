@@ -1,4 +1,4 @@
-import { createNotification } from "@/app/actions/createNotification";
+import { createNotification } from "@/app/actions/notification/createNotification";
 import NotificationType from "@/app/models/NotificationType";
 import Trip from "@/app/models/Trip";
 import User from "@/app/models/User";

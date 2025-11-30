@@ -1,4 +1,5 @@
 import * as z from "zod";
+import {User} from "@/types/user/types";
 
 // -------------------- Signup Schema --------------------
 export const SignupFormSchema = z.object({
@@ -93,6 +94,7 @@ export const EditUserSchema = z.object({
   first_name: z.string().trim().nonempty("First name is required"),
   last_name: z.string().trim().nonempty("Last name is required"),
   current_password: z.string().trim().nonempty("Current password is required"),
+  avatar: z.union([z.string().url(), z.instanceof(File)]).optional(),
 });
 
 // -------------------- Change Password Schema --------------------
@@ -131,6 +133,7 @@ export type AuthErrors = {
 };
 
 export type AuthResponse = {
+  user?: User | null;
   success: boolean;
   token?: string;
   errors?: AuthErrors;

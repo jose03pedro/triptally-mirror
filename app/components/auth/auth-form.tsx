@@ -7,6 +7,7 @@ import { AuthResponse } from "@/lib/definitions";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import Link from "next/link";
 import { login } from "@/app/actions/auth/login";
+import {useUserStore} from "@/lib/store/userStore";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -37,6 +38,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   useEffect(() => {
     if (state?.success && state?.token) {
       localStorage.setItem("token", state.token);
+      if (state.user) useUserStore.getState().setUser(state.user);
       router.push("/profile");
     }
   }, [state, router]);

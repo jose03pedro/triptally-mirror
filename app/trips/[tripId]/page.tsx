@@ -10,6 +10,8 @@ import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
+import {ExpenseCategory} from "@/types/expensecategory/types";
+import {Currency} from "@/types/currency/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -20,8 +22,8 @@ export default function TripPage() {
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [currencies, setCurrencies] = useState<any[]>([]);
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -147,12 +149,12 @@ export default function TripPage() {
                 {trip.isPublic ? "Public" : "Private"}
               </span>
 
-              <Link
-                href="/trips"
-                className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-              >
-                Back to my trips
-              </Link>
+                {currentUser && <Link
+                    href="/trips"
+                    className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
+                >
+                    Back to my trips
+                </Link>}
 
               {isOwner && (
                 <Link
