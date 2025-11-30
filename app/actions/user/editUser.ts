@@ -6,6 +6,7 @@ import { compare, hash } from "bcrypt";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { EditUserSchema, ChangePasswordSchema } from "@/lib/definitions";
 import { logoutHandler } from "../auth/logout";
+import Trip from "@/app/models/Trip";
 
 type EditResult = {
   success: boolean;
@@ -21,7 +22,9 @@ type EditResult = {
 export async function editUser(_prev: unknown, formData: FormData): Promise<EditResult> {
   try {
     await connectionToDB();
+
     const currentUser = await getCurrentUser();
+
     if (!currentUser) {
       return { success: false, errors: { message: "User not authenticated" } };
     }
@@ -30,11 +33,13 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
     const last_name = (formData.get("last_name") || "") as string;
     const current_password = (formData.get("current_password") || "") as string;
     const password = (formData.get("password") || "") as string;
+    const avatar = (formData.get("avatar") || "") as string;
 
     const userValidation = EditUserSchema.safeParse({
       first_name,
       last_name,
       current_password,
+      avatar
     });
 
     if (!userValidation.success) {
@@ -79,6 +84,12 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
       last_name: userValidation.data.last_name,
     };
 
+    if (avatar) {
+      updateData.avatar = avatar;
+    }
+
+    console.log(updateData);
+
     if (password) {
       const passValidation = ChangePasswordSchema.safeParse({ password });
       if (!passValidation.success) {
@@ -93,14 +104,13 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
       updateData.password = await hash(passValidation.data.password, 10);
     }
 
-    await User.findByIdAndUpdate(currentUser.id, updateData);
-    const updated = await User.findById(currentUser.id).lean();
+    const updated = await User.findByIdAndUpdate(currentUser.id, updateData);
+
+    console.log(updated);
+
     if (!updated) {
       return { success: false, errors: { message: "Could not find user after update." } };
     }
-
-    // Minimal side-effect for test (can be mocked)
-    await logoutHandler();
 
     return {
       success: true,

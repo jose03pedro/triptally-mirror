@@ -5,6 +5,7 @@ import { useActionState, useEffect, useState } from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import FormModal from "../ui/formModal";
 import { useRouter } from "next/navigation";
+import UploadAvatars from "@/app/components/user/uploadAvatars";
 
 export default function UserEditModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -43,8 +44,6 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
       document.body.classList.remove("modal-open");
       document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
 
-      router.refresh(); // forces server layouts/pages to re-read cookies
-
       setFormValues({
         first_name: "",
         last_name: "",
@@ -67,6 +66,7 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
       submitLabel="Save"
       pendingLabel="Saving..."
     >
+      <UploadAvatars />
       <div className="mb-2">
         <label htmlFor="first_name" className="form-label text-secondary mb-0">
           First Name <span className="text-danger">*</span>

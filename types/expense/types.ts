@@ -1,18 +1,12 @@
+import {Currency} from "@/types/currency/types";
+import {ExpenseCategory} from "@/types/expensecategory/types";
+
 export type ExpenseType = {
   _id: string;
   description: string;
   value: number;
-  currency?: {
-    _id: string;
-    code: string;
-    name: string;
-    symbol: string;
-  };
-  category?: {
-    _id: string;
-    name: string;
-    color: string;
-  };
+  currency?: Currency;
+  category?: ExpenseCategory;
 };
 
 export type ExpenseWithConverted = ExpenseType & {

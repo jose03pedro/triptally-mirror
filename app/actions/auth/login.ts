@@ -93,7 +93,7 @@ export async function loginHandler(id: string, email: string, first_name: string
                 id: id,
                 email: email,
                 first_name: first_name,
-                last_name: last_name
+                last_name: last_name,
             }}, JWT_SECRET, {
             expiresIn: "24h",
         }
