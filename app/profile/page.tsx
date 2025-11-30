@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const [travelerProfile, setTravelerProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const { user, updateAvatar } = useUserStore();
+  const { user, updateUser } = useUserStore();
 
   useEffect(() => {
     async function loadData() {
@@ -248,7 +248,7 @@ export default function ProfilePage() {
       </div>
 
       <CreateTripModal onClose={() => {}} />
-      <UserEditModal onClose={() => {}} />
+      <UserEditModal updateUser={updateUser} onClose={() => {}} />
     </div>
   );
 }

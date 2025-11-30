@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image";
 import { RoundIcon } from "../ui/roundIcon";
 import {useUserStore} from "@/lib/store/userStore";

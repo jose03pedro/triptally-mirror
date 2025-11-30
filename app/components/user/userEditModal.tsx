@@ -1,14 +1,23 @@
 "use client";
 
 import { editUser } from "@/app/actions/user/editUser";
-import { useActionState, useEffect, useState } from "react";
+import {useActionState, useEffect, useMemo, useState} from "react";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import FormModal from "../ui/formModal";
 import { useRouter } from "next/navigation";
 import UploadAvatars from "@/app/components/user/uploadAvatars";
+import {useUserStore} from "@/lib/store/userStore";
 
-export default function UserEditModal({ onClose }: { onClose: () => void }) {
-  const router = useRouter();
+declare const bootstrap: any;
+
+interface UserEditModalProps {
+    onClose: () => void;
+    updateUser: (user: any) => void;
+}
+
+export default function UserEditModal({ onClose, updateUser }: UserEditModalProps) {
+  const {user} = useUserStore();
+
   const initialState = {
     success: false,
     errors: {
@@ -19,41 +28,39 @@ export default function UserEditModal({ onClose }: { onClose: () => void }) {
     },
   };
 
-  const [state, action, isPending] = useActionState(editUser, initialState);
-  const [formValues, setFormValues] = useState({
-    first_name: "",
-    last_name: "",
-    password: "",
-    current_password: "",
-  });
+    const formInitialState = useMemo(() => ({
+        first_name: user?.first_name || "",
+        last_name: user?.last_name || "",
+        password: "",
+        current_password: "",
+        avatar: user?.avatar || "",
+    }), [user]);
+
+    const [state, action, isPending] = useActionState(editUser, initialState);
+  const [formValues, setFormValues] = useState(formInitialState);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    if (state?.success) {
-      // Close the modal programmatically by clicking the dismiss button
-      const closeBtn = document.querySelector('#editUserModal [data-bs-dismiss="modal"]') as HTMLElement;
-      if (closeBtn) {
-        closeBtn.click();
-      }
-      
-      // Additional cleanup just in case
-      document.body.classList.remove("modal-open");
-      document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+    useEffect(() => {
+        if (!state?.success) return;
 
-      setFormValues({
-        first_name: "",
-        last_name: "",
-        password: "",
-        current_password: "",
-      });
-    }
-  }, [state, router]);
+        // Close modal
+        const modalEl = document.getElementById("editUserModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal?.hide();
 
-  const canSubmit = Boolean(formValues.first_name && formValues.last_name);
+        // Update user in Zustand
+        if (state.user) updateUser(state.user);
+
+        // Reset form
+        setFormValues(formInitialState);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state?.success]);
+
+    const canSubmit = Boolean(formValues.first_name && formValues.last_name);
 
   return (
     <FormModal

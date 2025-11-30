@@ -7,10 +7,11 @@ import { NavbarButton } from "./navbarButton";
 import { UnreadIndicator } from "@/app/notification/unreadIndicator";
 import { useNotificationStore } from "@/lib/store/notificationStore";
 import { useEffect } from "react";
+import {useUserStore} from "@/lib/store/userStore";
 
 export function Navbar() {
   const session = useAuth();
-  const user = session?.user;
+  const { user, updateUser } = useUserStore();
 
   const notifications = useNotificationStore((state) => state.notifications);
   const setNotifications = useNotificationStore(
@@ -18,11 +19,11 @@ export function Navbar() {
   );
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?._id) return;
 
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(`/api/users/${user.id}/notifications`);
+        const res = await fetch(`/api/users/${user._id}/notifications`);
         if (!res.ok) throw new Error("Failed to fetch notifications");
 
         const data = await res.json();
@@ -33,7 +34,7 @@ export function Navbar() {
     };
 
     fetchNotifications();
-  }, [user?.id, setNotifications]);
+  }, [user?._id, setNotifications]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

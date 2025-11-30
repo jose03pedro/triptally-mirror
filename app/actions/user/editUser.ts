@@ -9,6 +9,7 @@ import { logoutHandler } from "../auth/logout";
 import Trip from "@/app/models/Trip";
 
 type EditResult = {
+  user?: any;
   success: boolean;
   errors: {
     first_name?: string[];
@@ -88,8 +89,6 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
       updateData.avatar = avatar;
     }
 
-    console.log(updateData);
-
     if (password) {
       const passValidation = ChangePasswordSchema.safeParse({ password });
       if (!passValidation.success) {
@@ -104,15 +103,20 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
       updateData.password = await hash(passValidation.data.password, 10);
     }
 
-    const updated = await User.findByIdAndUpdate(currentUser.id, updateData);
-
-    console.log(updated);
+    const updated = await User.findByIdAndUpdate(currentUser.id, updateData, {
+        new: true, // return the updated document
+    });
 
     if (!updated) {
       return { success: false, errors: { message: "Could not find user after update." } };
     }
 
     return {
+      user: {
+          first_name: updated.first_name,
+          last_name: updated.last_name,
+          avatar: updated.avatar,
+      },
       success: true,
       errors: {
         first_name: [],
@@ -122,6 +126,7 @@ export async function editUser(_prev: unknown, formData: FormData): Promise<Edit
       },
     };
   } catch (e) {
+    console.error(e);
     return { success: false, errors: { message: "Unhandled error" } };
   }
 }

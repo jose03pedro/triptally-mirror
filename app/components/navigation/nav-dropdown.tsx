@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { logoutHandler } from "@/app/actions/auth/logout";
 import IconText from "@/app/components/ui/icon-text";
+import {useUserStore} from "@/lib/store/userStore";
 
 type NavDropdownProps = {
   firstName: string;
@@ -16,6 +17,7 @@ export function NavDropdown({ firstName, lastName }: NavDropdownProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token
+    useUserStore.getState().clearUser(); // Clear user from the state
     logoutHandler(); // Remove 'session' cookie
     router.push("/login"); // Redirect
   };

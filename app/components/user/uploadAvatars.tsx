@@ -29,7 +29,7 @@ export default function UploadAvatars() {
                     onChange={handleAvatarChange}
                 />
             </ButtonBase>
-            <input type="hidden" name="avatar" value={avatarSrc} />
+            <input type="hidden" name="avatar" value={avatarSrc ?? ""} />
         </>
     );
 }

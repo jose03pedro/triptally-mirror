@@ -6,10 +6,9 @@ import {useUserStore} from "@/lib/store/userStore";
 type UserCardProps = {
   firstName?: string;
   lastName?: string;
-  avatar?: string;
 };
 
-export function UserCard({ firstName, lastName, avatar }: UserCardProps) {
+export function UserCard({ firstName, lastName }: UserCardProps) {
     const displayName =
         [firstName, lastName].filter(Boolean).join(" ") || "Traveler";
 
