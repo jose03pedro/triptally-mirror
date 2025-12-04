@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { Navbar } from "./navbar";
-import Link from "next/link";
+
+// Mock do hook de auth para não correr efeitos nem mexer em localStorage
+jest.mock("@/lib/hook/useAuth", () => ({
+  useAuth: jest.fn(() => null), // sessão "carregada" mas sem user
+}));
 
 // Mock Link
 jest.mock("next/link", () => ({ href, children }: any) => (

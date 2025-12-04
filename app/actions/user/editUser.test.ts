@@ -29,7 +29,7 @@ jest.mock("@/lib/auth/getCurrentUser", () => ({
   getCurrentUser: jest.fn(),
 }));
 
-jest.mock("./logout", () => ({
+jest.mock("../auth/logout", () => ({
   __esModule: true,
   logoutHandler: jest.fn(),
 }));
