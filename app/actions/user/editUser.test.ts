@@ -133,15 +133,19 @@ describe("editUser action", () => {
 
   test("update names only success", async () => {
     (getCurrentUser as jest.Mock).mockResolvedValue({ id: "u1" });
+
+    // First call returns password for verification
+    const mockLeanResult = {
+      _id: "u1",
+      email: "e@x",
+      first_name: "A",
+      last_name: "B",
+    };
+
     (User.findById as jest.Mock)
       .mockResolvedValueOnce({ password: "hashed" })
-      .mockReturnValueOnce({
-        lean: () => ({
-          _id: "u1",
-          email: "e@x",
-          first_name: "A",
-          last_name: "B",
-        }),
+      .mockResolvedValueOnce({
+        lean: jest.fn().mockResolvedValue(mockLeanResult),
       });
 
     (compare as jest.Mock).mockResolvedValue(true);
