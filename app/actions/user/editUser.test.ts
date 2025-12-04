@@ -11,7 +11,7 @@ jest.mock("@/lib/mongoose", () => ({
   default: jest.fn(() => Promise.resolve()),
 }));
 
-jest.mock("../models/User", () => ({
+jest.mock("../../models/User", () => ({
   __esModule: true,
   default: {
     findById: jest.fn(),
@@ -68,9 +68,9 @@ jest.mock("@/lib/definitions", () => ({
 }));
 
 const mockFormData = (data: Record<string, string>) =>
-  ({
-    get: (k: string) => data[k],
-  } as unknown as FormData);
+({
+  get: (k: string) => data[k],
+} as unknown as FormData);
 
 describe("editUser action", () => {
   beforeEach(() => {

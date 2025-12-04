@@ -22,3 +22,4 @@ Object.defineProperty(window, "localStorage", {
 });
 
 jest.mock("jwt-decode", () => () => ({ exp: Date.now() / 1000 + 1000 }));
+

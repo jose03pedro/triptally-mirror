@@ -7,6 +7,7 @@ module.exports = {
     "\\.(css|scss)$": "identity-obj-proxy",
     "^@/(.*)$": "<rootDir>/$1",
     "^next/navigation$": "<rootDir>/__mocks__/next/navigation.js",
+    "^next/headers$": "<rootDir>/__mocks__/next/headers.ts",
   },
   transform: {
     "^.+\\.jsx?$": "babel-jest", // use babel-jest only for JS files
