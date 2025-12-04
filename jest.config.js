@@ -8,7 +8,7 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/$1",
     "^next/navigation$": "<rootDir>/__mocks__/next/navigation.js",
     "^next/headers$": "<rootDir>/__mocks__/next/headers.ts",
-    "^next/server$": "<rootDir>/ __mocks__ / next / server.ts",
+    "^next/server$": "<rootDir>/__mocks__/next/server.ts",
   },
   transform: {
     "^.+\\.jsx?$": "babel-jest", // use babel-jest only for JS files
