@@ -39,15 +39,15 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           git push mirror refs/heads/main:refs/heads/main --force
-          git push --tags mirror
+          git push --tags --force mirror
 
       - name: Push dev -> dev (mirror)
         if: github.ref == 'refs/heads/dev'
         run: |
           git push mirror refs/heads/dev:refs/heads/dev --force
-          git push --tags mirror
+          git push --tags --force mirror
 
       - name: Push tags (on tag push)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          git push --tags mirror
+          git push --tags --force mirror
