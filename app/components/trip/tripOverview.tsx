@@ -2,9 +2,10 @@ import { Trip } from "@/types/trip/types";
 
 interface TripOverviewProps {
   trip: Trip;
+  showCities?: boolean;
 }
 
-export function TripOverview({ trip }: TripOverviewProps) {
+export function TripOverview({ trip, showCities = true }: TripOverviewProps) {
   return (
     <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-2">
       <h2 className="text-sm md:text-base font-semibold text-slate-900 mb-2">
@@ -24,12 +25,12 @@ export function TripOverview({ trip }: TripOverviewProps) {
           <dt className="font-medium">End</dt>
           <dd>{new Date(trip.endDate).toLocaleString()}</dd>
         </div>
-        <div className="sm:col-span-2">
-          <dt className="font-medium">Cities</dt>
+        <div>
+          <dt className="font-medium">Destinations</dt>
           <dd>
-            {trip.cities
-              ?.map((c) => `${c.name}, ${c.country ?? ""}`)
-              .join(" · ") || "No cities added"}
+            {showCities
+              ? trip.cities?.map(city => city.name).join(" · ") || "No cities added"
+              : "Hidden by privacy settings"}
           </dd>
         </div>
         <div>

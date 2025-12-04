@@ -24,9 +24,18 @@ export async function GET(
       .populate("user", "first_name last_name")
       .populate("currency");
 
-    if (!tripDoc) {
-      return NextResponse.json({ error: "Trip not found" }, { status: 404 });
+    const currentUser = await getCurrentUser();
+
+    const isOwner =
+      currentUser && tripDoc.user.toString() === currentUser.id;
+
+    if (!tripDoc.isPublic && !isOwner) {
+      return NextResponse.json(
+        { error: "This trip is private" },
+        { status: 403 }
+      );
     }
+
 
     const trip = {
       _id: tripDoc._id,

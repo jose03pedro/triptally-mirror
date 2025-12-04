@@ -10,8 +10,8 @@ import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
-import {ExpenseCategory} from "@/types/expensecategory/types";
-import {Currency} from "@/types/currency/types";
+import { ExpenseCategory } from "@/types/expensecategory/types";
+import { Currency } from "@/types/currency/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -41,7 +41,16 @@ export default function TripPage() {
           fetch(`/api/expensecategories`, { cache: "no-store" }),
         ]);
 
-        if (!tripRes.ok) throw new Error("Failed to load trip");
+        if (!tripRes.ok) {
+          if (tripRes.status === 403) {
+            throw new Error("This trip is private or you don't have access.");
+          }
+          if (tripRes.status === 404) {
+            throw new Error("Trip not found.");
+          }
+          throw new Error("Failed to load trip");
+        }
+
         const tripData: Trip = await tripRes.json();
 
         const expData = expRes.ok ? await expRes.json() : [];
@@ -80,21 +89,20 @@ export default function TripPage() {
       </div>
     );
   }
-
-  const privacy = trip.privacy || {};
-  const showCities = privacy.showCities !== false;
-  const showExpenses = privacy.showExpenses !== false;
-  const showCover = privacy.showCover !== false;
-
   const ownerId = trip.owner._id;
 
-  const creatorName = `${
-    currentUser?.id === trip?.owner._id
-      ? "You"
-      : `${trip?.owner?.first_name} ${trip?.owner?.last_name}`
-  }`;
+  const creatorName = `${currentUser?.id === trip?.owner._id
+    ? "You"
+    : `${trip?.owner?.first_name} ${trip?.owner?.last_name}`
+    }`;
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
+
+  const privacy = trip.privacy || {};
+  const showCities = isOwner || privacy.showCities !== false;
+  const showExpenses = isOwner || privacy.showExpenses !== false;
+  const showCover = isOwner || privacy.showCover !== false;
+
 
   console.log(expenses);
 
@@ -140,21 +148,20 @@ export default function TripPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                  trip.isPublic
-                    ? "bg-green-50 text-green-700 border border-green-100"
-                    : "bg-slate-100 text-slate-700 border border-slate-200"
-                }`}
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${trip.isPublic
+                  ? "bg-green-50 text-green-700 border border-green-100"
+                  : "bg-slate-100 text-slate-700 border border-slate-200"
+                  }`}
               >
                 {trip.isPublic ? "Public" : "Private"}
               </span>
 
-                {currentUser && <Link
-                    href="/trips"
-                    className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-                >
-                    Back to my trips
-                </Link>}
+              {currentUser && <Link
+                href="/trips"
+                className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
+              >
+                Back to my trips
+              </Link>}
 
               {isOwner && (
                 <Link
@@ -209,8 +216,8 @@ export default function TripPage() {
                     setExpenses((prev) =>
                       prev.some((e) => e._id === updatedExpense._id)
                         ? prev.map((e) =>
-                            e._id === updatedExpense._id ? updatedExpense : e
-                          )
+                          e._id === updatedExpense._id ? updatedExpense : e
+                        )
                         : [...prev, updatedExpense]
                     );
                   }}

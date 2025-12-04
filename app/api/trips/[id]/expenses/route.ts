@@ -3,8 +3,7 @@
 import connectionToDB from "@/lib/mongoose";
 import { NextResponse } from "next/server";
 import Expense from "@/app/models/Expense";
-import ExpenseCategory from "@/app/models/ExpenseCategory";
-import Currency from "@/app/models/Currency";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Trip from "@/app/models/Trip";
 import { getExchangeRates } from "@/lib/utils/helperFunctions";
 
@@ -24,6 +23,20 @@ export async function GET(
     }
 
     const trip = await Trip.findById(id).populate("currency");
+
+    const currentUser = await getCurrentUser();
+
+    const isOwner =
+      currentUser && trip && trip.user.toString() === currentUser.id;
+
+    if (!trip?.isPublic && !isOwner) {
+      return NextResponse.json(
+        { error: "This trip is private" },
+        { status: 403 }
+      );
+    }
+
+
     const tripCurrencyCode = trip?.currency?.code;
 
     const expenses = await Expense.find({ trip: id })
