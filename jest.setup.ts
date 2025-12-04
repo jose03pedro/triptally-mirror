@@ -1,4 +1,22 @@
-import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from 'util';
+import { ReadableStream, TransformStream } from 'node:stream/web';
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder as any;
+
+Object.assign(global, {
+  ReadableStream,
+  TransformStream,
+});
+
+import '@testing-library/jest-dom';
+import 'whatwg-fetch';
+
+import { server } from './__tests__/mocks/server';
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 Object.defineProperty(window, "localStorage", {
   value: (() => {
