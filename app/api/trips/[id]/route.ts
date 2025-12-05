@@ -3,6 +3,7 @@ import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Expense from "@/app/models/Expense";
+import { getExchangeRates } from "@/lib/utils/helperFunctions";
 
 export async function GET(
   request: Request,
@@ -26,8 +27,19 @@ export async function GET(
 
     const currentUser = await getCurrentUser();
 
-    const isOwner =
-      currentUser && tripDoc.user.toString() === currentUser.id;
+    const ownerRaw = tripDoc.user ?? tripDoc.owner;
+    const ownerId =
+      ownerRaw == null
+        ? undefined
+        : typeof ownerRaw === "string"
+          ? ownerRaw
+          : ownerRaw._id != null
+            ? String(ownerRaw._id)
+            : typeof ownerRaw.toString === "function"
+              ? ownerRaw.toString()
+              : undefined;
+
+    const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
 
     if (!tripDoc.isPublic && !isOwner) {
       return NextResponse.json(
@@ -35,7 +47,6 @@ export async function GET(
         { status: 403 }
       );
     }
-
 
     const trip = {
       _id: tripDoc._id,

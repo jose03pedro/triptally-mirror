@@ -38,10 +38,14 @@ jest.mock("@/app/models/Currency", () => ({
 jest.mock("@/lib/auth/getCurrentUser", () => ({
   __esModule: true,
   getCurrentUser: jest.fn(),
-}));
-
-jest.mock("@/lib/utils/helperFunctions", () => ({
-  __esModule: true,
+  // also provide a default export in case implementation imports the default
+  default: jest.fn(),
+  jest.mock("@/lib/utils/helperFunctions", () => ({
+    __esModule: true,
+    getExchangeRates: jest.fn(),
+    // also provide a default export in case implementation imports the default
+    default: jest.fn(),
+  }));
   getExchangeRates: jest.fn(),
 }));
 
@@ -52,15 +56,24 @@ const mockedTrip = Trip as unknown as {
 const mockedExpense = Expense as unknown as {
   find: jest.Mock;
 };
-
-const mockedGetCurrentUser = getCurrentUser as jest.Mock;
-const mockedGetExchangeRates = getExchangeRates as jest.Mock;
-
 // helper para simular um Query do mongoose com .populate() e que é awaitable
 function makePopulateQuery<T>(doc: T) {
   return {
     populate: jest.fn().mockReturnThis(),
-    then: (resolve: (d: T) => void) => resolve(doc),
+    // support both .exec() and direct await of the query (thenable)
+    exec: jest.fn().mockResolvedValue(doc),
+    then: (resolve: (d: T) => void, reject?: (e: any) => void) => {
+      try {
+        resolve(doc);
+      } catch (e) {
+        if (reject) reject(e);
+      }
+    },
+    catch: jest.fn(),
+  };
+}
+populate: jest.fn().mockReturnThis(),
+  then: (resolve: (d: T) => void) => resolve(doc),
   };
 }
 
@@ -85,7 +98,7 @@ describe("Trip privacy – GET /api/trips/[id]", () => {
   test("returns 404 when trip does not exist", async () => {
     mockedTrip.findById.mockReturnValue(makePopulateQuery(null));
 
-    const req = new Request("http://localhost/api/trips/trip1");
+    const req = new Request("http://localhost:3000/api/trips/trip1");
 
     const res = await getTrip(req, {
       params: Promise.resolve({ id: "trip1" }),
@@ -103,7 +116,7 @@ describe("Trip privacy – GET /api/trips/[id]", () => {
 
     mockedTrip.findById.mockReturnValue(makePopulateQuery(privateTrip));
 
-    const req = new Request("http://localhost/api/trips/trip1");
+    const req = new Request("http://localhost:3000/api/trips/trip1");
 
     const res = await getTrip(req, {
       params: Promise.resolve({ id: "trip1" }),
@@ -121,7 +134,7 @@ describe("Trip privacy – GET /api/trips/[id]", () => {
 
     mockedTrip.findById.mockReturnValue(makePopulateQuery(privateTrip));
 
-    const req = new Request("http://localhost/api/trips/trip1");
+    const req = new Request("http://localhost:3000/api/trips/trip1");
 
     const res = await getTrip(req, {
       params: Promise.resolve({ id: "trip1" }),
@@ -142,7 +155,7 @@ describe("Trip privacy – GET /api/trips/[id]", () => {
 
     mockedTrip.findById.mockReturnValue(makePopulateQuery(publicTrip));
 
-    const req = new Request("http://localhost/api/trips/trip1");
+    const req = new Request("http://localhost:3000/api/trips/trip1");
 
     const res = await getTrip(req, {
       params: Promise.resolve({ id: "trip1" }),
@@ -175,7 +188,7 @@ describe("Trip privacy – GET /api/trips/[id]/expenses", () => {
     mockedGetCurrentUser.mockResolvedValue({ id: "otherUser" });
 
     const req = new Request(
-      "http://localhost/api/trips/trip1/expenses"
+      "http://localhost:3000/api/trips/trip1/expenses"
     );
 
     const res = await getTripExpenses(req, {
@@ -208,7 +221,7 @@ describe("Trip privacy – GET /api/trips/[id]/expenses", () => {
     });
 
     const req = new Request(
-      "http://localhost/api/trips/trip1/expenses"
+      "http://localhost:3000/api/trips/trip1/expenses"
     );
 
     const res = await getTripExpenses(req, {
@@ -237,7 +250,7 @@ describe("Trip privacy – GET /api/trips/[id]/expenses", () => {
     mockedGetCurrentUser.mockResolvedValue({ id: "visitor" });
 
     const req = new Request(
-      "http://localhost/api/trips/trip1/expenses"
+      "http://localhost:3000/api/trips/trip1/expenses"
     );
 
     const res = await getTripExpenses(req, {
