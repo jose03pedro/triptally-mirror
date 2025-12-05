@@ -21,7 +21,7 @@ describe("GET /api/currencies/exchange-rates", () => {
     });
 
     const req = new Request(
-      "http://localhost/api/currencies/exchange-rates?fromCurrency=EUR&toCurrency=USD"
+      "http://localhost:3000/api/currencies/exchange-rates?fromCurrency=EUR&toCurrency=USD"
     );
 
     const res = await getExchangeRatesRoute(req);

@@ -40,14 +40,15 @@ jest.mock("@/lib/auth/getCurrentUser", () => ({
   getCurrentUser: jest.fn(),
   // also provide a default export in case implementation imports the default
   default: jest.fn(),
-  jest.mock("@/lib/utils/helperFunctions", () => ({
-    __esModule: true,
-    getExchangeRates: jest.fn(),
-    // also provide a default export in case implementation imports the default
-    default: jest.fn(),
-  }));
-  getExchangeRates: jest.fn(),
 }));
+
+jest.mock("@/lib/utils/helperFunctions", () => ({
+  __esModule: true,
+  getExchangeRates: jest.fn(),
+  // also provide a default export in case implementation imports the default
+  default: jest.fn(),
+}));
+
 
 const mockedTrip = Trip as unknown as {
   findById: jest.Mock;
@@ -72,10 +73,9 @@ function makePopulateQuery<T>(doc: T) {
     catch: jest.fn(),
   };
 }
-populate: jest.fn().mockReturnThis(),
-  then: (resolve: (d: T) => void) => resolve(doc),
-  };
-}
+const mockedGetCurrentUser = getCurrentUser as jest.Mock;
+const mockedGetExchangeRates = getExchangeRates as jest.Mock;
+
 
 describe("Trip privacy – GET /api/trips/[id]", () => {
   const baseTrip: any = {

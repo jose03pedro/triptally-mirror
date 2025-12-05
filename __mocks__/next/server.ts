@@ -1,3 +1,4 @@
+
 export class NextRequest {
     url: string;
     constructor(input: string, _init?: any) {

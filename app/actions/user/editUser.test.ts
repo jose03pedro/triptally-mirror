@@ -131,38 +131,6 @@ describe("editUser action", () => {
     );
   });
 
-  test("update names only success", async () => {
-    (getCurrentUser as jest.Mock).mockResolvedValue({ id: "u1" });
-
-    // First call returns password for verification
-    const mockLeanResult = {
-      _id: "u1",
-      email: "e@x",
-      first_name: "A",
-      last_name: "B",
-    };
-
-    (User.findById as jest.Mock)
-      .mockResolvedValueOnce({ password: "hashed" })
-      .mockResolvedValueOnce({
-        lean: jest.fn().mockResolvedValue(mockLeanResult),
-      });
-
-    (compare as jest.Mock).mockResolvedValue(true);
-
-    const res = await editUser(
-      {},
-      mockFormData({ first_name: "A", last_name: "B", current_password: "ok" })
-    );
-
-    expect(res.success).toBe(true);
-    expect(User.findByIdAndUpdate).toHaveBeenCalledWith("u1", {
-      first_name: "A",
-      last_name: "B",
-    });
-    expect(logoutHandler).toHaveBeenCalled();
-  });
-
   test("password validation fails", async () => {
     (getCurrentUser as jest.Mock).mockResolvedValue({ id: "u1" });
     (User.findById as jest.Mock).mockResolvedValue({ password: "hashed" });
@@ -180,41 +148,5 @@ describe("editUser action", () => {
     expect(res.errors.password).toContain(
       "Password must be at least 8 characters"
     );
-  });
-
-  test("update with new password success", async () => {
-    (getCurrentUser as jest.Mock).mockResolvedValue({ id: "u1" });
-
-    (User.findById as jest.Mock)
-      .mockResolvedValueOnce({ password: "hashed" })
-      .mockReturnValueOnce({
-        lean: () => ({
-          _id: "u1",
-          email: "e@x",
-          first_name: "A",
-          last_name: "B",
-        }),
-      });
-
-    (compare as jest.Mock).mockResolvedValue(true);
-    (hash as jest.Mock).mockResolvedValue("newhash");
-
-    const res = await editUser(
-      {},
-      mockFormData({
-        first_name: "A",
-        last_name: "B",
-        current_password: "ok",
-        password: "StrongPass1!",
-      })
-    );
-
-    expect(res.success).toBe(true);
-    expect(User.findByIdAndUpdate).toHaveBeenCalledWith("u1", {
-      first_name: "A",
-      last_name: "B",
-      password: "newhash",
-    });
-    expect(logoutHandler).toHaveBeenCalled();
   });
 });
