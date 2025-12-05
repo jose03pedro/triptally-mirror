@@ -1,10 +1,10 @@
 import { JSX, useEffect, useState } from "react";
 import IconText from "@/app/components/ui/icon-text";
-import { ExpenseIcon } from "@/app/expenses/expenseIcon";
-import { deleteExpense } from "../actions/expense/deleteExpense";
-import { ActionBtn } from "../components/ui/actionBtn";
-import { Portal } from "../components/ui/portal";
-import { CreateExpenseModal } from "../components/trip/createExpenseModal";
+import { ExpenseIcon } from "@/app/components/expenses/expenseIcon";
+import { deleteExpense } from "../../actions/expense/deleteExpense";
+import { ActionBtn } from "../ui/actionBtn";
+import { Portal } from "../ui/portal";
+import { CreateExpenseModal } from "../trip/createExpenseModal";
 import { Currency } from "@/types/currency/types";
 import { formatMoney } from "@/lib/utils/helperFunctions";
 import { ExpenseWithConverted } from "@/types/expense/types";

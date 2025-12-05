@@ -8,14 +8,15 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { Currency } from "@/types/currency/types";
 import { ExpenseType, ExpenseWithConverted } from "@/types/expense/types";
+import {ExpenseCategory} from "@/types/expensecategory/types";
 
 interface ExpenseTabsProps {
   tripCurrency: Currency | undefined;
   expenses: Array<ExpenseWithConverted>;
-  currencies: Array<any>;
-  categories: Array<any>;
+  currencies: Currency[];
+  categories: ExpenseCategory[];
   setExpenses: React.Dispatch<React.SetStateAction<ExpenseWithConverted[]>>;
-  onExpensesUpdated?: (expense: any) => void;
+  onExpensesUpdated?: (expense: ExpenseWithConverted) => void;
 }
 
 export default function ExpenseTabs({

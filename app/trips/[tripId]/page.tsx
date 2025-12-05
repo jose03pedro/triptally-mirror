@@ -4,14 +4,15 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
-import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
-import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
+import {TripSection} from "@/app/components/trip/tripSection";
+import {ExpenseSection} from "@/app/components/expenses/expenseSection";
+import {WeatherSection} from "@/app/components/weather/weatherSection";
 
 export default function TripPage() {
   const params = useParams();
@@ -181,49 +182,19 @@ export default function TripPage() {
             {/* Overview area */}
             <TripOverview trip={trip} />
 
-            {/* Expenses dashboard */}
-            {showExpenses && (
-              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
-                <div className="mb-2">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                      Expenses
-                    </h2>
-                    <AddExpense
-                      tripId={tripId as string}
-                      userId={trip.owner._id as string}
-                      onExpenseCreated={(newExpense) => {
-                        setExpenses((prev) => {
-                          if (prev.some((e) => e._id === newExpense._id))
-                            return prev;
-                          return [...prev, newExpense];
-                        });
-                      }}
-                    />
-                  </div>
-                  <span className="text-[11px] text-slate-400">
-                    {expenses.length} item(s)
-                  </span>
-                </div>
+            {/* Weather dashboad */}
+            <WeatherSection trip={trip} />
 
-                <ExpenseTabs
-                  tripCurrency={trip.currency}
-                  expenses={expenses}
-                  setExpenses={setExpenses}
-                  currencies={currencies}
-                  categories={categories}
-                  onExpensesUpdated={(updatedExpense) => {
-                    setExpenses((prev) =>
-                      prev.some((e) => e._id === updatedExpense._id)
-                        ? prev.map((e) =>
-                          e._id === updatedExpense._id ? updatedExpense : e
-                        )
-                        : [...prev, updatedExpense]
-                    );
-                  }}
+            {/* Expenses dashboard */}
+            { showExpenses &&
+                <ExpenseSection
+                    trip={trip}
+                    expenses={expenses}
+                    setExpenses={setExpenses}
+                    currencies={currencies}
+                    categories={categories}
                 />
-              </div>
-            )}
+            }
           </section>
 
           {/* Side note for visitors / owners */}
