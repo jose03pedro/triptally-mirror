@@ -19,6 +19,11 @@ jest.mock("../../models/User", () => ({
   },
 }));
 
+jest.mock("../actions/login", () => ({
+  __esModule: true,
+  loginHandler: jest.fn(),
+}));
+
 describe("signup action", () => {
   const mockFormData = (data: Record<string, string>) =>
     ({
