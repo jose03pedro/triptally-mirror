@@ -92,8 +92,6 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-slate-50 pb-16">
         <div className="mx-auto max-w-6xl px-4">
           {/* HERO */}
           <section className="flex flex-col items-center text-center gap-4 mb-10 md:mb-14 fade-up">
@@ -142,7 +140,6 @@ export default function Home() {
             )}
           </section>
         </div>
-      </main>
     </>
   );
 }
