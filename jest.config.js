@@ -15,5 +15,7 @@ module.exports = {
     "^.+\\.jsx?$": "babel-jest", // use babel-jest only for JS files
     "^.+\\.tsx?$": "ts-jest", // use ts-jest for TS/TSX
   },
-  transformIgnorePatterns: ["/node_modules/(?!(bson|mongodb|mongoose|@mongodb-js)/)"],
+
+
+  transformIgnorePatterns: ["/node_modules/(?!(bson|mongodb|mongoose|@mongodb-js)/)",],
 };

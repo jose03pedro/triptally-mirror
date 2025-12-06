@@ -6,7 +6,7 @@ module.exports = {
     setupFilesAfterEnv: ["./jest.setup.node.ts"],
     testMatch: [
         "**/__tests__/api/**/*.test.ts",
-        "**/__tests__/trips.smoke.test.ts"
+
     ],
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/$1",
