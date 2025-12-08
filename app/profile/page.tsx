@@ -9,55 +9,48 @@ import Link from "next/link";
 import { Navbar } from "@/app/components/navigation/navbar";
 // import { getTravelerProfile } from "@/app/api/traveler/getTravelerProfile";
 import { TravelerCard } from "../components/traveler/TravelerCard";
-
-type City = { name: string; country?: string };
-type Trip = {
-  _id: string;
-  title: string;
-  startDate: string;
-  endDate?: string;
-  cities?: City[];
-  userId?: string;
-};
+import { Trip } from "@/types/trip/types";
+import {useUserStore} from "@/lib/store/userStore";
+import {Loading} from "@/app/components/ui/loading";
 
 export default function ProfilePage() {
-  const session = useAuth();
   const [upcoming, setUpcoming] = useState<Trip[]>([]);
-  const user = session?.user;
-  const [travelerProfile, setTravelerProfile] = useState<any>(null); // State for profile
+  const [travelerProfile, setTravelerProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const { user, updateUser } = useUserStore();
 
   useEffect(() => {
     async function loadData() {
-      if (!user) return;
-
-      // 1. Fetch Trips
       try {
-        const res = await fetch(`/api/trips?userId=${user.id}&upcoming=1`, {
+        if (!user) return;
+
+        // 1. Fetch Trips
+        const tripsRes = await fetch(`/api/trips?userId=${user._id}&upcoming=1`, {
           cache: "no-store",
         });
-        if (res.ok) {
-          const data = await res.json();
-          setUpcoming(data.items || []);
+        // 2. Fetch Traveler Profile
+        const travelerRes = await fetch(`/api/traveler`, { cache: "no-store" });
+
+        if (tripsRes.ok) {
+          const tripsData = await tripsRes.json();
+          setUpcoming(tripsData.items || []);
+        }
+        if (travelerRes.ok) {
+            const travelerData = await travelerRes.json();
+            setTravelerProfile(travelerData);
         }
       } catch (err) {
-        console.error("Failed to load upcoming trips:", err);
-      }
-
-      // 2. Fetch Traveler Profile
-      try {
-        const res = await fetch(`/api/traveler`, { cache: "no-store" });
-
-        if (res.ok) {
-          const data = await res.json();
-          setTravelerProfile(data);
-        }
-      } catch (err) {
-        console.error("Failed to load profile:", err);
+        console.error("Failed loading data:", err);
+      } finally {
+          setLoading(false);
       }
     }
 
     loadData();
   }, [user]);
+
+  if (loading) return <Loading />;
 
   if (!user) {
     return (
@@ -142,7 +135,7 @@ export default function ProfilePage() {
               <div className="mt-4 pt-3">
                 <TravelerCard
                   travelerProfile={travelerProfile}
-                  onProfileUpdate={setTravelerProfile} // <--- Pass the setter here
+                  onProfileUpdate={setTravelerProfile}
                 />
               </div>
             </div>
@@ -255,7 +248,7 @@ export default function ProfilePage() {
       </div>
 
       <CreateTripModal onClose={() => {}} />
-      <UserEditModal onClose={() => {}} />
+      <UserEditModal updateUser={updateUser} onClose={() => {}} />
     </div>
   );
 }

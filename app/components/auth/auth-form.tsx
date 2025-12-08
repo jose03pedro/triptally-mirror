@@ -1,11 +1,13 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { signup } from "../../actions/signup";
+import { signup } from "../../actions/auth/signup";
 import { useRouter } from "next/navigation";
-import { login } from "../../actions/login";
 import { AuthResponse } from "@/lib/definitions";
 import FieldErrors from "@/app/components/ui/fieldErrors";
+import Link from "next/link";
+import { login } from "@/app/actions/auth/login";
+import {useUserStore} from "@/lib/store/userStore";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -36,6 +38,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   useEffect(() => {
     if (state?.success && state?.token) {
       localStorage.setItem("token", state.token);
+      if (state.user) useUserStore.getState().setUser(state.user);
       router.push("/profile");
     }
   }, [state, router]);
@@ -143,13 +146,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
         )}
       </div>
 
-      <button
-        type="submit"
-        className="btn btn-primary w-100"
-        disabled={pending}
-      >
-        Continue
-      </button>
+        <button type="submit" className="btn btn-primary w-100" disabled={pending}>
+          {pending ? "Processing..." : mode === "login" ? "Login" : "Sign Up"}
+        </button>
+
+        {mode === "login" && (
+          <div className="text-center mt-3">
+            <Link href="/forgot-password" className="small text-decoration-none">
+              Forgot password?
+            </Link>
+          </div>
+        )}
     </form>
   );
 }

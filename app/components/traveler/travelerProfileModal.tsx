@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { addTravelerProfile } from "@/app/actions/addTravelerProfile";
+import { addTravelerProfile } from "@/app/actions/user/addTravelerProfile";
 import ResponsiveModal from "../ui/responsiveModal";
 import { ChipSelector } from "../ui/chipSelector";
 import { SuccessStep } from "./succesStep";

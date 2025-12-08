@@ -17,7 +17,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
         <Script
           src="https://accounts.google.com/gsi/client"
           strategy="afterInteractive"
@@ -26,9 +33,7 @@ export default function RootLayout({
       {/* Add top padding so fixed navbar does not overlap page content */}
       <body className={`antialiased`} style={{ paddingTop: "64px" }}>
         {children}
-        <Script
-          src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        />
+        <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" />
       </body>
     </html>
   );

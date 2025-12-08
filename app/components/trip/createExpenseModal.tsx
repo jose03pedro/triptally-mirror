@@ -1,9 +1,9 @@
 import FormModal from "@/app/components/ui/formModal";
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { createExpense } from "@/app/actions/createExpense";
+import { createExpense } from "@/app/actions/expense/createExpense";
 import { Loading } from "@/app/components/ui/loading";
 import FieldErrors from "@/app/components/ui/fieldErrors";
-import { editExpense } from "@/app/actions/editExpense";
+import { editExpense } from "@/app/actions/expense/editExpense";
 
 declare const bootstrap: any;
 
@@ -115,8 +115,6 @@ export function CreateExpenseModal({
       modal?.hide();
 
       setFormValues(initialFormValues);
-
-      console.log(state);
 
       if (state.expense && onExpensesUpdated && !isUpdated) {
         onExpensesUpdated(state.expense);

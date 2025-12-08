@@ -1,0 +1,56 @@
+
+> triptally@0.1.0 test:coverage
+> jest --coverage --projects jest.config.js jest.config.node.js
+
+-----------------------------------|---------|----------|---------|---------|-------------------
+File                               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------------|---------|----------|---------|---------|-------------------
+All files                          |   77.58 |    59.53 |   56.52 |   78.75 |                   
+ app/actions/auth                  |   81.51 |     62.5 |   57.14 |   81.51 |                   
+  forgotPassword.ts                |     100 |      100 |     100 |     100 |                   
+  login.ts                         |   41.37 |    18.75 |   33.33 |   41.37 | 15-93             
+  logout.ts                        |      40 |      100 |       0 |      40 | 6-8               
+  resetPassword.ts                 |     100 |       90 |     100 |     100 | 44                
+  signup.ts                        |   92.59 |    66.66 |     100 |   92.59 | 66-67             
+ app/actions/mail                  |     100 |      100 |     100 |     100 |                   
+  sendEmail.ts                     |     100 |      100 |     100 |     100 |                   
+ app/api/cities                    |   41.66 |    21.42 |      50 |   45.45 |                   
+  route.ts                         |   41.66 |    21.42 |      50 |   45.45 | 37-72             
+ app/api/currencies/exchange-rates |     100 |       50 |     100 |     100 |                   
+  route.ts                         |     100 |       50 |     100 |     100 | 7-8               
+ app/api/trips/[id]                |   94.73 |     87.5 |     100 |   94.73 |                   
+  route.ts                         |   94.73 |     87.5 |     100 |   94.73 | 17                
+ app/api/trips/[id]/expenses       |   75.86 |       68 |      50 |   78.57 |                   
+  route.ts                         |   75.86 |       68 |      50 |   78.57 | 19,50-63          
+ app/components/auth               |      65 |       35 |      60 |   63.15 |                   
+  auth.tsx                         |     100 |      100 |     100 |     100 |                   
+  external-auth-btn.tsx            |   56.25 |    27.77 |      50 |   53.33 | 14-27,56          
+ app/components/navigation         |    62.5 |     37.5 |   44.44 |   63.63 |                   
+  nav-dropdown.tsx                 |      50 |      100 |       0 |      50 | 16-25             
+  navbar.tsx                       |   66.66 |     37.5 |   66.66 |   69.23 | 24-36             
+  navbarButton.tsx                 |      75 |      100 |       0 |      75 | 11                
+ app/components/ui                 |      50 |        0 |       0 |      50 |                   
+  icon-text.tsx                    |      50 |        0 |       0 |      50 | 16                
+ app/components/user               |    62.5 |        0 |       0 |    62.5 |                   
+  userIcon.tsx                     |      60 |        0 |       0 |      60 | 13-15             
+  userNameImage.tsx                |   66.66 |      100 |       0 |   66.66 | 8                 
+ app/forgot-password               |     100 |      100 |     100 |     100 |                   
+  page.tsx                         |     100 |      100 |     100 |     100 |                   
+ app/models                        |   38.88 |    33.33 |       0 |   41.17 |                   
+  Trip.ts                          |   38.88 |    33.33 |       0 |   41.17 | 61-78             
+ app/notification                  |      50 |      100 |       0 |      50 |                   
+  unreadIndicator.tsx              |      50 |      100 |       0 |      50 | 6                 
+ app/reset-password                |   97.36 |    96.77 |     100 |   97.22 |                   
+  page.tsx                         |   97.36 |    96.77 |     100 |   97.22 | 46                
+ lib                               |   47.05 |        0 |       0 |      50 |                   
+  definitions.ts                   |   47.05 |        0 |       0 |      50 | 38-41,59-66,80-87 
+ lib/auth                          |     100 |      100 |     100 |     100 |                   
+  getCurrentUser.ts                |     100 |      100 |     100 |     100 |                   
+ lib/mail                          |   66.66 |      100 |       0 |   66.66 |                   
+  mail-template.ts                 |   66.66 |      100 |       0 |   66.66 | 2                 
+ lib/store                         |   73.33 |       25 |      60 |      75 |                   
+  notificationStore.ts             |   42.85 |        0 |      20 |      40 | 13-17             
+  userStore.ts                     |     100 |       50 |     100 |     100 | 29                
+ lib/utils                         |   94.11 |     92.3 |     100 |     100 |                   
+  helperFunctions.ts               |   94.11 |     92.3 |     100 |     100 | 26-41             
+-----------------------------------|---------|----------|---------|---------|-------------------

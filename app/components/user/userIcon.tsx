@@ -1,19 +1,20 @@
+"use client"
+
 import Image from "next/image";
+import { RoundIcon } from "../ui/roundIcon";
+import {useUserStore} from "@/lib/store/userStore";
+import Avatar from "@mui/material/Avatar";
 
 type UserIconProps = {
-  url?: string;
   size: number;
 };
 
-export function UserIcon({ url, size }: UserIconProps) {
-  const src = url ? url : "/default-profile.png";
+export function UserIcon({ size }: UserIconProps) {
+  const { user } = useUserStore();
 
-  return (
-    <div
-      className="user-icon rounded-circle overflow-hidden"
-      style={{ width: size, height: size }}
-    >
-      <Image src={src} alt="Profile" width={size} height={size} />
-    </div>
-  );
+  return <Avatar
+      alt={`${user?.first_name} ${user?.last_name} avatar`}
+      src={user?.avatar}
+      sx={{ height: size, width: size }}
+  />;
 }

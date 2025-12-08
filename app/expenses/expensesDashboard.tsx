@@ -1,42 +1,63 @@
 import { PieChart } from "@mui/x-charts/PieChart";
-import { ExpenseType } from "../trips/[tripId]/page";
 import { ExpenseIcon } from "./expenseIcon";
-import { formatMoney } from "./singleExpense";
+import { formatMoney } from "@/lib/utils/helperFunctions";
+import { ExpenseWithConverted } from "@/types/expense/types";
+import { Currency } from "@/types/currency/types";
 
 interface ExpensesDashboardProps {
-  expenses: Array<ExpenseType>;
+  tripCurrency: Currency | undefined;
+  expenses: Array<ExpenseWithConverted>;
 }
 
-export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
-  const groupedData = Object.values(
-    expenses.reduce((acc, expense) => {
-      const categoryId = expense?.category?._id || "undefined";
-      const categoryLabel = expense?.category?.name || "undefined";
-      const categoryColor = expense?.category?.color || "#888888";
-      const expenseCurrency = expense?.currency || { symbol: "" };
+interface CategorySummary {
+  id: string;
+  value: number;
+  label: string;
+  color: string;
+  transactions: number;
+}
 
-      if (!acc[categoryId] || acc[categoryId] === undefined) {
+export function ExpensesDashboard({
+  tripCurrency,
+  expenses,
+}: ExpensesDashboardProps) {
+  // Group expenses by category
+  const groupedData: CategorySummary[] = Object.values(
+    expenses.reduce((acc, expense) => {
+      const categoryId = expense?.category?._id ?? "undefined";
+      const categoryLabel = expense?.category?.name ?? "Undefined";
+      const categoryColor = expense?.category?.color ?? "#888888";
+
+      if (!acc[categoryId]) {
         acc[categoryId] = {
           id: categoryId,
           value: 0,
           label: categoryLabel,
           color: categoryColor,
           transactions: 0,
-          currency: "",
         };
       }
 
-      acc[categoryId].value += Number(expense.value);
+      acc[categoryId].value += Number(expense.convertedValue ?? 0);
       acc[categoryId].transactions += 1;
-      acc[categoryId].currency = expenseCurrency.symbol;
+
       return acc;
-    }, {} as Record<string, { id: string; value: number; label: string; color: string; transactions: number; currency: string }>)
+    }, {} as Record<string, CategorySummary>)
   );
 
   const total = groupedData.reduce((sum, cat) => sum + cat.value, 0);
 
+  if (groupedData.length === 0) {
+    return (
+      <div className="text-muted">
+        Start adding your expenses to see your spending overview.
+      </div>
+    );
+  }
+
   return (
     <div className="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-5">
+      {/* Pie Chart */}
       <div className="d-flex justify-content-center">
         <PieChart
           series={[
@@ -44,7 +65,7 @@ export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
               data: groupedData,
               innerRadius: 80,
               valueFormatter: (item) =>
-                `${((item.value / total) * 100).toFixed(0)}%`,
+                `${((item.value / total) * 100)?.toFixed(0)}%`,
             },
           ]}
           width={250}
@@ -52,6 +73,7 @@ export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
         />
       </div>
 
+      {/* Category list */}
       <section
         className="d-flex flex-column gap-3 justify-content-between w-100"
         style={{ maxWidth: "500px" }}
@@ -72,7 +94,7 @@ export function ExpensesDashboard({ expenses }: ExpensesDashboardProps) {
               </div>
             </div>
             <p className="fs-6 mb-0">
-              {formatMoney(category.value)} {category.currency}
+              {formatMoney(category.value)} {tripCurrency?.symbol}
             </p>
           </article>
         ))}
