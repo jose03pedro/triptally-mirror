@@ -7,7 +7,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "target": "es5",
+    "target": "es2015",
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -31,9 +31,19 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "__tests__",
+    "__mocks__",
+    "jest.config.js",
+    "jest.setup.ts",
+    "server.ts",
+    "handlers.ts"
   ]
 }

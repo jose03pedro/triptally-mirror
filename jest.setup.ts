@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import "whatwg-fetch";
 
 // MSW setup
-import { server } from "./__tests__/mocks/server";
+import { server } from "./server";
 
 Object.defineProperty(window, "localStorage", {
   value: (() => {
