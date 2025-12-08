@@ -1,39 +1,17 @@
-import { TextEncoder, TextDecoder } from 'util';
-import { ReadableStream, TransformStream } from 'node:stream/web';
+import "@testing-library/jest-dom";
+import "whatwg-fetch";
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder as any;
-
-Object.assign(global, {
-  ReadableStream,
-  TransformStream,
-});
-
-import '@testing-library/jest-dom';
-import 'whatwg-fetch';
-
-import { server } from './__tests__/mocks/server';
-
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+// MSW setup
+import { server } from "./__tests__/mocks/server";
 
 Object.defineProperty(window, "localStorage", {
   value: (() => {
     let store: Record<string, string> = {};
     return {
-      getItem(key: string) {
-        return store[key] || null;
-      },
-      setItem(key: string, value: string) {
-        store[key] = value.toString();
-      },
-      removeItem(key: string) {
-        delete store[key];
-      },
-      clear() {
-        store = {};
-      },
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => (store[key] = value.toString()),
+      removeItem: (key: string) => delete store[key],
+      clear: () => (store = {}),
     };
   })(),
   writable: true,
@@ -41,3 +19,8 @@ Object.defineProperty(window, "localStorage", {
 
 jest.mock("jwt-decode", () => () => ({ exp: Date.now() / 1000 + 1000 }));
 
+beforeAll(() => server.listen());
+
+afterEach(() => server.resetHandlers());
+
+afterAll(() => server.close());

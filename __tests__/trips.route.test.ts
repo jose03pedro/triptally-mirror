@@ -44,8 +44,8 @@ describe('GET /api/trips', () => {
 
   it('returns a paginated list of trips', async () => {
     const mockTrips = [
-      { _id: '1', title: 'Trip to Paris', createdByName: 'Unknown traveler' },
-      { _id: '2', title: 'Trip to London', createdByName: 'Unknown traveler' },
+      { _id: '1', title: 'Trip to Paris' },
+      { _id: '2', title: 'Trip to London' },
     ];
     mockTripCountDocuments.mockResolvedValue(20); // Total trips in DB
 

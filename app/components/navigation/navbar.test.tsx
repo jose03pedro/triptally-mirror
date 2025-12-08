@@ -1,5 +1,8 @@
+/** @jest-environment jsdom */
+
 import { render, screen } from "@testing-library/react";
 import { Navbar } from "./navbar";
+import { useAuth } from "@/lib/hook/useAuth";
 
 // Mock do hook de auth para não correr efeitos nem mexer em localStorage
 jest.mock("@/lib/hook/useAuth", () => ({

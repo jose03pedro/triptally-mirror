@@ -26,24 +26,19 @@
     "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.8",
     "dayjs": "^1.11.19",
-    "dns": "^0.2.2",
-    "fs": "^0.0.1-security",
     "googleapis": "^164.1.0",
-    "icons-material": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "material-symbols": "^0.40.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.2",
-    "net": "^1.0.2",
-    "next": "16.0.0",
+    "next": "^16.0.7",
     "nodemailer": "^7.0.11",
     "react": "19.2.0",
     "react-aria-components": "^1.13.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "19.2.0",
     "react-loader-spinner": "^8.0.0",
-    "tls": "^0.0.1",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
@@ -72,6 +67,8 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "undici": "^6.21.0",
+    "whatwg-fetch": "^3.6.20"
   }
 }

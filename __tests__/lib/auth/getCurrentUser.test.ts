@@ -43,6 +43,16 @@ const jwtMock = jest.requireMock("jsonwebtoken");
 const UserMock = jest.requireMock("@/app/models/User").default;
 
 describe("getCurrentUser", () => {
+  // Suppress console.error for tests that are expected to fail
+  const originalConsoleError = console.error;
+  beforeAll(() => {
+    console.error = jest.fn();
+  });
+
+  afterAll(() => {
+    console.error = originalConsoleError;
+  });
+
   beforeEach(() => {
     headersMock.__clearCookies();
     jest.clearAllMocks();
