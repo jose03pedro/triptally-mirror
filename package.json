@@ -39,6 +39,7 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "19.2.0",
     "react-loader-spinner": "^8.0.0",
+    "request": "^2.88.2",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
@@ -63,6 +64,7 @@
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
     "msw": "^2.11.6",
+    "node-fetch": "^3.3.2",
     "sass": "^1.93.2",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.6",

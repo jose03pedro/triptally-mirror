@@ -17,6 +17,11 @@ Object.defineProperty(window, "localStorage", {
   writable: true,
 });
 
+declare global {
+  // eslint-disable-next-line no-var
+  var Request: typeof Request;
+}
+
 jest.mock("jwt-decode", () => () => ({ exp: Date.now() / 1000 + 1000 }));
 
 beforeAll(() => server.listen());
