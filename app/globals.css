@@ -169,3 +169,8 @@ html {
   width: 56px;
   height: 56px;
 }
+
+footer a:hover {
+    text-decoration: underline !important;
+    color: #6c757d;
+}
