@@ -24,6 +24,13 @@ export async function GET(
 
     const trip = await Trip.findById(id).populate("currency");
 
+    if (!trip) {
+      return NextResponse.json(
+        { error: "Trip not found" },
+        { status: 404 }
+      );
+    }
+
     const currentUser = await getCurrentUser();
 
     const isOwner =

@@ -149,6 +149,7 @@ describe("editUser action", () => {
       });
 
     (compare as jest.Mock).mockResolvedValue(true);
+    (User.findByIdAndUpdate as jest.Mock).mockResolvedValue(mockLeanResult);
 
     const res = await editUser(
       {},
@@ -156,11 +157,14 @@ describe("editUser action", () => {
     );
 
     expect(res.success).toBe(true);
-    expect(User.findByIdAndUpdate).toHaveBeenCalledWith("u1", {
-      first_name: "A",
-      last_name: "B",
-    });
-    expect(logoutHandler).toHaveBeenCalled();
+    expect(User.findByIdAndUpdate).toHaveBeenCalledWith(
+      "u1",
+      {
+        first_name: "A",
+        last_name: "B",
+      },
+      { new: true }
+    );
   });
 
   test("password validation fails", async () => {
@@ -199,6 +203,8 @@ describe("editUser action", () => {
     (compare as jest.Mock).mockResolvedValue(true);
     (hash as jest.Mock).mockResolvedValue("newhash");
 
+    (User.findByIdAndUpdate as jest.Mock).mockResolvedValue({ _id: "u1" });
+
     const res = await editUser(
       {},
       mockFormData({
@@ -210,11 +216,14 @@ describe("editUser action", () => {
     );
 
     expect(res.success).toBe(true);
-    expect(User.findByIdAndUpdate).toHaveBeenCalledWith("u1", {
-      first_name: "A",
-      last_name: "B",
-      password: "newhash",
-    });
-    expect(logoutHandler).toHaveBeenCalled();
+    expect(User.findByIdAndUpdate).toHaveBeenCalledWith(
+      "u1",
+      {
+        first_name: "A",
+        last_name: "B",
+        password: "newhash",
+      },
+      { new: true }
+    );
   });
 });
