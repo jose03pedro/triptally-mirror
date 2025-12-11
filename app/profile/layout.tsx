@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar } from "@/app/components/navigation/navbar";
 
 export const metadata = {
-  title: "Profile",
+  title: "User Profile",
 };
 
 export default function ProfileLayout({
@@ -16,9 +16,8 @@ export default function ProfileLayout({
       <main
         style={{
           maxWidth: "1400px",
-          margin: "auto",
-          marginTop: "7rem",
-        }}
+          margin: "auto"
+      }}
         className="container position-relative"
       >
         {children}

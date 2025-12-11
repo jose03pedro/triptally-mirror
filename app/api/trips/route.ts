@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
+import {User} from "@/types/user/types";
 
 type StatusFilter = "all" | "upcoming" | "past" | "ongoing";
 
@@ -120,14 +121,14 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const trips = await Trip.find(query)
-      .populate("user", "first_name last_name")
+      .populate("user", "first_name last_name avatar")
       .sort(sort)
       .skip(skip)
       .limit(limit);
 
     const items = trips.map((t) => {
       const anyTrip: any = t;
-      const u: any = anyTrip.user;
+      const owner: User = anyTrip.user;
 
       return {
         _id: anyTrip._id,
@@ -138,7 +139,7 @@ export async function GET(req: NextRequest) {
         isPublic: anyTrip.isPublic,
         coverImage: anyTrip.coverImage,
         privacy: anyTrip.privacy,
-        owner: anyTrip.user,
+        owner: owner,
       };
     });
 

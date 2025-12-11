@@ -1,3 +1,5 @@
+import Icon from "@/app/components/ui/icon";
+
 type IconTextProps = {
   icon: string;
   text: string;
@@ -15,16 +17,8 @@ export default function IconText({
 }: IconTextProps) {
   return (
     <div className="d-flex gap-1 align-items-center">
-      <span
-        className={
-          type === "outlined"
-            ? `material-symbols-outlined md-dark`
-            : `material-icons md-dark `
-        }
-        style={{ fontSize: size, color: color }}
-      >
-        {icon}
-      </span>
+
+      <Icon icon={icon} size={size} color={color} type={type} />
       <span style={{ fontSize: size / 1.3, color: color }}>{text} </span>
     </div>
   );

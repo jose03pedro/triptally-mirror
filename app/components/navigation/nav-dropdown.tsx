@@ -37,10 +37,10 @@ export function NavDropdown({ firstName, lastName }: NavDropdownProps) {
         </div>
         <div className="dropdown-menu w-100" aria-labelledby="dropdownNavbar">
           <Link className="dropdown-item" href="/profile">
-            <IconText icon={"person"} text={"Profile"} />
+            <IconText icon="person" text="Profile" type="outlined" />
           </Link>
           <Link className="dropdown-item" href="/trips">
-            <IconText icon={"travel"} type={"outlined"} text={"My Trips"} />
+            <IconText icon="trip" text="My Trips" type="outlined" />
           </Link>
           <div className="dropdown-divider"></div>
           <button className="dropdown-item" onClick={handleLogout}>
