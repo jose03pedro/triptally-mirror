@@ -1,13 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import CreateTripModal from "@/app/components/trip/createTripModal";
 import { Navbar } from "@/app/components/navigation/navbar";
-import { Loading } from "@/app/components/ui/loading";
 import { useAuth } from "@/lib/hook/useAuth";
 import { useRouter } from "next/navigation";
-import TripCard from "../components/trip/tripCard";
 import { Trip, TripsResponse } from "@/types/trip/types";
 import TripsGrid from "../components/trip/tripsGrid";
 

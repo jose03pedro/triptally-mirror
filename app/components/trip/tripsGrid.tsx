@@ -36,7 +36,7 @@ export default function TripsGrid({ trips, onRemovedTrip }: TripsGridProps) {
   return (
     <>
       <div className="row g-3 mb-3">
-        {trips.map((t) => (
+        {trips.map((t : Trip) => (
           <div key={t._id} className="col-12 col-md-6 col-lg-4">
             <TripCard
               loggedUserId={userId}

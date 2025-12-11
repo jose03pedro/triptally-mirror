@@ -3,19 +3,17 @@
 import { TravelerProfileButton } from "./travelerButton";
 
 interface TravelerCardProps {
+  isLoggedUser: boolean;
   travelerProfile: any;
   onProfileUpdate: (data: any) => void;
 }
 
-export function TravelerCard({
-  travelerProfile,
-  onProfileUpdate,
-}: TravelerCardProps) {
+export function TravelerCard({isLoggedUser, travelerProfile, onProfileUpdate}: TravelerCardProps) {
   if (!travelerProfile) {
     return (
       <div className="text-center">
         <h5 className="text-muted mb-3">
-          You haven't created a traveler profile yet.
+          A traveler profile hasn't been created yet.
         </h5>
         <p className="text-secondary small mb-4">
           Create a profile to get personalized trip recommendations.

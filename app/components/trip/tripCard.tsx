@@ -4,6 +4,7 @@ import { Trip } from "@/types/trip/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
+import {UserIcon} from "@/app/components/user/userIcon";
 
 interface TripCardProps {
   loggedUserId?: string;

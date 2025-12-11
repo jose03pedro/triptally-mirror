@@ -12,6 +12,7 @@ import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
+import user from "@/app/models/User";
 
 export default function TripPage() {
   const params = useParams();
@@ -138,12 +139,12 @@ export default function TripPage() {
                     .join(" · ") || "No cities added yet"}
                 </p>
               )}
-              <p className="text-[11px] text-slate-400 mt-1">
+              <Link className="text-[11px] text-slate-400 mt-1" href={"/profile/" + trip.owner._id}>
                 Created by{" "}
                 <strong className="font-medium text-slate-600">
                   {creatorName}
                 </strong>
-              </p>
+              </Link>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">

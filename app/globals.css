@@ -173,4 +173,5 @@ html {
 footer a:hover {
     text-decoration: underline !important;
     color: #6c757d;
+    cursor: pointer;
 }
