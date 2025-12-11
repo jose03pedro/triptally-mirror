@@ -36,7 +36,7 @@ export function TravelerCard({isLoggedUser, travelerProfile, onProfileUpdate}: T
         <div>
           <h5 className="mb-1 fw-bold text-primary">Traveler Profile</h5>
           <p className="text-muted small mb-0">
-            Your preferences and travel style
+              Preferences and travel style
           </p>
         </div>
       </div>
@@ -201,13 +201,15 @@ export function TravelerCard({isLoggedUser, travelerProfile, onProfileUpdate}: T
           </div>
         )}
       </div>
-      <div className="d-flex justify-content-center">
-        <TravelerProfileButton
-          label="Edit Traveler Profile"
-          initialData={travelerProfile}
-          onProfileUpdate={onProfileUpdate}
-        />
-      </div>
+      {isLoggedUser &&
+          <div className="d-flex justify-content-center">
+            <TravelerProfileButton
+              label="Edit Traveler Profile"
+              initialData={travelerProfile}
+              onProfileUpdate={onProfileUpdate}
+            />
+          </div>
+      }
     </div>
   );
 }

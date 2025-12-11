@@ -106,13 +106,15 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                             >
                                 <IconText icon="trip" text="View all trips" size={18} type="outlined" />
                             </Link>
-                            <button
-                                className="btn btn-primary btn-sm d-flex align-items-center gap-2"
-                                data-bs-toggle="modal"
-                                data-bs-target="#createTripModal"
-                            >
-                                <IconText icon="add" text="New Trip" size={18} color="#fff"/>
-                            </button>
+                            {isLoggedUser &&
+                                <button
+                                    className="btn btn-primary btn-sm d-flex align-items-center gap-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#createTripModal"
+                                >
+                                    <IconText icon="add" text="New trip" size={18} color="#fff"/>
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -125,7 +127,7 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                     <div className="card border-0 shadow-sm mb-3 fade-up fade-up-delay-1">
                         <div className="card-body">
                             {/* Existing user card inside a cleaner container */}
-                            <UserCard firstName={user.first_name} lastName={user.last_name} />
+                            <UserCard isLoggedUser={isLoggedUser} user={user} />
 
                             <div className="mt-4 pt-3">
                                 <TravelerCard
@@ -141,20 +143,20 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                         <div className="card-body">
                             <h5 className="card-title mb-3 fw-bold">Quick Actions</h5>
                             <div className="d-grid gap-2">
-                                <button
-                                    className="btn btn-primary d-flex align-items-center justify-content-center gap-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#createTripModal"
-                                >
-                                    <i className="bi bi-plus-circle" />
-                                    Create new trip
-                                </button>
+                                {isLoggedUser &&
+                                        <button
+                                        className="btn btn-primary d-flex align-items-center justify-content-center gap-2"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#createTripModal"
+                                    >
+                                        <IconText icon="add" text="Create new trip" color="#fff"/>
+                                    </button>
+                                }
                                 <Link
                                     href="/trips"
                                     className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2"
                                 >
-                                    <i className="bi bi-geo-alt" />
-                                    See all trips
+                                    <IconText icon="trip" text="View all trips" type="outlined" />
                                 </Link>
                             </div>
                         </div>
