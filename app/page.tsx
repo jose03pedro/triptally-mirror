@@ -118,7 +118,7 @@ export default function Home() {
               </h2>
             </div>
 
-            {loading && <Loading />}
+            {loading ? <Loading /> : ""}
 
             {!loading && trips.length === 0 && (
               <p className="text-xs md:text-sm text-slate-500">
