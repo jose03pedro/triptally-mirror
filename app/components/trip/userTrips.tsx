@@ -6,6 +6,11 @@ import CreateTripModal from "@/app/components/trip/createTripModal";
 import { Navbar } from "@/app/components/navigation/navbar";
 import { Trip, TripsResponse } from "@/types/trip/types";
 import TripsGrid from "@/app/components/trip/tripsGrid";
+import {useUserStore} from "@/lib/store/userStore";
+import Icon from "@/app/components/ui/icon";
+import {color} from "d3-color";
+import IconText from "@/app/components/ui/icon-text";
+import {Loading} from "@/app/components/ui/loading";
 
 type StatusFilter = "all" | "upcoming" | "past" | "ongoing";
 type Tab = "ongoing" | "upcoming" | "past";
@@ -15,6 +20,9 @@ interface UserTripsProps {
 }
 
 export default function UserTrips({ user }: UserTripsProps) {
+    const loggedUser = useUserStore((state) => state.user);
+    const isLoggedUser = loggedUser?._id === user?._id;
+
     // Form input values (inside filter panel)
     const [qInput, setQInput] = useState("");
     const [startDateInput, setStartDateInput] = useState("");
@@ -187,9 +195,11 @@ export default function UserTrips({ user }: UserTripsProps) {
             <div className="rounded-4 p-4 mb-4 shadow-sm bg-light border fade-up">
                 <div className="d-flex justify-content-between align-items-center">
                     <div>
-                        <h2 className="fw-bold mb-1">My Trips</h2>
+                        <h2 className="fw-bold mb-1">
+                            {isLoggedUser ? "My" : user.first_name + " " + user.last_name + "'s"} Trips
+                        </h2>
                         <div className="text-muted">
-                            Plan, track & explore your adventures.
+                            Plan, explore & track adventures.
                         </div>
                     </div>
                     <div className="d-flex gap-2 align-items-center">
@@ -198,18 +208,18 @@ export default function UserTrips({ user }: UserTripsProps) {
                             className="btn btn-outline-secondary"
                             onClick={() => setFiltersOpen((v) => !v)}
                         >
-                            <i className="bi bi-funnel me-1" />
-                            Filters
+                            <IconText icon="filter_alt" text="Filters" size={18} type="outlined" />
                         </button>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#createTripModal"
-                        >
-                            <i className="bi bi-plus-lg me-1" />
-                            Create Trip
-                        </button>
+                        {isLoggedUser &&
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createTripModal"
+                            >
+                                <IconText icon="add" text="New trip" size={18} color="#fff"/>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -219,7 +229,7 @@ export default function UserTrips({ user }: UserTripsProps) {
                 <form onSubmit={onSearch}>
                     <div className="input-group">
             <span className="input-group-text bg-white border-end-0">
-              <i className="bi bi-search" />
+              <Icon icon="search" color="#6c757d" />
             </span>
                         <input
                             className="form-control border-start-0"
@@ -312,7 +322,7 @@ export default function UserTrips({ user }: UserTripsProps) {
                 </div>
             )}
 
-            {loading && <p>Loading trips...</p>}
+            {loading && <Loading />}
 
             {!loading && items.length === 0 && (
                 <p className="text-muted">No trips found with these filters.</p>

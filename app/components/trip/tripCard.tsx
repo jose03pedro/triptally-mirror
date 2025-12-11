@@ -161,9 +161,9 @@ export default function TripCard({
                 </strong>
             </Link>
           </span>
-          {trip.isPublic && (
+          {!trip.isPublic && (
             <span className="badge bg-outline-secondary text-muted border">
-              Public
+              Private
             </span>
           )}
         </div>
