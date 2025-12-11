@@ -2,6 +2,7 @@ import connectionToDB from "@/lib/mongoose";
 import {NextResponse} from "next/server";
 import { User as UserType } from "@/types/user/types";
 import User from "@/app/models/User";
+import {TravelerProfile} from "@/app/models/TravelerProfile";
 
 export async function GET(
     request: Request,
@@ -30,7 +31,9 @@ export async function GET(
             );
         }
 
-        return NextResponse.json({ user }, { status: 200 });
+        const travelerProfile = await TravelerProfile.findById(id).lean();
+
+        return NextResponse.json({ user, travelerProfile }, { status: 200 });
     } catch (e) {
         console.error(e);
         return NextResponse.json(

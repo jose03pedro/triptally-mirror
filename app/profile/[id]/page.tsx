@@ -10,6 +10,7 @@ export default function OtherProfilePage() {
     const id = params?.id as string | undefined;
 
     const [user, setUser] = useState<User | null>(null);
+    const [travelerProfile, setTravelerProfile] = useState<any | null>(null);
 
     useEffect(() => {
         async function loadData() {
@@ -21,6 +22,7 @@ export default function OtherProfilePage() {
 
                 const userData = await userRes.json();
                 setUser(userData.user);
+                setTravelerProfile(userData.travelerProfile);
             }
             catch (e) {
                 console.error("Failed loading data:", e);
@@ -29,5 +31,5 @@ export default function OtherProfilePage() {
         loadData();
     }, [id]);
 
-    return user && <UserProfile user={user} />;
+    return user && <UserProfile user={user} travelerProfile={travelerProfile} />;
 }

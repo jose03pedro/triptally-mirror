@@ -12,15 +12,16 @@ import IconText from "@/app/components/ui/icon-text";
 
 interface UserProfileProps {
     user: User;
+    travelerProfile: any;
     updateUser?: (user: User) => void;
+    setTravelerProfile?: (travelerProfile: any) => void;
 }
 
-export default function UserProfile({ user, updateUser }: UserProfileProps) {
+export default function UserProfile({ user, travelerProfile, updateUser, setTravelerProfile }: UserProfileProps) {
     const loggedUser = useUserStore().user;
     const isLoggedUser = user._id === loggedUser?._id;
 
     const [upcoming, setUpcoming] = useState<Trip[]>([]);
-    const [travelerProfile, setTravelerProfile] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -32,16 +33,10 @@ export default function UserProfile({ user, updateUser }: UserProfileProps) {
                 const tripsRes = await fetch(`/api/trips?userId=${user._id}&upcoming=1`, {
                     cache: "no-store",
                 });
-                // 2. Fetch Traveler Profile
-                const travelerRes = await fetch(`/api/traveler`, { cache: "no-store" });
 
                 if (tripsRes.ok) {
                     const tripsData = await tripsRes.json();
                     setUpcoming(tripsData.items || []);
-                }
-                if (travelerRes.ok) {
-                    const travelerData = await travelerRes.json();
-                    setTravelerProfile(travelerData);
                 }
             } catch (err) {
                 console.error("Failed loading data:", err);
