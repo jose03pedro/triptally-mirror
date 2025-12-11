@@ -19,7 +19,7 @@ export default function AboutUsPage() {
                         If you are here, you probably love traveling — the discovery, the food, the spontaneity,
                         the feeling of landing somewhere new.
                     </p>
-                    <p className="text-secondary">
+                    <p className="text-primary">
                         <strong>But there’s another side of travel that isn’t quite as glamorous...</strong>
                     </p>
                 </div>
@@ -92,9 +92,10 @@ export default function AboutUsPage() {
             </div>
 
             <div className="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3 my-5">
-                <p className="text-secondary align-items-center text-center fs-5" style={{ maxWidth: "35rem" }}>
+                <p className="text-primary align-items-center text-center fs-5" style={{ maxWidth: "35rem" }}>
                     <strong>
-                        TripTally is for people who want to spend less time managing logistics and more time enjoying the journey.
+                        TripTally is for people who want to spend less time managing logistics and{" "}
+                        more time enjoying the journey.
                     </strong>
                 </p>
             </div>
