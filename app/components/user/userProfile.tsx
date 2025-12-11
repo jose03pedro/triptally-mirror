@@ -101,7 +101,7 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                         </div>
                         <div className="d-flex gap-2">
                             <Link
-                                href="/trips"
+                                href={`/profile/${user._id}/trips`}
                                 className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
                             >
                                 <IconText icon="trip" text="View all trips" size={18} type="outlined" />
@@ -153,7 +153,7 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                                     </button>
                                 }
                                 <Link
-                                    href="/trips"
+                                    href={`/profile/${user._id}/trips`}
                                     className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2"
                                 >
                                     <IconText icon="trip" text="View all trips" type="outlined" />

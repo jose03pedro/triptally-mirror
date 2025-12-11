@@ -139,12 +139,14 @@ export default function TripPage() {
                     .join(" · ") || "No cities added yet"}
                 </p>
               )}
-              <Link className="text-[11px] text-slate-400 mt-1" href={"/profile/" + trip.owner._id}>
+              <span className="text-[11px] text-slate-400 mt-1">
                 Created by{" "}
-                <strong className="font-medium text-slate-600">
-                  {creatorName}
-                </strong>
-              </Link>
+                <Link href={"/profile/" + trip.owner._id}>
+                    <strong className="font-medium text-slate-600">
+                      {creatorName}
+                    </strong>
+                </Link>
+              </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
