@@ -8,6 +8,7 @@ import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
 import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
+import FlightSearch from "@/app/components/trip/flightSearch";
 import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
@@ -224,6 +225,15 @@ export default function TripPage() {
                 />
               </div>
             )}
+
+            {/* Flights search (display-only for now) */}
+            <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up">
+              <div className="mb-2">
+                <h2 className="text-sm md:text-base font-semibold text-slate-900">Flights</h2>
+                <span className="text-[11px] text-slate-400">Search a flight by number and date</span>
+              </div>
+              {tripId && <FlightSearch tripId={tripId} />}
+            </div>
           </section>
 
           {/* Side note for visitors / owners */}

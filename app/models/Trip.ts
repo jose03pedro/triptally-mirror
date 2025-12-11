@@ -47,6 +47,11 @@ const tripSchema = new mongoose.Schema({
     ref: "Currency",
     required: true,
   },
+  //! Flights associated with the trip
+  flights: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Flight"
+   }],
 
   participants: [participantSchema],
   // Fine‑grained privacy controls for what gets exposed publicly
