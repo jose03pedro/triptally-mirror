@@ -1,7 +1,8 @@
-import { WeatherDisplay } from "@/app/components/weather/weatherDisplay";
+import {WeatherDisplayData} from "@/types/weather/types";
+import {WeatherDisplay} from "@/app/components/weather/weatherDisplay";
 
 interface WeatherCardProps {
-    weatherData: WeatherDisplay[];
+    weatherData: WeatherDisplayData[];
 }
 
 export function WeatherCard({ weatherData }: WeatherCardProps) {

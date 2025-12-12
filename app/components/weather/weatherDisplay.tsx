@@ -1,7 +1,8 @@
 import {WeatherIcon} from "@/app/components/weather/weatherIcon";
+import {WeatherDisplayData} from "@/types/weather/types";
 
 interface WeatherDisplayProps {
-    weatherData: WeatherDisplay;
+    weatherData: WeatherDisplayData;
 }
 
 export function WeatherDisplay({ weatherData }: WeatherDisplayProps) {
@@ -11,7 +12,7 @@ export function WeatherDisplay({ weatherData }: WeatherDisplayProps) {
                 <strong>{weatherData.temperature}°C</strong>
             </p>
             <WeatherIcon
-                icon="snowflake"
+                icon={weatherData.icon}
             />
             <p className="m-0 mt-2">
                 <strong>Mon</strong>

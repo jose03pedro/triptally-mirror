@@ -1,10 +1,13 @@
-enum WeatherIconType {
+export enum WeatherIconType {
     RAIN = 'rain',
     CLEAR = 'clear-day',
-    CLOUDY = 'partly-cloudy-day',
+    PARTLY_CLOUDY = 'partly-cloudy-day',
+    CLOUDY = 'cloudy',
+    SNOW = 'snow',
+    FOG = 'fog',
 }
 
-interface WeatherDisplay {
+export interface WeatherDisplayData {
     date: string;
     icon: WeatherIconType;
     temperature: number;

@@ -3,6 +3,7 @@ import {TripSection} from "@/app/components/trip/tripSection";
 import React, {useEffect, useState} from "react";
 import {WeatherCard} from "@/app/components/weather/weatherCard";
 import {Loading} from "@/app/components/ui/loading";
+import {WeatherDisplayData, WeatherIconType} from "@/types/weather/types";
 
 interface DayForecast {
     datetime: string;
@@ -28,13 +29,13 @@ interface WeatherSectionProps {
 export function WeatherSection({ trip }: WeatherSectionProps) {
     const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplay[]>([]);
+    const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
 
     const parseWeatherRes = (data: WeatherResponse | null) => {
         if (!data) return;
         const days : DayForecast[] = data.days;
 
-        const formatted: WeatherDisplay[] = days.map(item => ({
+        const formatted: WeatherDisplayData[] = days.map(item => ({
             date: item.datetime,
             icon: item.icon as WeatherIconType,
             temperature: item.temp,
@@ -67,6 +68,8 @@ export function WeatherSection({ trip }: WeatherSectionProps) {
     }, [weatherData]);
 
     if (isLoading) { return <Loading />; }
+
+    console.log(weatherDisplay);
 
     return (
         <TripSection title="Weather">
