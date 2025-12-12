@@ -33,7 +33,6 @@ export async function convertMoney(
   }
 }
 
-// lib/utils/exchangeRates.ts
 export async function getExchangeRates(
   baseCurrency: string,
   targetCurrencies: string[]

@@ -1,10 +1,14 @@
 import {WeatherIcon} from "@/app/components/weather/weatherIcon";
 
-export function WeatherDisplay() {
+interface WeatherDisplayProps {
+    weatherData: WeatherDisplay;
+}
+
+export function WeatherDisplay({ weatherData }: WeatherDisplayProps) {
     return (
         <div className="flex-column">
             <p className="small m-0 mb-2">
-                <strong>21°C</strong>
+                <strong>{weatherData.temperature}°C</strong>
             </p>
             <WeatherIcon
                 icon="snowflake"

@@ -31,6 +31,12 @@ const tripSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       country: { type: String, required: true },
+
+      lastWeatherSnapshot: {
+          temperature: { type: Number, required: false },
+          condition: { type: String, required: false },
+          updatedAt: { type: Date, required: false },
+      },
     },
   ],
   // Owner of the trip

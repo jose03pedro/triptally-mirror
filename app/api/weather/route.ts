@@ -1,48 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// mais tarde podes mover isto para env
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  const apiKey = process.env.WEATHER_API_KEY;
 
-  const city = searchParams.get("city");
-  const start = searchParams.get("start");
-  const end = searchParams.get("end");
-
-  if (!city || !start || !end) {
-    return NextResponse.json(
-      { error: "city, start and end are required" },
-      { status: 400 }
-    );
+  const location = searchParams.get("location");
+  if (!location) {
+      console.error("Location not found.");
+      return NextResponse.json(
+          { message: "Location not found." },
+          { status: 400 }
+      );
   }
 
   try {
-    // 1) Aqui chamarias a tua API real
-    // const response = await fetch(...);
-    // const data = await response.json();
+      const res = await fetch(
+          `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/lisbon?unitGroup=metric&include=days&key=${apiKey}&contentType=json`
+      );
 
-    // 2) Por agora, mock simples:
-    const days = [
-      {
-        date: start,
-        city,
-        minTemp: 18,
-        maxTemp: 26,
-        condition: "sunny",
-        precipitationChance: 0.1,
-      },
-      {
-        date: end,
-        city,
-        minTemp: 16,
-        maxTemp: 22,
-        condition: "rain",
-        precipitationChance: 0.7,
-      },
-    ];
+      if (!res.ok) {
+          console.error(res);
+          return NextResponse.json(
+              { message: "Failed to fetch weather forecast" },
+              { status: res.status }
+          );
+      }
+      const data = await res.json();
 
-    return NextResponse.json({ days }, { status: 200 });
+      return NextResponse.json(data, { status: 200 });
   } catch (err) {
     console.error("Weather error", err);
     return NextResponse.json(
