@@ -1,5 +1,6 @@
 import {WeatherIcon} from "@/app/components/weather/weatherIcon";
 import {WeatherDisplayData} from "@/types/weather/types";
+import {formatShortDate, getWeekday} from "@/lib/utils/helperFunctions";
 
 interface WeatherDisplayProps {
     weatherData: WeatherDisplayData;
@@ -15,10 +16,10 @@ export function WeatherDisplay({ weatherData }: WeatherDisplayProps) {
                 icon={weatherData.icon}
             />
             <p className="m-0 mt-2">
-                <strong>Mon</strong>
+                <strong>{getWeekday(weatherData.date)}</strong>
             </p>
             <p className="mb-0 text-muted" style={{ fontSize: ".65rem" }}>
-                2/ago
+                {formatShortDate(weatherData.date)}
             </p>
         </div>
     )

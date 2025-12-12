@@ -6,7 +6,7 @@ interface WeatherIconProps {
     size?: number,
 }
 
-export function WeatherIcon({ icon, size = 40 }: WeatherIconProps) {
+export function WeatherIcon({ icon, size = 35 }: WeatherIconProps) {
     const getIconPath = (icon: string) => {
         switch (icon) {
             case WeatherIconType.RAIN: return "rain.png"

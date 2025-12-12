@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
 import { useAuth } from "@/lib/hook/useAuth";
@@ -12,6 +12,7 @@ import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
 import {ExpenseSection} from "@/app/components/expenses/expenseSection";
 import {WeatherSection} from "@/app/components/weather/weatherSection";
+import {DayForecast, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -24,7 +25,23 @@ export default function TripPage() {
   const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const parseWeatherRes = (data: WeatherResponse | null) => {
+        if (!data) return;
+        const days : DayForecast[] = data.days;
+
+        const formatted: WeatherDisplayData[] = days.map(item => ({
+            date: item.datetime,
+            icon: item.icon as WeatherIconType,
+            temperature: item.temp,
+        }));
+
+        setWeatherDisplay(formatted);
+    };
 
   useEffect(() => {
     if (!tripId) return;
@@ -80,6 +97,29 @@ export default function TripPage() {
     };
   }, [tripId]);
 
+  useEffect(() => {
+        (async () => {
+            try {
+                // Get weather for current trip
+                const res = await fetch(`/api/weather?location="lisbon"`);
+                if (!res.ok) console.error(res.text);
+
+                const data = await res.json();
+                setWeatherData(data);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setIsLoading(false);
+            }
+        })();
+    }, []);
+
+  useEffect(() => {
+        if (weatherData) {
+            parseWeatherRes(weatherData);
+        }
+    }, [weatherData]);
+
   if (loading) return <Loading />;
 
   if (!trip) {
@@ -89,6 +129,7 @@ export default function TripPage() {
       </div>
     );
   }
+
   const ownerId = trip.owner._id;
 
   const creatorName = `${currentUser?.id === trip?.owner._id
@@ -102,9 +143,6 @@ export default function TripPage() {
   const showCities = isOwner || privacy.showCities !== false;
   const showExpenses = isOwner || privacy.showExpenses !== false;
   const showCover = isOwner || privacy.showCover !== false;
-
-
-  console.log(expenses);
 
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
@@ -184,7 +222,7 @@ export default function TripPage() {
             <TripOverview trip={trip} />
 
             {/* Weather dashboad */}
-            <WeatherSection trip={trip} />
+            <WeatherSection weatherDisplay={weatherDisplay} />
 
             {/* Expenses dashboard */}
             { showExpenses &&

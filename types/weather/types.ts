@@ -12,3 +12,20 @@ export interface WeatherDisplayData {
     icon: WeatherIconType;
     temperature: number;
 }
+
+export interface DayForecast {
+    datetime: string;
+    tempmax: number;
+    tempmin: number;
+    temp: number;
+    conditions: string;
+    icon: string;
+}
+
+export interface WeatherResponse {
+    latitude: number;
+    longitude: number;
+    resolvedAddress: string;
+    address: string;
+    days: DayForecast[];
+}

@@ -14,7 +14,7 @@ export function WeatherCard({ weatherData }: WeatherCardProps) {
                 </p>
                 <hr className="m-0 p-0" />
 
-                <div className="d-flex gap-5 text-center px-4 mt-3">
+                <div className="d-flex text-center px-3 mt-3" style={{ gap: "2.75rem" }}>
                     {weatherData.map((item, index) => (
                         <WeatherDisplay
                             key={index}
