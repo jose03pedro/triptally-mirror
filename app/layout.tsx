@@ -3,6 +3,8 @@ import "./globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/custom.scss";
 import Script from "next/script";
+import {Navbar} from "@/app/components/navigation/navbar";
+import {Footer} from "@/app/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,8 +34,12 @@ export default function RootLayout({
       </head>
       {/* Add top padding so fixed navbar does not overlap page content */}
       <body className={`antialiased`} style={{ paddingTop: "64px" }}>
-        {children}
         <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" />
+        <Navbar />
+        <main className="min-h-screen bg-slate-50 pb-16">
+            {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

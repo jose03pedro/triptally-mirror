@@ -3,27 +3,29 @@
 import { TravelerProfileButton } from "./travelerButton";
 
 interface TravelerCardProps {
+  isLoggedUser: boolean;
   travelerProfile: any;
-  onProfileUpdate: (data: any) => void;
+  onProfileUpdate?: (data: any) => void;
 }
 
-export function TravelerCard({
-  travelerProfile,
-  onProfileUpdate,
-}: TravelerCardProps) {
+export function TravelerCard({isLoggedUser, travelerProfile, onProfileUpdate}: TravelerCardProps) {
   if (!travelerProfile) {
     return (
       <div className="text-center">
-        <h5 className="text-muted mb-3">
-          You haven't created a traveler profile yet.
+        <h5 className="text-muted mb-3 h6">
+          A traveler profile hasn't been created yet.
         </h5>
-        <p className="text-secondary small mb-4">
-          Create a profile to get personalized trip recommendations.
-        </p>
-        <TravelerProfileButton
-          label="Create Traveler Profile"
-          onProfileUpdate={onProfileUpdate}
-        />
+        {isLoggedUser &&
+            <>
+                <p className="text-secondary small mb-4 mx-4">
+                    Create a profile to get personalized trip recommendations.
+                </p>
+                <TravelerProfileButton
+                    label="Create Traveler Profile"
+                    onProfileUpdate={onProfileUpdate}
+                />
+            </>
+        }
       </div>
     );
   }
@@ -34,7 +36,7 @@ export function TravelerCard({
         <div>
           <h5 className="mb-1 fw-bold text-primary">Traveler Profile</h5>
           <p className="text-muted small mb-0">
-            Your preferences and travel style
+              Preferences and travel style
           </p>
         </div>
       </div>
@@ -199,13 +201,15 @@ export function TravelerCard({
           </div>
         )}
       </div>
-      <div className="d-flex justify-content-center">
-        <TravelerProfileButton
-          label="Edit Traveler Profile"
-          initialData={travelerProfile}
-          onProfileUpdate={onProfileUpdate}
-        />
-      </div>
+      {isLoggedUser &&
+          <div className="d-flex justify-content-center">
+            <TravelerProfileButton
+              label="Edit Traveler Profile"
+              initialData={travelerProfile}
+              onProfileUpdate={onProfileUpdate}
+            />
+          </div>
+      }
     </div>
   );
 }
