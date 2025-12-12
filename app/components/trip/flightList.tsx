@@ -6,10 +6,11 @@ import { Portal } from "../ui/portal";
 interface FlightListProps {
   flights: any[];
   tripId: string;
+  isOwner?: boolean;
   onFlightDeleted?: (flightId: string) => void;
 }
 
-export function FlightList({ flights, tripId, onFlightDeleted }: FlightListProps) {
+export function FlightList({ flights, tripId, isOwner = false, onFlightDeleted }: FlightListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmFlight, setConfirmFlight] = useState<any | null>(null);
 
@@ -148,19 +149,21 @@ export function FlightList({ flights, tripId, onFlightDeleted }: FlightListProps
                 >
                   {f.status || "Unknown"}
                 </span>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => setConfirmFlight(f)}
-                  disabled={deletingId === f._id}
-                  title="Remove flight"
-                >
-                  {deletingId === f._id ? (
-                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  ) : (
-                    <span className="material-icons" style={{ fontSize: 16 }}>delete</span>
-                  )}
-                </button>
+                {isOwner && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => setConfirmFlight(f)}
+                    disabled={deletingId === f._id}
+                    title="Remove flight"
+                  >
+                    {deletingId === f._id ? (
+                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    ) : (
+                      <span className="material-icons" style={{ fontSize: 16 }}>delete</span>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

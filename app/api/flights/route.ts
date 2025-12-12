@@ -46,11 +46,9 @@ export async function GET(request: NextRequest) {
     const data = await res.json();
     //@ The API returns an array of flights (operator + codeshares). Persist operator if available; else first item.
     const primary = Array.isArray(data) ? data[0] : data;
-    console.log('Fetched live flight data: \n', primary);
     if (primary) {
       try {
         const doc = transformFlightData(primary);
-        console.log('Caching flight data for', doc.flightNumber, doc.date);
         await Flight.findOneAndUpdate(
           { flightNumber: doc.flightNumber, date: doc.date },
           doc,

@@ -111,8 +111,6 @@ export default function TripPage() {
   const showCover = isOwner || privacy.showCover !== false;
 
 
-  console.log(expenses);
-
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -260,6 +258,7 @@ export default function TripPage() {
                 <FlightList
                   flights={flights}
                   tripId={tripId as string}
+                  isOwner={isOwner}
                   onFlightDeleted={(flightId) => {
                     setFlights((prev) => prev.filter((f) => f._id !== flightId));
                   }}

@@ -51,7 +51,6 @@ export async function POST(
 
     const body = await request.json();
     const { flightNumber, date } = body || {};
-    console.log("Attaching flight to trip:", { flightNumber, date });
 
     const trip = await Trip.findById(id);
     if (!trip) {
