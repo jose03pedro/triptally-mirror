@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import Expense from "@/app/models/Expense";
-import { getExchangeRates } from "@/lib/utils/helperFunctions";
 
 export async function GET(
   request: Request,
@@ -23,7 +21,8 @@ export async function GET(
 
     const tripDoc = await Trip.findById(id)
       .populate("user", "first_name last_name")
-      .populate("currency");
+      .populate("currency")
+      .populate("flights");
 
     const currentUser = await getCurrentUser();
 
@@ -59,6 +58,7 @@ export async function GET(
       privacy: tripDoc.privacy,
       currency: tripDoc.currency,
       owner: tripDoc.user,
+      flights: tripDoc.flights,
     };
 
     return NextResponse.json(trip, { status: 200 });

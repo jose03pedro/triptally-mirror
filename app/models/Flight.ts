@@ -4,7 +4,7 @@ const FlightSchema = new Schema(
   {
     date: { type: Date, required: true },
     flightNumber: String,
-    // tripId: { type: Schema.Types.ObjectId, ref: "Trip" },
+    tripId: { type: Schema.Types.ObjectId, ref: "Trip" },
 
     aircraft: {
       model: String,

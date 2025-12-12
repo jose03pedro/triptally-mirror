@@ -1,4 +1,4 @@
-export interface IFlight {
+export type Flight = {
   date: Date;
   flightNumber: string;
   tripId?: string;
@@ -46,7 +46,7 @@ export interface IFlight {
   };
 }
 
-export interface RawFlightApiResponse {
+export type RawFlightApiResponse = {
   greatCircleDistance: {
     meter: number;
     km: number;

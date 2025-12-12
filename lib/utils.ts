@@ -1,10 +1,16 @@
-import { IFlight } from "./types/flight";
+import { Flight } from "@/types/flight/types";
 
-export function transformFlightData(apiData: any): IFlight {
+export function transformFlightData(apiData: any): Flight {
+  const toMidnight = (dateStr: string) => {
+    const date = new Date(dateStr);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+
   return {
     date: apiData.departure?.scheduledTime?.utc
-      ? new Date(apiData.departure.scheduledTime.utc)
-      : new Date(),
+      ? toMidnight(apiData.departure.scheduledTime.utc)
+      : new Date(new Date().setHours(0, 0, 0, 0)),
 
     flightNumber: apiData.number?.replace(/\s+/g, "") || "UNKNOWN",
 
@@ -20,7 +26,9 @@ export function transformFlightData(apiData: any): IFlight {
 
     isCargo: apiData.isCargo || false,
     status: apiData.status || "Unknown",
-    lastUpdated: apiData.lastUpdatedUtc ? new Date(apiData.lastUpdatedUtc) : new Date(),
+    lastUpdated: apiData.lastUpdatedUtc 
+      ? toMidnight(apiData.lastUpdatedUtc) 
+      : new Date(new Date().setHours(0, 0, 0, 0)),
 
     departure: {
       airport: {
