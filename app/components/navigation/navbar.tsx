@@ -8,6 +8,7 @@ import { UnreadIndicator } from "@/app/notification/unreadIndicator";
 import { useNotificationStore } from "@/lib/store/notificationStore";
 import { useEffect } from "react";
 import {useUserStore} from "@/lib/store/userStore";
+import {Logo} from "@/app/components/navigation/logo";
 
 export function Navbar() {
   const session = useAuth();
@@ -41,21 +42,7 @@ export function Navbar() {
   return (
     <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom fixed-top">
       <div className="container-fluid px-4">
-        <Link href="/" className="navbar-brand d-flex align-items-center gap-2">
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            className="rounded-circle bg-primary p-1"
-            style={{ color: "white" }}
-          >
-            <path d="M2 12L22 3L14 22L11 13L2 12Z" fill="white" />
-          </svg>
-          <span className="fw-semibold text-dark">TripTally</span>
-        </Link>
+        <Logo />
 
         <div className="d-flex align-items-center">
           {/* Saved trips navigation */}

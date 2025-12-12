@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 process.env.JWT_SECRET = "test_secret_key";
 
 import { signup } from "./signup";
@@ -17,6 +19,11 @@ jest.mock("../../models/User", () => ({
     findOne: jest.fn(),
     create: jest.fn(),
   },
+}));
+
+jest.mock("./login", () => ({
+  __esModule: true,
+  loginHandler: jest.fn(),
 }));
 
 describe("signup action", () => {

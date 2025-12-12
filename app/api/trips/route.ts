@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
+import {User} from "@/types/user/types";
 
 type StatusFilter = "all" | "upcoming" | "past" | "ongoing";
 
@@ -15,14 +16,24 @@ export async function GET(req: NextRequest) {
     const userId = searchParams.get("userId");
     const rawStatus = (searchParams.get("status") || "all") as StatusFilter;
 
-    const page = Math.max(
-      1,
-      Number.parseInt(searchParams.get("page") || "1", 10) || 1
-    );
-    const limitRaw =
-      Number.parseInt(searchParams.get("limit") || "12", 10) || 12;
-    const limit = Math.max(0, limitRaw); // 0 = we only want the total
+    const pageParam = searchParams.get("page") || "1";
+    const limitParam = searchParams.get("limit") || "12";
 
+    const pageNum = Number.parseInt(pageParam, 10);
+    const limitNum = Number.parseInt(limitParam, 10);
+
+    if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 0) {
+      return NextResponse.json(
+        {
+          message: "Invalid query parameters",
+          error: "Page must be a number >= 1 and limit must be a number >= 0.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const page = pageNum;
+    const limit = limitNum;
     const startDateParam = searchParams.get("startDate");
     const endDateParam = searchParams.get("endDate");
 
@@ -34,13 +45,8 @@ export async function GET(req: NextRequest) {
       ? rawStatus
       : "all";
 
-    // -----------------------
-    // Build Mongo query
-    // -----------------------
     const query: any = {};
 
-    // If `userId` is present → return that user's trips.
-    // If not present → return only public trips (homepage / explore).
     if (userId) {
       query.user = userId;
     } else {
@@ -75,7 +81,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Temporal status filtering
     if (status === "ongoing") {
       query.startDate = {
         ...(query.startDate || {}),
@@ -97,9 +102,6 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    // -----------------------
-    // Sorting
-    // -----------------------
     let sort: any = { startDate: 1 };
     if (status === "past") {
       sort = { startDate: -1 };
@@ -107,7 +109,6 @@ export async function GET(req: NextRequest) {
 
     const total = await Trip.countDocuments(query);
 
-    // Special case: limit = 0 → only want total (used for tab counts)
     if (limit === 0) {
       return NextResponse.json({
         items: [],
@@ -120,14 +121,14 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const trips = await Trip.find(query)
-      .populate("user", "first_name last_name")
+      .populate("user", "first_name last_name avatar")
       .sort(sort)
       .skip(skip)
       .limit(limit);
 
     const items = trips.map((t) => {
       const anyTrip: any = t;
-      const u: any = anyTrip.user;
+      const owner: User = anyTrip.user;
 
       return {
         _id: anyTrip._id,
@@ -138,7 +139,7 @@ export async function GET(req: NextRequest) {
         isPublic: anyTrip.isPublic,
         coverImage: anyTrip.coverImage,
         privacy: anyTrip.privacy,
-        owner: anyTrip.user,
+        owner: owner,
       };
     });
 

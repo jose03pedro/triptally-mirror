@@ -54,7 +54,7 @@ export async function login(formData: FormData): Promise<AuthResponse> {
         token: undefined,
         errors: {
           email: [],
-          password: ["Incorrect password."],
+          password: ["Incorrect password"],
           first_name: [],
           last_name: [],
         },

@@ -1,6 +1,17 @@
 import { formatMoney, convertMoney, getExchangeRates } from "@/lib/utils/helperFunctions";
 
 describe("helperFunctions", () => {
+  // Suppress console logs for tests that are expected to fail
+  const originalConsoleError = console.error;
+  const originalConsoleWarn = console.warn;
+  beforeAll(() => {
+    console.error = jest.fn();
+    console.warn = jest.fn();
+  });
+  afterAll(() => {
+    console.error = originalConsoleError;
+    console.warn = originalConsoleWarn;
+  });
   describe("formatMoney", () => {
     it("formata número com 2 casas decimais", () => {
       expect(formatMoney(10)).toBe("10.00");

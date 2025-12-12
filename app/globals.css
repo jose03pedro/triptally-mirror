@@ -169,3 +169,17 @@ html {
   width: 56px;
   height: 56px;
 }
+
+footer a:hover {
+    text-decoration: underline !important;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #0d6efd, #6610f2); /* blue → indigo */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+

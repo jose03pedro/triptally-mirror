@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 import { render, screen } from "@testing-library/react";
 import Auth from "./auth";
 

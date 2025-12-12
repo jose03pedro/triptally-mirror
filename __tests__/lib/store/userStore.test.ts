@@ -1,3 +1,5 @@
+/** @jest-environment jsdom */
+
 import { useUserStore } from "@/lib/store/userStore";
 
 describe("useUserStore", () => {

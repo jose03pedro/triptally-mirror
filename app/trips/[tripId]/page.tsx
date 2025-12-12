@@ -10,7 +10,6 @@ import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
-import {TripSection} from "@/app/components/trip/tripSection";
 import {ExpenseSection} from "@/app/components/expenses/expenseSection";
 import {WeatherSection} from "@/app/components/weather/weatherSection";
 
@@ -139,12 +138,14 @@ export default function TripPage() {
                     .join(" · ") || "No cities added yet"}
                 </p>
               )}
-              <p className="text-[11px] text-slate-400 mt-1">
+              <span className="text-[11px] text-slate-400 mt-1">
                 Created by{" "}
-                <strong className="font-medium text-slate-600">
-                  {creatorName}
-                </strong>
-              </p>
+                <Link href={"/profile/" + trip.owner._id}>
+                    <strong className="font-medium text-slate-600">
+                      {creatorName}
+                    </strong>
+                </Link>
+              </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">

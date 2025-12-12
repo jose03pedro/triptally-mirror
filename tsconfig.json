@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
     "lib": [
       "dom",
       "dom.iterable",
@@ -8,6 +7,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    "target": "es2015",
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -33,12 +33,17 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    ".next\\dev/types/**/*.ts",
-    ".next\\dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "__tests__",
+    "__mocks__",
+    "jest.config.js",
+    "jest.setup.ts",
+    "server.ts",
+    "handlers.ts"
   ]
 }
