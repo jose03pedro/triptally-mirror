@@ -12,7 +12,7 @@ import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
 import {ExpenseSection} from "@/app/components/expenses/expenseSection";
 import {WeatherSection} from "@/app/components/weather/weatherSection";
-import {DayForecast, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
+import {DayForecast, DayWeather, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -30,17 +30,37 @@ export default function TripPage() {
   const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const parseWeatherRes = (data: WeatherResponse | null) => {
+  const parseWeatherRes = (
+        data: WeatherResponse | null,
+        start: string,
+        end: string
+  ) => {
         if (!data) return;
-        const days : DayForecast[] = data.days;
 
-        const formatted: WeatherDisplayData[] = days.map(item => ({
-            date: item.datetime,
-            icon: item.icon as WeatherIconType,
-            temperature: item.temp,
-        }));
+        const startDate = new Date(start);
+        const endDate = new Date(end);
 
-        setWeatherDisplay(formatted);
+        const city = data.resolvedAddress;
+
+        const filteredDays: DayWeather[] = data.days
+            .filter(day => {
+                const d = new Date(day.datetime);
+                return d >= startDate && d <= endDate;
+            })
+            .map(item => ({
+                date: item.datetime,
+                icon: item.icon as WeatherIconType,
+                temperature: item.temp,
+            }));
+
+        if (filteredDays.length === 0) return;
+
+        const formatted: WeatherDisplayData = {
+            city,
+            days: filteredDays,
+        };
+
+        setWeatherDisplay(prev => [...prev, formatted]);
     };
 
   useEffect(() => {
@@ -101,7 +121,7 @@ export default function TripPage() {
         (async () => {
             try {
                 // Get weather for current trip
-                const res = await fetch(`/api/weather?location="lisbon"`);
+                const res = await fetch(`/api/weather?location="chicago"`);
                 if (!res.ok) console.error(res.text);
 
                 const data = await res.json();
@@ -115,12 +135,12 @@ export default function TripPage() {
     }, []);
 
   useEffect(() => {
-        if (weatherData) {
-            parseWeatherRes(weatherData);
+        if (weatherData && trip) {
+            parseWeatherRes(weatherData, trip?.startDate, trip?.endDate);
         }
-    }, [weatherData]);
+    }, [weatherData, trip]);
 
-  if (loading) return <Loading />;
+  if (isLoading || loading) return <Loading />;
 
   if (!trip) {
     return (

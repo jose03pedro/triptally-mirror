@@ -1,25 +1,25 @@
 import {WeatherIcon} from "@/app/components/weather/weatherIcon";
-import {WeatherDisplayData} from "@/types/weather/types";
+import {DayWeather} from "@/types/weather/types";
 import {formatShortDate, getWeekday} from "@/lib/utils/helperFunctions";
 
 interface WeatherDisplayProps {
-    weatherData: WeatherDisplayData;
+    dayWeather: DayWeather;
 }
 
-export function WeatherDisplay({ weatherData }: WeatherDisplayProps) {
+export function WeatherDisplay({ dayWeather }: WeatherDisplayProps) {
     return (
         <div className="flex-column">
             <p className="small m-0 mb-2">
-                <strong>{weatherData.temperature}°C</strong>
+                <strong>{dayWeather.temperature}°C</strong>
             </p>
             <WeatherIcon
-                icon={weatherData.icon}
+                icon={dayWeather.icon}
             />
             <p className="m-0 mt-2">
-                <strong>{getWeekday(weatherData.date)}</strong>
+                <strong>{getWeekday(dayWeather.date)}</strong>
             </p>
             <p className="mb-0 text-muted" style={{ fontSize: ".65rem" }}>
-                {formatShortDate(weatherData.date)}
+                {formatShortDate(dayWeather.date)}
             </p>
         </div>
     )

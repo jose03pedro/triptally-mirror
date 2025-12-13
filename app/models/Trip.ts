@@ -31,12 +31,6 @@ const tripSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       country: { type: String, required: true },
-
-      lastWeatherSnapshot: {
-          temperature: { type: Number, required: false },
-          condition: { type: String, required: false },
-          updatedAt: { type: Date, required: false },
-      },
     },
   ],
   // Owner of the trip
@@ -52,6 +46,11 @@ const tripSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Currency",
     required: true,
+  },
+  // Weather snapshot of the trip
+  lastWeatherSnapshot: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {}
   },
 
   participants: [participantSchema],

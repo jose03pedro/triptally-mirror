@@ -16,6 +16,7 @@ export interface Trip {
   coverImage?: string;
   owner: User;
   currency?: Currency;
+  lastWeatherSnapshot?: Record<string, any>;
   privacy?: {
     showCities?: boolean;
     showExpenses?: boolean;

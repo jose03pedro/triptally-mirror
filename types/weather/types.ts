@@ -7,10 +7,15 @@ export enum WeatherIconType {
     FOG = 'fog',
 }
 
-export interface WeatherDisplayData {
+export interface DayWeather {
     date: string;
     icon: WeatherIconType;
     temperature: number;
+}
+
+export interface WeatherDisplayData {
+    city: string;
+    days: DayWeather[];
 }
 
 export interface DayForecast {

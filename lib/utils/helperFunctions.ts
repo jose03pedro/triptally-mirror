@@ -82,3 +82,7 @@ export function getWeekday(dateStr : string) {
         weekday: "short"
     });
 }
+
+export function capitalizeFirst(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
