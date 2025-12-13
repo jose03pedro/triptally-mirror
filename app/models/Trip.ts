@@ -49,8 +49,8 @@ const tripSchema = new mongoose.Schema({
   },
   // Weather snapshot of the trip
   lastWeatherSnapshot: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {}
+      type: Array,
+      default: []
   },
 
   participants: [participantSchema],

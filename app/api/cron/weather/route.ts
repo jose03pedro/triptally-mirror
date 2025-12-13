@@ -31,9 +31,7 @@ export async function GET() {
             // save today's snapshot for this city
             newSnapshot[city] = today;
         }
-
         await updateTripSnapshot(trip._id, newSnapshot);
     }
-
     return NextResponse.json({ ok: true });
 }

@@ -1,5 +1,6 @@
 import { Currency } from "../currency/types";
 import { User } from "../user/types";
+import {WeatherDisplayData} from "@/types/weather/types";
 
 export interface City {
   name: string;
@@ -16,7 +17,7 @@ export interface Trip {
   coverImage?: string;
   owner: User;
   currency?: Currency;
-  lastWeatherSnapshot?: Record<string, any>;
+  lastWeatherSnapshot?: WeatherDisplayData[];
   privacy?: {
     showCities?: boolean;
     showExpenses?: boolean;

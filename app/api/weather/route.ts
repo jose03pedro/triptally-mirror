@@ -41,6 +41,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function getWeather(cities: City[] | undefined): Promise<WeatherDisplayData[]> {
+    await connectionToDB();
+
     if (!cities || !cities.length) return [];
 
     const key = process.env.WEATHER_API_KEY;

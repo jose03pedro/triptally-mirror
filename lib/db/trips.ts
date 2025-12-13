@@ -14,7 +14,7 @@ export async function getTripsForNextDays(days: number): Promise<TripType[]> {
         .select("_id title user startDate endDate cities lastWeatherSnapshot")
         .lean();
 
-    return trips.map(t => ({
+    return trips.map((t: { _id: { toString: () => any; }; title: any; user: any; startDate: any; endDate: any; cities: any; lastWeatherSnapshot: any; }) => ({
         _id: t._id.toString(),
         title: t.title,
         owner: t.user,

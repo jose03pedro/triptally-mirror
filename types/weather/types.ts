@@ -34,3 +34,5 @@ export interface WeatherResponse {
     address: string;
     days: DayForecast[];
 }
+
+export type WeatherSnapshot = WeatherDisplayData[];

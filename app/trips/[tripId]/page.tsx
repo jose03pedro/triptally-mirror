@@ -12,7 +12,7 @@ import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
 import {ExpenseSection} from "@/app/components/expenses/expenseSection";
 import {WeatherSection} from "@/app/components/weather/weatherSection";
-import {DayForecast, DayWeather, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
+import {DayWeather, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -25,13 +25,13 @@ export default function TripPage() {
   const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
-  const [weatherData, setWeatherData] = useState<WeatherResponse | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const parseWeatherRes = (
-        data: WeatherResponse | null,
+        data: WeatherResponse,
         start: string,
         end: string
   ) => {
@@ -117,26 +117,52 @@ export default function TripPage() {
     };
   }, [tripId]);
 
-  useEffect(() => {
-        (async () => {
-            try {
-                // Get weather for current trip
-                const res = await fetch(`/api/weather?location="chicago"`);
-                if (!res.ok) console.error(res.text);
+    useEffect(() => {
+        if (!trip?.cities?.length) return;
 
-                const data = await res.json();
-                setWeatherData(data);
-            } catch (e) {
-                console.error(e);
+        const fetchWeatherPerCity = async () => {
+            if (!trip?.cities || trip.cities.length === 0) {
+                setIsLoading(false);
+                return;
+            }
+
+            const cities = trip.cities;
+
+            try {
+                const results = await Promise.all(
+                    cities.map(async (city) => {
+                        const res = await fetch(
+                            `/api/weather?location=${encodeURIComponent(city.name)}`,
+                            { cache: "no-store" }
+                        );
+
+                        if (!res.ok) return null;
+
+                        return res.json() as Promise<WeatherResponse>;
+                    })
+                );
+
+                const filtered = results.filter(
+                    (r): r is WeatherResponse => r !== null
+                );
+
+                setWeatherData(filtered);
+            } catch (err) {
+                console.error(err);
             } finally {
                 setIsLoading(false);
             }
-        })();
-    }, []);
+        };
 
-  useEffect(() => {
+        fetchWeatherPerCity();
+    }, [trip]);
+
+
+    useEffect(() => {
         if (weatherData && trip) {
-            parseWeatherRes(weatherData, trip?.startDate, trip?.endDate);
+            weatherData.forEach((data) => {
+                parseWeatherRes(data, trip?.startDate, trip?.endDate);
+            })
         }
     }, [weatherData, trip]);
 
@@ -158,6 +184,7 @@ export default function TripPage() {
     }`;
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
+  const isPastTrip = new Date(trip.endDate) < new Date();
 
   const privacy = trip.privacy || {};
   const showCities = isOwner || privacy.showCities !== false;
@@ -170,14 +197,24 @@ export default function TripPage() {
         {/* HEADER */}
         <header className="space-y-3">
           {showCover && trip.coverImage && (
-            <div className="relative h-48 md:h-64 w-full rounded-3xl overflow-hidden shadow-md bg-slate-200 fade-up">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={trip.coverImage}
-                alt={trip.title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
+              <div
+                  className="position-relative mb-4"
+                  style={{
+                      left: "50%",
+                      right: "50%",
+                      marginLeft: "-50vw",
+                      marginRight: "-50vw",
+                      width: "100vw"
+                  }}
+              >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                      src={trip.coverImage}
+                      alt={trip.title}
+                      className="w-100 object-fit-cover"
+                      style={{ height: "23rem" }}
+                  />
+              </div>
           )}
 
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 fade-up fade-up-delay-1">
@@ -242,7 +279,10 @@ export default function TripPage() {
             <TripOverview trip={trip} />
 
             {/* Weather dashboad */}
-            <WeatherSection weatherDisplay={weatherDisplay} />
+              <WeatherSection
+                  isPastTrip={isPastTrip}
+                  weatherDisplay={isPastTrip ? trip.lastWeatherSnapshot ?? [] : weatherDisplay}
+              />
 
             {/* Expenses dashboard */}
             { showExpenses &&
