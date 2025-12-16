@@ -7,8 +7,7 @@ import { Navbar } from "@/app/components/navigation/navbar";
 import { Trip, TripsResponse } from "@/types/trip/types";
 import TripsGrid from "@/app/components/trip/tripsGrid";
 import {useUserStore} from "@/lib/store/userStore";
-import Icon from "@/app/components/ui/icon";
-import {color} from "d3-color";
+import IconComponent from "@/app/components/ui/icon-component";
 import IconText from "@/app/components/ui/icon-text";
 import {Loading} from "@/app/components/ui/loading";
 
@@ -229,7 +228,7 @@ export default function UserTrips({ user }: UserTripsProps) {
                 <form onSubmit={onSearch}>
                     <div className="input-group">
             <span className="input-group-text bg-white border-end-0">
-              <Icon icon="search" color="#6c757d" />
+              <IconComponent icon="search" color="#6c757d" />
             </span>
                         <input
                             className="form-control border-start-0"

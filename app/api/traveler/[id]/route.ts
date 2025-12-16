@@ -3,7 +3,7 @@ import { TravelerProfile }from "@/app/models/TravelerProfile";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { NextResponse } from "next/server";
 
-export async function GET(context: { params: Promise<{ id: string }>}) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }>}) {
     try {
         await connectionToDB();
         const { id } = await context.params;

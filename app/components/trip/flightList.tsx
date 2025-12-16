@@ -37,7 +37,10 @@ export function FlightList({ flights, tripId, isOwner = false, onFlightDeleted }
 
   if (!flights || flights.length === 0) {
     return (
-      <p className="text-muted small">No flights added yet. Add your first flight!</p>
+        <p className="text-muted small">
+            No flights added yet.
+            {isOwner && " Add your first flight!"}
+        </p>
     );
   }
 

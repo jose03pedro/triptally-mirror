@@ -1,20 +1,20 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
-import { AddExpense } from "@/app/components/trip/addExpense";
 import { useAuth } from "@/lib/hook/useAuth";
-import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
+import {Trip, WeatherSnapshot} from "@/types/trip/types";
 import { AddFlight } from "@/app/components/trip/addFlight";
 import { FlightList } from "@/app/components/trip/flightList";
-import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
-import user from "@/app/models/User";
+import {ExpenseSection} from "@/app/components/expenses/expenseSection";
+import {WeatherSection} from "@/app/components/weather/weatherSection";
+import {DayWeather, WeatherDisplayData, WeatherIconType, WeatherResponse} from "@/types/weather/types";
 
 export default function TripPage() {
   const params = useParams();
@@ -27,8 +27,44 @@ export default function TripPage() {
   const [expenses, setExpenses] = useState<ExpenseWithConverted[]>([]);
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [flights, setFlights] = useState<any[]>([]);
+
+  const parseWeatherRes = (
+        data: WeatherResponse,
+        start: string,
+        end: string
+  ) => {
+        if (!data) return;
+
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        const city = data.resolvedAddress;
+
+        const filteredDays: DayWeather[] = data.days
+            .filter(day => {
+                const d = new Date(day.datetime);
+                return d >= startDate && d <= endDate;
+            })
+            .map(item => ({
+                date: item.datetime,
+                icon: item.icon as WeatherIconType,
+                temperature: item.temp,
+            }));
+
+        if (filteredDays.length === 0) return;
+
+        const formatted: WeatherDisplayData = {
+            city,
+            days: filteredDays,
+        };
+
+        setWeatherDisplay(prev => [...prev, formatted]);
+    };
 
   useEffect(() => {
     if (!tripId) return;
@@ -87,7 +123,56 @@ export default function TripPage() {
     };
   }, [tripId]);
 
-  if (loading) return <Loading />;
+    useEffect(() => {
+        if (!trip?.cities?.length) return;
+
+        const fetchWeatherPerCity = async () => {
+            if (!trip?.cities || trip.cities.length === 0) {
+                setIsLoading(false);
+                return;
+            }
+
+            const cities = trip.cities;
+
+            try {
+                const results = await Promise.all(
+                    cities.map(async (city) => {
+                        const res = await fetch(
+                            `/api/weather?location=${encodeURIComponent(city.name)}`,
+                            { cache: "no-store" }
+                        );
+
+                        if (!res.ok) return null;
+
+                        return res.json() as Promise<WeatherResponse>;
+                    })
+                );
+
+                const filtered = results.filter(
+                    (r): r is WeatherResponse => r !== null
+                );
+
+                setWeatherData(filtered);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchWeatherPerCity();
+    }, [trip]);
+
+
+    useEffect(() => {
+        if (weatherData && trip) {
+            weatherData.forEach((data) => {
+                parseWeatherRes(data, trip?.startDate, trip?.endDate);
+            })
+        }
+    }, [weatherData, trip]);
+
+  if (isLoading || loading) return <Loading />;
 
   if (!trip) {
     return (
@@ -96,6 +181,7 @@ export default function TripPage() {
       </div>
     );
   }
+
   const ownerId = trip.owner._id;
 
   const creatorName = `${currentUser?.id === trip?.owner._id
@@ -104,6 +190,7 @@ export default function TripPage() {
     }`;
 
   const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
+  const isPastTrip = new Date(trip.endDate) < new Date();
 
   const privacy = trip.privacy || {};
   const showCities = isOwner || privacy.showCities !== false;
@@ -118,14 +205,24 @@ export default function TripPage() {
         {/* HEADER */}
         <header className="space-y-3">
           {showCover && trip.coverImage && (
-            <div className="relative h-48 md:h-64 w-full rounded-3xl overflow-hidden shadow-md bg-slate-200 fade-up">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={trip.coverImage}
-                alt={trip.title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
+              <div
+                  className="position-relative mb-4"
+                  style={{
+                      left: "50%",
+                      right: "50%",
+                      marginLeft: "-50vw",
+                      marginRight: "-50vw",
+                      width: "100vw"
+                  }}
+              >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                      src={trip.coverImage}
+                      alt={trip.title}
+                      className="w-100 object-fit-cover"
+                      style={{ height: "23rem" }}
+                  />
+              </div>
           )}
 
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 fade-up fade-up-delay-1">
@@ -189,49 +286,23 @@ export default function TripPage() {
             {/* Overview area */}
             <TripOverview trip={trip} />
 
-            {/* Expenses dashboard */}
-            {showExpenses && (
-              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
-                <div className="mb-2">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                      Expenses
-                    </h2>
-                    <AddExpense
-                      tripId={tripId as string}
-                      userId={trip.owner._id as string}
-                      onExpenseCreated={(newExpense) => {
-                        setExpenses((prev) => {
-                          if (prev.some((e) => e._id === newExpense._id))
-                            return prev;
-                          return [...prev, newExpense];
-                        });
-                      }}
-                    />
-                  </div>
-                  <span className="text-[11px] text-slate-400">
-                    {expenses.length} item(s)
-                  </span>
-                </div>
+            {/* Weather dashboard */}
+            <WeatherSection
+                isPastTrip={isPastTrip}
+                weatherSnapshot={trip.lastWeatherSnapshot ?? {}}
+                weatherDisplay={weatherDisplay}
+            />
 
-                <ExpenseTabs
-                  tripCurrency={trip.currency}
-                  expenses={expenses}
-                  setExpenses={setExpenses}
-                  currencies={currencies}
-                  categories={categories}
-                  onExpensesUpdated={(updatedExpense) => {
-                    setExpenses((prev) =>
-                      prev.some((e) => e._id === updatedExpense._id)
-                        ? prev.map((e) =>
-                          e._id === updatedExpense._id ? updatedExpense : e
-                        )
-                        : [...prev, updatedExpense]
-                    );
-                  }}
+            {/* Expenses dashboard */}
+            { showExpenses &&
+                <ExpenseSection
+                    trip={trip}
+                    expenses={expenses}
+                    setExpenses={setExpenses}
+                    currencies={currencies}
+                    categories={categories}
                 />
-              </div>
-            )}
+            }
 
             {/* Flights dashboard */}
             {showItinerary && (

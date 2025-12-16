@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+import Expense from "@/app/models/Expense";
+import { getExchangeRates } from "@/lib/utils/helperFunctions";
+import {WeatherDisplayData, WeatherSnapshot} from "@/types/weather/types";
 
 export async function GET(
   request: Request,
@@ -58,6 +61,7 @@ export async function GET(
       privacy: tripDoc.privacy,
       currency: tripDoc.currency,
       owner: tripDoc.user,
+      lastWeatherSnapshot: tripDoc.lastWeatherSnapshot as WeatherDisplayData[] || [],
       flights: tripDoc.flights,
     };
 
