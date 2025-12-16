@@ -3,7 +3,7 @@ import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import PackingItem from "@/app/models/PackingItem";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import { generatePackingItems } from "@/lib/packing/generatePacking";
+import { generatePackingItems, WeatherDay } from "@/lib/packing/generatePacking";
 
 export async function POST(
   request: Request,
@@ -11,8 +11,12 @@ export async function POST(
 ) {
   try {
     await connectionToDB();
-    const resolved = await params;
-    const { id } = resolved;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
+
+    if (!id) {
+      return NextResponse.json({ error: "Trip ID is required" }, { status: 400 });
+    }
 
     const trip: any = await Trip.findById(id);
     if (!trip) {
@@ -25,64 +29,79 @@ export async function POST(
 
     if (!isOwner) {
       return NextResponse.json(
-        { error: "Only the owner can generate packing list" },
+        { error: "Only the trip owner can generate packing list" },
         { status: 403 }
       );
     }
 
-    // 1) buscar weather
-    const mainCity = trip.cities?.[0];
-    const start = trip.startDate.toISOString().slice(0, 10);
-    const end = trip.endDate.toISOString().slice(0, 10);
+    const startDate = trip.startDate ? new Date(trip.startDate).toISOString().slice(0, 10) : null;
+    const endDate = trip.endDate ? new Date(trip.endDate).toISOString().slice(0, 10) : null;
+    const mainCity = trip.cities?.[0]?.name;
 
-    const weatherRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?city=${encodeURIComponent(
-        mainCity
-      )}&start=${start}&end=${end}`
-    );
+    let weatherDays: WeatherDay[] = [];
 
-    if (!weatherRes.ok) {
-      return NextResponse.json(
-        { error: "Failed to get weather for packing" },
-        { status: 500 }
-      );
+    if (mainCity && startDate && endDate) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const weatherRes = await fetch(
+          `${baseUrl}/api/weather?city=${encodeURIComponent(mainCity)}&start=${startDate}&end=${endDate}`,
+          { cache: "no-store" }
+        );
+
+        if (weatherRes.ok) {
+          const weatherData = await weatherRes.json();
+          weatherDays = weatherData.days || [];
+        } else {
+          console.warn("Weather API returned non-OK status, using base items only");
+        }
+      } catch (weatherErr) {
+        console.warn("Failed to fetch weather, using base items only:", weatherErr);
+      }
     }
 
-    const { days } = await weatherRes.json();
-
-    // 2) gerar items
-    const itemsToCreate = generatePackingItems(days);
-
-    // 3) evitar duplicados
-    const existing = await PackingItem.find({ trip: id });
-    const existingNames = new Set(
-      existing.map((i: any) => i.name.toLowerCase())
+    const itemsToCreate = generatePackingItems(
+      weatherDays,
+      startDate || undefined,
+      endDate || undefined
     );
 
-    const filtered = itemsToCreate.filter(
-      (i) => !existingNames.has(i.name.toLowerCase())
+    const existingItems = await PackingItem.find({ trip: id }).lean();
+    const existingNames = new Set(existingItems.map((item: any) => item.name.toLowerCase()));
+
+    const newItems = itemsToCreate.filter(
+      (item) => !existingNames.has(item.name.toLowerCase())
     );
 
-    if (!filtered.length) {
+    if (newItems.length === 0) {
       return NextResponse.json(
-        { message: "Packing list already up to date" },
+        { message: "Packing list is already up to date", itemsAdded: 0, totalItems: existingItems.length },
         { status: 200 }
       );
     }
 
-    const created = await PackingItem.insertMany(
-      filtered.map((i) => ({
-        ...i,
+    const createdItems = await PackingItem.insertMany(
+      newItems.map((item) => ({
         trip: id,
+        name: item.name,
+        category: item.category,
+        required: item.required,
+        checked: false,
+        quantity: 1,
+        source: item.source,
       }))
     );
 
-    return NextResponse.json(created, { status: 201 });
-  } catch (err) {
-    console.error(err);
     return NextResponse.json(
-      { error: "Failed to generate packing list" },
-      { status: 500 }
+      {
+        message: "Packing list generated successfully",
+        itemsAdded: createdItems.length,
+        totalItems: existingItems.length + createdItems.length,
+        items: createdItems,
+      },
+      { status: 201 }
     );
+  } catch (err) {
+    console.error("Error generating packing list:", err);
+    return NextResponse.json({ error: "Failed to generate packing list" }, { status: 500 });
   }
 }

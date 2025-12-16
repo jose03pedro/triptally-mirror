@@ -1,4 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
+
+import jwt from "jsonwebtoken";
 import {cookies} from "next/headers";
 import {useUserStore} from "@/lib/store/userStore";
 
@@ -13,16 +15,34 @@ export async function proxy(request: NextRequest) {
     const isProtectedRoute = protectedRoutes.includes(path)
     const isGuestRoute = guestRoutes.includes(path)
 
-    // Check if a 'session' cookie exists
-    const cookieSession = (await cookies())?.get('session')?.name;
+    // Validate the session cookie (existence alone can be stale)
+    const token = request.cookies.get("session")?.value;
+    let isAuthenticated = false;
+
+    if (token) {
+        try {
+            jwt.verify(token, process.env.JWT_SECRET!);
+            isAuthenticated = true;
+        } catch {
+            // Stale/invalid cookie; treat as unauthenticated and clear it.
+            isAuthenticated = false;
+        }
+    }
 
     // Redirect to /login if the user is not authenticated
-    if (isProtectedRoute && !cookieSession) {
-        return NextResponse.redirect(new URL('/login', request.nextUrl))
+    if (isProtectedRoute && !isAuthenticated) {
+        const res = NextResponse.redirect(new URL('/login', request.nextUrl))
+        if (token) res.cookies.delete("session");
+        return res;
     }
 
     // Redirect to /profile if the user is authenticated
-    if (isGuestRoute && cookieSession) {
+    if (isGuestRoute && isAuthenticated) {
         return NextResponse.redirect(new URL('/profile', request.nextUrl))
     }
+
+    // Continue
+    const res = NextResponse.next();
+    if (token && !isAuthenticated) res.cookies.delete("session");
+    return res;
 }

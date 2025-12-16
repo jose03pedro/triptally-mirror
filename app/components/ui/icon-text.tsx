@@ -1,6 +1,8 @@
 'use client'
 
+import Icon from "@/app/components/ui/Icon";
 import IconComponent from "@/app/components/ui/icon-component";
+
 
 type IconTextProps = {
   icon: string;

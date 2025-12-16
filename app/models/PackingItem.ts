@@ -8,7 +8,7 @@ export interface PackingItemDocument extends Document {
   category: string;
   required: boolean;
   checked: boolean;
-  quantity?: number;
+  quantity: number;
   source: PackingItemSource;
   notes?: string;
   createdAt: Date;
@@ -37,6 +37,9 @@ const PackingItemSchema = new Schema<PackingItemDocument>(
   },
   { timestamps: true }
 );
+
+// Compound index for efficient queries and duplicate prevention
+PackingItemSchema.index({ trip: 1, name: 1 }, { unique: true });
 
 const PackingItem =
   mongoose.models.PackingItem ||

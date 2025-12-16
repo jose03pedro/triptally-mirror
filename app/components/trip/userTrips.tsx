@@ -7,6 +7,9 @@ import { Navbar } from "@/app/components/navigation/navbar";
 import { Trip, TripsResponse } from "@/types/trip/types";
 import TripsGrid from "@/app/components/trip/tripsGrid";
 import {useUserStore} from "@/lib/store/userStore";
+
+import Icon from "@/app/components/ui/Icon";
+import {color} from "d3-color";
 import IconComponent from "@/app/components/ui/icon-component";
 import IconText from "@/app/components/ui/icon-text";
 import {Loading} from "@/app/components/ui/loading";

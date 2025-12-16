@@ -1,7 +1,9 @@
 'use client'
 
 import Image from "next/image";
+import Icon from "@/app/components/ui/Icon";
 import IconComponent from "@/app/components/ui/icon-component";
+
 
 export default function ContactPage() {
     return (
