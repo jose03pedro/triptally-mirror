@@ -1,6 +1,6 @@
 import { Currency } from "../currency/types";
 import { User } from "../user/types";
-import {WeatherDisplayData} from "@/types/weather/types";
+import {WeatherDisplayData, WeatherIconType} from "@/types/weather/types";
 
 export interface City {
   name: string;
@@ -17,7 +17,7 @@ export interface Trip {
   coverImage?: string;
   owner: User;
   currency?: Currency;
-  lastWeatherSnapshot?: WeatherDisplayData[];
+  lastWeatherSnapshot?: WeatherSnapshot;
   privacy?: {
     showCities?: boolean;
     showExpenses?: boolean;
@@ -32,3 +32,12 @@ export type TripsResponse = {
   pages: number;
   total: number;
 };
+
+export type WeatherSnapshot = Record<
+    string, // city
+    {
+        date: string;
+        temperature: number;
+        icon: WeatherIconType;
+    }[]
+>;

@@ -9,7 +9,7 @@ interface WeatherCardProps {
 export function WeatherCard({ weatherData }: WeatherCardProps) {
     return (
         <div className="mb-4" style={{ borderRadius: "25px" }}>
-            <div className="mt-3" style={{ width: "fit-content" }}>
+            <div className="mt-3 d-flex flex-column gap-3" style={{ width: "fit-content" }}>
                 {weatherData.map((data, i) => (
                     <div key={i}>
                         <p className="mb-1" style={{ fontSize: "0.9rem" }}>

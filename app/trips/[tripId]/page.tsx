@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Loading } from "@/app/components/ui/loading";
 import { useAuth } from "@/lib/hook/useAuth";
 import { TripOverview } from "@/app/components/trip/tripOverview";
-import { Trip } from "@/types/trip/types";
+import {Trip, WeatherSnapshot} from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
@@ -278,11 +278,12 @@ export default function TripPage() {
             {/* Overview area */}
             <TripOverview trip={trip} />
 
-            {/* Weather dashboad */}
-              <WeatherSection
-                  isPastTrip={isPastTrip}
-                  weatherDisplay={isPastTrip ? trip.lastWeatherSnapshot ?? [] : weatherDisplay}
-              />
+            {/* Weather dashboard */}
+            <WeatherSection
+                isPastTrip={isPastTrip}
+                weatherSnapshot={trip.lastWeatherSnapshot ?? {}}
+                weatherDisplay={weatherDisplay}
+            />
 
             {/* Expenses dashboard */}
             { showExpenses &&

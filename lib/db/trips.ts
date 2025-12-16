@@ -1,5 +1,6 @@
-import { Trip as TripType} from "@/types/trip/types";
+import {Trip as TripType, WeatherSnapshot} from "@/types/trip/types";
 import Trip from "@/app/models/Trip";
+import {WeatherDisplayData} from "@/types/weather/types";
 
 export async function getTripsForNextDays(days: number): Promise<TripType[]> {
     const today = new Date();
@@ -25,13 +26,53 @@ export async function getTripsForNextDays(days: number): Promise<TripType[]> {
     }));
 }
 
+type DayWeather = WeatherDisplayData["days"][number];
+
+export function mergeDaysByDate(
+    prev: DayWeather[] = [],
+    next: DayWeather[] = []
+): DayWeather[] {
+    const map = new Map<string, DayWeather>();
+
+    // Keep previous days
+    for (const day of prev) {
+        map.set(day.date, day);
+    }
+
+    // Override with new forecast days
+    for (const day of next) {
+        map.set(day.date, day);
+    }
+
+    // Return sorted by date
+    return Array.from(map.values()).sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+}
+
+
+export function isDateWithinTrip(
+    date: string,
+    startDate: string,
+    endDate: string
+) {
+    const d = new Date(date);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    return d >= start && d <= end;
+}
+
 export async function updateTripSnapshot(
     tripId: string,
-    newSnapshot: Record<string, any>
+    newSnapshot: WeatherSnapshot
 ) {
     try {
-        const trip = await Trip.findByIdAndUpdate(tripId, { lastWeatherSnapshot: newSnapshot }, { new: true });
-        console.log(trip);
+        await Trip.findByIdAndUpdate(
+            tripId,
+            { lastWeatherSnapshot: newSnapshot },
+            { new: true }
+        );
 
         return true;
     } catch (err) {

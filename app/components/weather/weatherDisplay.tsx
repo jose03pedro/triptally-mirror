@@ -10,7 +10,7 @@ export function WeatherDisplay({ dayWeather }: WeatherDisplayProps) {
     return (
         <div className="flex-column">
             <p className="small m-0 mb-2">
-                <strong>{dayWeather.temperature}°C</strong>
+                <strong>{Math.round(dayWeather.temperature)}°C</strong>
             </p>
             <WeatherIcon
                 icon={dayWeather.icon}

@@ -1,37 +1,52 @@
 import { NextResponse } from "next/server";
-import {getTripsForNextDays, updateTripSnapshot} from "@/lib/db/trips";
+import {getTripsForNextDays, isDateWithinTrip, mergeDaysByDate, updateTripSnapshot} from "@/lib/db/trips";
 import {getWeather} from "@/app/api/weather/route";
-import {WeatherDisplayData} from "@/types/weather/types";
+import {DayWeather, WeatherDisplayData} from "@/types/weather/types";
+import {WeatherSnapshot} from "@/types/trip/types";
 
 export async function GET() {
     const trips = await getTripsForNextDays(14);
 
     for (const trip of trips) {
-        const weather : WeatherDisplayData[] = await getWeather(trip.cities);
+        const weather: WeatherDisplayData[] = await getWeather(trip.cities);
 
-        const prevSnapshot = trip.lastWeatherSnapshot || {};
+        const prevSnapshot: WeatherSnapshot = trip.lastWeatherSnapshot ?? {};
+        const newSnapshot: WeatherSnapshot = {};
 
-        const newSnapshot: Record<string, any> = {};
+        for (const { city, days } of weather) {
+            // Only forecast days within trip
+            const forecastTripDays = days.filter(day =>
+                isDateWithinTrip(day.date, trip.startDate, trip.endDate)
+            );
 
-        for (const cityData of weather) {
-            const { city, days } = cityData;
-            const today = days[0]; // compare only today / first day
+            const prevDays = prevSnapshot[city] ?? [];
 
-            const prev = prevSnapshot[city];
+            // Merge instead of replace
+            const mergedDays = mergeDaysByDate(prevDays as DayWeather[], forecastTripDays);
 
-            if (prev) {
-                const tempDiff = Math.abs(today.temperature - prev.temperature);
-                const conditionChanged = today.icon !== prev.icon;
+            if (mergedDays.length === 0) continue;
+
+            // Compare today (only if both exist)
+            const today = mergedDays.find(d =>
+                isDateWithinTrip(d.date, new Date().toISOString(), new Date().toISOString())
+            );
+
+            const prevToday = prevDays.find(d => d.date === today?.date);
+
+            if (today && prevToday) {
+                const tempDiff = Math.abs(today.temperature - prevToday.temperature);
+                const conditionChanged = today.icon !== prevToday.icon;
 
                 if (tempDiff >= 3 || conditionChanged) {
                     console.log(`Weather changed for ${city} in trip ${trip._id}`);
                 }
             }
 
-            // save today's snapshot for this city
-            newSnapshot[city] = today;
+            newSnapshot[city] = mergedDays;
         }
+
         await updateTripSnapshot(trip._id, newSnapshot);
     }
+
     return NextResponse.json({ ok: true });
 }
