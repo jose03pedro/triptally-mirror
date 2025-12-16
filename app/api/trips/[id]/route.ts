@@ -24,7 +24,8 @@ export async function GET(
 
     const tripDoc = await Trip.findById(id)
       .populate("user", "first_name last_name")
-      .populate("currency");
+      .populate("currency")
+      .populate("flights");
 
     const currentUser = await getCurrentUser();
 
@@ -61,6 +62,7 @@ export async function GET(
       currency: tripDoc.currency,
       owner: tripDoc.user,
       lastWeatherSnapshot: tripDoc.lastWeatherSnapshot as WeatherDisplayData[] || [],
+      flights: tripDoc.flights,
     };
 
     return NextResponse.json(trip, { status: 200 });

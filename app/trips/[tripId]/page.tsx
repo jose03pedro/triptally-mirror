@@ -7,6 +7,8 @@ import { Loading } from "@/app/components/ui/loading";
 import { useAuth } from "@/lib/hook/useAuth";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import {Trip, WeatherSnapshot} from "@/types/trip/types";
+import { AddFlight } from "@/app/components/trip/addFlight";
+import { FlightList } from "@/app/components/trip/flightList";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
@@ -29,6 +31,7 @@ export default function TripPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [flights, setFlights] = useState<any[]>([]);
 
   const parseWeatherRes = (
         data: WeatherResponse,
@@ -71,11 +74,12 @@ export default function TripPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [tripRes, expRes, currRes, catRes] = await Promise.all([
+        const [tripRes, expRes, currRes, catRes, flightsRes] = await Promise.all([
           fetch(`/api/trips/${tripId}`, { cache: "no-store" }),
           fetch(`/api/trips/${tripId}/expenses`, { cache: "no-store" }),
           fetch(`/api/currencies`, { cache: "no-store" }),
           fetch(`/api/expensecategories`, { cache: "no-store" }),
+          fetch(`/api/trips/${tripId}/flights`, { cache: "no-store" }),
         ]);
 
         if (!tripRes.ok) {
@@ -93,12 +97,14 @@ export default function TripPage() {
         const expData = expRes.ok ? await expRes.json() : [];
         const currData = currRes.ok ? await currRes.json() : [];
         const catData = catRes.ok ? await catRes.json() : [];
+        const flightsData = flightsRes.ok ? await flightsRes.json() : [];
 
         if (!ignore) {
           setTrip(tripData);
           setExpenses(expData.expenses || []);
           setCurrencies(currData || []);
           setCategories(catData || []);
+          setFlights(Array.isArray(flightsData) ? flightsData : []);
         }
       } catch (err) {
         console.error("Error loading trip:", err);
@@ -189,7 +195,9 @@ export default function TripPage() {
   const privacy = trip.privacy || {};
   const showCities = isOwner || privacy.showCities !== false;
   const showExpenses = isOwner || privacy.showExpenses !== false;
+  const showItinerary = isOwner || privacy.showItinerary !== false;
   const showCover = isOwner || privacy.showCover !== false;
+
 
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
@@ -295,6 +303,42 @@ export default function TripPage() {
                     categories={categories}
                 />
             }
+
+            {/* Flights dashboard */}
+            {showItinerary && (
+              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
+                <div className="mb-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
+                      Flights
+                    </h2>
+                    <AddFlight
+                      tripId={tripId as string}
+                      userId={trip.owner._id as string}
+                      onFlightAdded={(newFlight) => {
+                        setFlights((prev) => {
+                          if (prev.some((f) => f._id === newFlight._id))
+                            return prev;
+                          return [...prev, newFlight];
+                        });
+                      }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-slate-400">
+                    {flights.length} flight(s)
+                  </span>
+                </div>
+
+                <FlightList
+                  flights={flights}
+                  tripId={tripId as string}
+                  isOwner={isOwner}
+                  onFlightDeleted={(flightId) => {
+                    setFlights((prev) => prev.filter((f) => f._id !== flightId));
+                  }}
+                />
+              </div>
+            )}
           </section>
 
           {/* Side note for visitors / owners */}

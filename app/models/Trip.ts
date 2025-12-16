@@ -52,6 +52,11 @@ const tripSchema = new mongoose.Schema({
       type: Array,
       default: []
   },
+  //! Flights associated with the trip
+  flights: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Flight"
+   }],
 
   participants: [participantSchema],
   // Fine‑grained privacy controls for what gets exposed publicly
