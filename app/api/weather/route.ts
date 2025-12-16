@@ -7,6 +7,14 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const apiKey = process.env.WEATHER_API_KEY;
 
+  if (!apiKey) {
+      console.error("API key not found.");
+      return NextResponse.json(
+          { message: "API key not found." },
+          { status: 400 }
+      );
+  }
+
   const location = searchParams.get("location");
   if (!location) {
       console.error("Location not found.");
