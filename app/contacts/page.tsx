@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Icon from "@/app/components/ui/icon";
+import Icon from "@/app/components/ui/Icon";
 
 export default function ContactPage() {
     return (

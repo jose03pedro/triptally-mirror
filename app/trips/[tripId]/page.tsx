@@ -10,11 +10,11 @@ import ExpenseTabs from "@/app/expenses/expenseTabs";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { AddFlight } from "@/app/components/trip/addFlight";
 import { FlightList } from "@/app/components/trip/flightList";
+import { PackingListSection } from "@/app/components/trip/packingList";
 import { Trip } from "@/types/trip/types";
 import { ExpenseWithConverted } from "@/types/expense/types";
 import { ExpenseCategory } from "@/types/expensecategory/types";
 import { Currency } from "@/types/currency/types";
-import user from "@/app/models/User";
 
 export default function TripPage() {
   const params = useParams();
@@ -266,6 +266,13 @@ export default function TripPage() {
                     setFlights((prev) => prev.filter((f) => f._id !== flightId));
                   }}
                 />
+              </div>
+            )}
+
+            {/* Packing List section */}
+            {showItinerary && (
+              <div className="fade-up fade-up-delay-4">
+                <PackingListSection tripId={tripId as string} isOwner={isOwner} />
               </div>
             )}
           </section>

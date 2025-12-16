@@ -1,4 +1,4 @@
-import Icon from "@/app/components/ui/icon";
+import Icon from "@/app/components/ui/Icon";
 
 type IconTextProps = {
   icon: string;
