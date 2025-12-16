@@ -86,7 +86,7 @@ export function NotificationElement({
       onClick={handleReadNotification}
     >
       <div className="card-body d-flex justify-content-between align-items-start">
-        {/* Icon */}
+        {/* IconComponent */}
         <div className="me-3">
           <RoundIcon
             url={notification.type.icon}
