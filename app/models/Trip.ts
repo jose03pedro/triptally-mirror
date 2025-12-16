@@ -47,9 +47,14 @@ const tripSchema = new mongoose.Schema({
     ref: "Currency",
     required: true,
   },
+  // Weather snapshot of the trip
+  lastWeatherSnapshot: {
+      type: Array,
+      default: []
+  },
   //! Flights associated with the trip
-  flights: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
+  flights: [{
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Flight"
    }],
 

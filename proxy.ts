@@ -1,5 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server'
+
 import jwt from "jsonwebtoken";
+import {cookies} from "next/headers";
+import {useUserStore} from "@/lib/store/userStore";
 
 // Define the protected and public routes
 const protectedRoutes = ['/profile']

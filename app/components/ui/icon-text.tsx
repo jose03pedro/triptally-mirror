@@ -1,4 +1,8 @@
+'use client'
+
 import Icon from "@/app/components/ui/Icon";
+import IconComponent from "@/app/components/ui/icon-component";
+
 
 type IconTextProps = {
   icon: string;
@@ -18,7 +22,7 @@ export default function IconText({
   return (
     <div className="d-flex gap-1 align-items-center">
 
-      <Icon icon={icon} size={size} color={color} type={type} />
+      <IconComponent icon={icon} size={size} color={color} type={type} />
       <span style={{ fontSize: size / 1.3, color: color }}>{text} </span>
     </div>
   );

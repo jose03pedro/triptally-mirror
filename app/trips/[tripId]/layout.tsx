@@ -15,9 +15,7 @@ export default function TripLayout({
             <Navbar />
             <main
                 style={{
-                    maxWidth: "1400px",
                     margin: "auto",
-                    marginTop: "7rem",
                 }}
                 className="container position-relative"
             >

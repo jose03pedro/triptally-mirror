@@ -1,5 +1,9 @@
+'use client'
+
 import Image from "next/image";
 import Icon from "@/app/components/ui/Icon";
+import IconComponent from "@/app/components/ui/icon-component";
+
 
 export default function ContactPage() {
     return (
@@ -35,7 +39,7 @@ export default function ContactPage() {
 
             <section>
                 <div className="d-flex flex-column align-items-center">
-                    <Icon icon="mail" type="outlined" color="#0d6efd" size={40}/>
+                    <IconComponent icon="mail" type="outlined" color="#0d6efd" size={40}/>
                     <h3 className="my-3" style={{ fontSize: "1.3rem"}}>
                         <strong>EMAIL US</strong>
                     </h3>
