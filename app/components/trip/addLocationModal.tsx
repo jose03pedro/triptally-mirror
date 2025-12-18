@@ -34,51 +34,41 @@ export function AddLocationModal({
   const [searching, setSearching] = useState(false);
   const [showPredictions, setShowPredictions] = useState(false);
   const [manualEntry, setManualEntry] = useState(false);
-  const [placeSelected, setPlaceSelected] = useState(false);
 
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Debounced place search
-  useEffect(() => {
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
-
-    if (!searchQuery || searchQuery.length < 2 || manualEntry || placeSelected) {
-      setPredictions([]);
-      setShowPredictions(false);
+  // Search for places when Enter is pressed
+  async function handleSearch() {
+    if (!searchQuery || searchQuery.length < 2 || manualEntry) {
       return;
     }
 
-    searchTimeout.current = setTimeout(async () => {
-      setSearching(true);
-      try {
-        const res = await fetch(`/api/places?query=${encodeURIComponent(searchQuery)}`);
-        const data = await res.json();
-        if (res.ok && data.predictions) {
-          setPredictions(data.predictions);
-          setShowPredictions(true);
-        }
-      } catch (e) {
-        console.error("Search error:", e);
-      } finally {
-        setSearching(false);
+    setSearching(true);
+    try {
+      const res = await fetch(`/api/places?query=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
+      if (res.ok && data.predictions) {
+        setPredictions(data.predictions);
+        setShowPredictions(true);
       }
-    }, 300);
+    } catch (e) {
+      console.error("Search error:", e);
+    } finally {
+      setSearching(false);
+    }
+  }
 
-    return () => {
-      if (searchTimeout.current) {
-        clearTimeout(searchTimeout.current);
-      }
-    };
-  }, [searchQuery, manualEntry, placeSelected]);
+  function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  }
 
   async function handleSelectPlace(prediction: PlacePrediction) {
-    setPlaceSelected(true);
     setShowPredictions(false);
     setPredictions([]);
     setSearchQuery(prediction.name);
@@ -175,7 +165,6 @@ export function AddLocationModal({
     setPredictions([]);
     setShowPredictions(false);
     setManualEntry(false);
-    setPlaceSelected(false);
     setError(null);
   }
 
@@ -246,9 +235,10 @@ export function AddLocationModal({
                     ref={searchInputRef}
                     type="text"
                     className="form-control"
-                    placeholder="Restaurant, museum, attraction..."
+                    placeholder="Type and press Enter to search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
                     onFocus={() => predictions.length > 0 && setShowPredictions(true)}
                   />
                   {searching && (
@@ -257,6 +247,9 @@ export function AddLocationModal({
                     </span>
                   )}
                 </div>
+                {searchQuery.length > 0 && !showPredictions && !searching && (
+                  <small className="text-muted">Press Enter to search</small>
+                )}
 
                 {/* Predictions Dropdown */}
                 {showPredictions && predictions.length > 0 && (

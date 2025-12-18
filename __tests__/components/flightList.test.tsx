@@ -60,7 +60,7 @@ describe("FlightList Component", () => {
     it("should render empty state when no flights", () => {
       render(<FlightList {...defaultProps} flights={[]} />);
       expect(
-        screen.getByText("No flights added yet. Add your first flight!")
+        screen.getByText("No flights added yet.")
       ).toBeInTheDocument();
     });
 
