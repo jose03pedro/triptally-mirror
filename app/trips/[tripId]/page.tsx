@@ -10,8 +10,12 @@ import { useAuth } from "@/lib/hook/useAuth";
 import { TripOverview } from "@/app/components/trip/tripOverview";
 import { AddFlight } from "@/app/components/trip/addFlight";
 import { FlightList } from "@/app/components/trip/flightList";
+import { AddLocation } from "@/app/components/trip/addLocation";
+import { LocationList } from "@/app/components/trip/locationList";
 
 import { PackingListSection } from "@/app/components/trip/packingList";
+
+import { MustVisitLocation } from "@/types/location/types";
 import { ExpenseSection } from "@/app/components/expenses/expenseSection";
 import { WeatherSection } from "@/app/components/weather/weatherSection";
 
@@ -38,6 +42,7 @@ export default function TripPage() {
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [flights, setFlights] = useState<any[]>([]);
+  const [locations, setLocations] = useState<MustVisitLocation[]>([]);
 
   const [weatherData, setWeatherData] = useState<WeatherResponse[]>([]);
   const [weatherDisplay, setWeatherDisplay] = useState<WeatherDisplayData[]>([]);
@@ -104,6 +109,7 @@ export default function TripPage() {
           setCurrencies(currData || []);
           setCategories(catData || []);
           setFlights(Array.isArray(flightsData) ? flightsData : []);
+          setLocations(Array.isArray(tripData.mustVisitLocations) ? tripData.mustVisitLocations : []);
         }
       } catch (err) {
         console.error("Error loading trip:", err);
@@ -133,7 +139,7 @@ export default function TripPage() {
     const fetchWeatherPerCity = async () => {
       try {
         const results = await Promise.all(
-          trip.cities.map(async (city) => {
+          (trip.cities || []).map(async (city) => {
             const res = await fetch(
               `/api/weather?location=${encodeURIComponent(city.name)}`,
               { cache: "no-store" }
@@ -329,6 +335,46 @@ export default function TripPage() {
                   isOwner={isOwner}
                   onFlightDeleted={(flightId) => {
                     setFlights((prev) => prev.filter((f) => f._id !== flightId));
+                  }}
+                />
+              </div>
+            )}
+
+            {showItinerary && (
+              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
+                <div className="mb-2">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
+                      Must-Visit Locations
+                    </h2>
+                    <AddLocation
+                      tripId={tripId as string}
+                      userId={trip.owner._id as string}
+                      onLocationAdded={(newLocation) => {
+                        setLocations((prev) =>
+                          prev.some((l) => l._id === newLocation._id)
+                            ? prev
+                            : [...prev, newLocation]
+                        );
+                      }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-slate-400">
+                    {locations.length} location(s)
+                  </span>
+                </div>
+
+                <LocationList
+                  locations={locations}
+                  tripId={tripId as string}
+                  isOwner={isOwner}
+                  onLocationDeleted={(locationId) => {
+                    setLocations((prev) => prev.filter((l) => l._id !== locationId));
+                  }}
+                  onLocationUpdated={(updatedLocation) => {
+                    setLocations((prev) =>
+                      prev.map((l) => (l._id === updatedLocation._id ? updatedLocation : l))
+                    );
                   }}
                 />
               </div>

@@ -22,6 +22,31 @@ const privacySchema = new mongoose.Schema(
   { _id: false }
 );
 
+const mustVisitLocationSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    category: {
+      type: String,
+      enum: ["restaurant", "attraction", "museum", "hotel", "shopping", "nightlife", "custom"],
+      default: "custom",
+    },
+    address: { type: String },
+    coordinates: {
+      lat: { type: Number },
+      lng: { type: Number },
+    },
+    placeId: { type: String }, // Google Places ID for fetching updates
+    notes: { type: String },
+    priority: {
+      type: Number,
+      enum: [1, 2, 3], // 1 = must-see, 2 = want to see, 3 = if time
+      default: 2,
+    },
+    addedAt: { type: Date, default: Date.now },
+  },
+  { _id: true }
+);
+
 const tripSchema = new mongoose.Schema({
   title: { type: String, required: true },
   startDate: { type: Date, required: true },
@@ -57,6 +82,9 @@ const tripSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Flight"
    }],
+
+  //! Must-visit locations for the trip
+  mustVisitLocations: [mustVisitLocationSchema],
 
   participants: [participantSchema],
   // Fine‑grained privacy controls for what gets exposed publicly

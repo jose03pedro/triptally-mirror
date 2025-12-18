@@ -1,6 +1,7 @@
 import { Currency } from "../currency/types";
 import { User } from "../user/types";
 import {WeatherDisplayData, WeatherIconType} from "@/types/weather/types";
+import { MustVisitLocation } from "@/types/location/types";
 
 export interface City {
   name: string;
@@ -18,6 +19,7 @@ export interface Trip {
   owner: User;
   currency?: Currency;
   lastWeatherSnapshot?: WeatherSnapshot;
+  mustVisitLocations?: MustVisitLocation[];
   privacy?: {
     showCities?: boolean;
     showExpenses?: boolean;
