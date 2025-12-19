@@ -9,7 +9,7 @@ type FieldErrorsProps = {
 export default function FieldErrors({ errors, asList = false, className = "" }: FieldErrorsProps) {
     if (!errors || errors.length === 0) return null;
 
-    const baseClass = `text-xs text-red-600 mt-1 ${className}`;
+    const baseClass = `small text-danger mt-1 ${className}`;
 
     if (asList) {
         return (

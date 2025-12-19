@@ -59,7 +59,8 @@ export default function TripCitiesInput({
   // Use useEffect to notify parent
   useEffect(() => {
     onChangeCities?.(cities.filter((c) => c.name));
-  }, [cities, onChangeCities]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cities]);
 
   return (
     <div className="mb-4">

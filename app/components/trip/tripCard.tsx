@@ -4,6 +4,7 @@ import { Trip } from "@/types/trip/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
+import {UserIcon} from "@/app/components/user/userIcon";
 
 interface TripCardProps {
   loggedUserId?: string;
@@ -152,15 +153,17 @@ export default function TripCard({
         <div className="mt-auto d-flex justify-content-between align-items-center pt-2">
           <span className="text-muted small">
             Created by{" "}
-            <strong>
-              {loggedUserId === trip?.owner._id
-                ? "You"
-                : `${trip?.owner?.first_name} ${trip?.owner?.last_name}`}
-            </strong>
+              <Link href={"/profile/" + trip.owner._id}>
+                <strong>
+                  {loggedUserId === trip?.owner._id
+                    ? "You"
+                    : `${trip?.owner?.first_name} ${trip?.owner?.last_name}`}
+                </strong>
+            </Link>
           </span>
-          {trip.isPublic && (
+          {!trip.isPublic && (
             <span className="badge bg-outline-secondary text-muted border">
-              Public
+              Private
             </span>
           )}
         </div>

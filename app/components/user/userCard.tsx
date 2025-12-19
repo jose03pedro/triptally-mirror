@@ -1,16 +1,16 @@
 import { UserIcon } from "@/app/components/user/userIcon";
 import { UserEditButton } from "@/app/components/user/userEditButton";
 import Tooltip from "@mui/material/Tooltip";
-import {useUserStore} from "@/lib/store/userStore";
+import {User} from "@/types/user/types";
 
 type UserCardProps = {
-  firstName?: string;
-  lastName?: string;
+  isLoggedUser: boolean;
+  user: User;
 };
 
-export function UserCard({ firstName, lastName }: UserCardProps) {
+export function UserCard({ isLoggedUser, user }: UserCardProps) {
     const displayName =
-        [firstName, lastName].filter(Boolean).join(" ") || "Traveler";
+        [user.first_name, user.last_name].filter(Boolean).join(" ") || "Traveler";
 
     return (
         <div className="d-flex flex-column align-items-center gap-3 text-center">
@@ -22,7 +22,7 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
                     style={{ opacity: 0.2 }}
                 />
                 <div className="position-relative">
-                    <UserIcon size={72} />
+                    <UserIcon size={72} user={user} />
                 </div>
             </div>
 
@@ -38,31 +38,33 @@ export function UserCard({ firstName, lastName }: UserCardProps) {
             </div>
 
             {/* Edit button */}
-            <div className="w-100 pt-1">
-                <Tooltip
-                    title="Edit user details"
-                    slotProps={{
-                        popper: {
-                            modifiers: [
-                                {
-                                    name: "offset",
-                                    options: {
-                                        offset: [0, -10],
+            {isLoggedUser &&
+                <div className="w-100 pt-1">
+                    <Tooltip
+                        title="Edit user details"
+                        slotProps={{
+                            popper: {
+                                modifiers: [
+                                    {
+                                        name: "offset",
+                                        options: {
+                                            offset: [0, -10],
+                                        },
                                     },
-                                },
-                            ],
-                        },
-                    }}
-                >
-                    <UserEditButton
-                        size={22}
-                        label="Edit Profile"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editUserModal"
-                        className="btn btn-outline-secondary w-100"
-                    />
-                </Tooltip>
-            </div>
+                                ],
+                            },
+                        }}
+                    >
+                        <UserEditButton
+                            size={22}
+                            label="Edit Profile"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editUserModal"
+                            className="btn btn-outline-secondary w-100"
+                        />
+                    </Tooltip>
+                </div>
+            }
         </div>
     );
 }

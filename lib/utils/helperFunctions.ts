@@ -33,7 +33,6 @@ export async function convertMoney(
   }
 }
 
-// lib/utils/exchangeRates.ts
 export async function getExchangeRates(
   baseCurrency: string,
   targetCurrencies: string[]
@@ -60,4 +59,30 @@ export async function getExchangeRates(
     console.error("Error fetching exchange rates:", err);
     return {};
   }
+}
+
+export function formatShortDate(dateStr : string) {
+    const date = new Date(dateStr);
+
+    const months = [
+        "jan", "fev", "mar", "abr", "mai", "jun",
+        "jul", "ago", "set", "out", "nov", "dez"
+    ];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+
+    return `${day}/${month}`;
+}
+
+export function getWeekday(dateStr : string) {
+    const date = new Date(dateStr);
+
+    return date.toLocaleDateString("en-US", {
+        weekday: "short"
+    });
+}
+
+export function capitalizeFirst(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }

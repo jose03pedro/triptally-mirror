@@ -5,6 +5,8 @@ import "@/app/models/Trip";
 import "@/app/models/Currency";
 import "@/app/models/Expense";
 import "@/app/models/ExpenseCategory";
+import "@/app/models/Flight";
+import "@/app/models/PackingItem";
 
 import mongoose from "mongoose";
 

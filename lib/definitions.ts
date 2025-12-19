@@ -29,6 +29,8 @@ export const CreateTripSchema = z
         z.object({
           name: z.string().trim().nonempty("Please select a valid city"),
           country: z.string().trim(),
+          lat: z.number().optional(),
+          lon: z.number().optional(),
         })
       )
       .min(1, "At least one city is required"),

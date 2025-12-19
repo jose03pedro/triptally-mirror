@@ -35,6 +35,7 @@ export function TravelerProfileButton({
             icon={initialData ? "edit" : "add"} // Change icon based on state
             text={label}
             color={"000"}
+            type="outlined"
           />
         </button>
       </div>

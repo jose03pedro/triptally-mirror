@@ -4,6 +4,7 @@ import Trip from "@/app/models/Trip";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Expense from "@/app/models/Expense";
 import { getExchangeRates } from "@/lib/utils/helperFunctions";
+import {WeatherDisplayData, WeatherSnapshot} from "@/types/weather/types";
 
 export async function GET(
   request: Request,
@@ -23,7 +24,8 @@ export async function GET(
 
     const tripDoc = await Trip.findById(id)
       .populate("user", "first_name last_name")
-      .populate("currency");
+      .populate("currency")
+      .populate("flights");
 
     const currentUser = await getCurrentUser();
 
@@ -41,7 +43,17 @@ export async function GET(
 
     const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
 
-    if (!tripDoc.isPublic && !isOwner) {
+    // Check if user is a collaborator (US401)
+    const isCollaborator = currentUser
+      ? tripDoc.participants?.some(
+          (p: any) =>
+            (p.user?._id?.toString() === currentUser.id ||
+              p.user?.toString() === currentUser.id) &&
+            p.role !== "owner"
+        )
+      : false;
+
+    if (!tripDoc.isPublic && !isOwner && !isCollaborator) {
       return NextResponse.json(
         { error: "This trip is private" },
         { status: 403 }
@@ -59,6 +71,9 @@ export async function GET(
       privacy: tripDoc.privacy,
       currency: tripDoc.currency,
       owner: tripDoc.user,
+      lastWeatherSnapshot: tripDoc.lastWeatherSnapshot as WeatherDisplayData[] || [],
+      flights: tripDoc.flights,
+      mustVisitLocations: tripDoc.mustVisitLocations || [],
     };
 
     return NextResponse.json(trip, { status: 200 });

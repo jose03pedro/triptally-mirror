@@ -92,27 +92,26 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-slate-50 pb-16">
         <div className="mx-auto max-w-6xl px-4">
           {/* HERO */}
-          <section className="flex flex-col items-center text-center gap-4 mb-10 md:mb-14 fade-up">
-            <p className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 mb-1">
-              TripTally · Plan, share, remember
-            </p>
-            <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-slate-900 max-w-3xl">
-              Discover trips from the{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500">
-                community
-              </span>
-            </h1>
-            <p className="text-slate-600 max-w-2xl text-sm md:text-base">
-              Explore public trips created by other travelers and get inspired
-              for your next adventure.
-            </p>
+          <section className="d-flex flex-column align-items-center text-center gap-3 my-5 mb-md-6">
+              <p className="d-inline-flex align-items-center rounded-pill bg-primary bg-opacity-10 px-3 py-1 small fw-medium text-primary mb-1">
+                  TripTally · Plan, share, remember
+              </p>
+
+              <h1 className="fs-1 fs-md-2 fw-semibold lh-sm text-dark max-w-75">
+                  Discover trips from the{" "}
+                  <span className="text-gradient">
+                    community
+                  </span>
+              </h1>
+
+              <p className="text-muted fs-6 fs-md-5 mx-auto" >
+                  Explore public trips created by other travelers and get inspired for your next adventure.
+              </p>
           </section>
 
-          {/* PUBLIC TRIPS GRID */}
+            {/* PUBLIC TRIPS GRID */}
           <section className="space-y-3 fade-up fade-up-delay-1">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm md:text-base font-semibold text-slate-900">
@@ -120,7 +119,7 @@ export default function Home() {
               </h2>
             </div>
 
-            {loading && <Loading />}
+            {loading ? <Loading /> : ""}
 
             {!loading && trips.length === 0 && (
               <p className="text-xs md:text-sm text-slate-500">
@@ -142,7 +141,6 @@ export default function Home() {
             )}
           </section>
         </div>
-      </main>
     </>
   );
 }
