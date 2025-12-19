@@ -4,12 +4,12 @@ import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-    request: NextRequest,
-    context: { params: Promise<{ id: string }> }
+    _request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await connectionToDB();
-        const { id } = await context.params;
+        const { id } = await params;
 
         const user = await getCurrentUser();
 
