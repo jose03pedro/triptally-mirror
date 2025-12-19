@@ -1,16 +1,21 @@
-import { TripContext, PlanOutput, DayOutput, ActivityOutput } from "./types";
+import { TripContext, PlanOutput, DayOutput, ActivityOutput, MustVisitLocationInput } from "./types";
 
 /**
  * Deterministic fallback plan generator.
  * Used when GEMINI_API_KEY is not available or when Gemini call fails.
  */
 export function generateFallbackPlan(context: TripContext): PlanOutput {
-  const { trip, travelerProfile, preferences } = context;
+  const { trip, travelerProfile, preferences, mustVisitLocations } = context;
   const { destinations, startDate, endDate } = trip;
   
   const pace = preferences?.pace || "moderate";
   const interests = preferences?.interests || travelerProfile?.interests || [];
   const mustVisit = preferences?.mustVisit || [];
+  
+  // Sort must-visit locations by priority (1 = must-see first)
+  const sortedLocations = [...(mustVisitLocations || [])].sort(
+    (a, b) => (a.priority || 2) - (b.priority || 2)
+  );
   
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -18,6 +23,7 @@ export function generateFallbackPlan(context: TripContext): PlanOutput {
   
   let currentDate = new Date(start);
   let dayIndex = 0;
+  let locationIndex = 0;
   
   while (currentDate <= end) {
     const dateStr = currentDate.toISOString().split("T")[0];
@@ -45,8 +51,51 @@ export function generateFallbackPlan(context: TripContext): PlanOutput {
       tags: ["exploration", "sightseeing"],
     });
     
-    // Lunch
-    if (activityCount >= 2) {
+    // Add must-visit locations from Google Places (rich data)
+    if (sortedLocations.length > 0 && locationIndex < sortedLocations.length) {
+      const loc = sortedLocations[locationIndex];
+      const priorityLabel = loc.priority === 1 ? "Must-see" : loc.priority === 3 ? "If time permits" : "Want to see";
+      
+      // Schedule based on category
+      let time = "10:30";
+      let tags = ["must-visit", loc.category || "custom"];
+      
+      if (loc.category === "restaurant") {
+        time = "12:30"; // Lunch time for restaurants
+        tags.push("food");
+      } else if (loc.category === "nightlife") {
+        time = "21:00";
+        tags.push("evening");
+      } else if (loc.category === "museum") {
+        time = "14:00";
+        tags.push("culture");
+      }
+      
+      activities.push({
+        time,
+        title: loc.name,
+        location: loc.address || city.name,
+        notes: `${priorityLabel}${loc.notes ? ` - ${loc.notes}` : ""}`,
+        durationMins: loc.category === "restaurant" ? 90 : 120,
+        tags,
+      });
+      
+      locationIndex++;
+    } else if (mustVisit.length > 0 && dayIndex < mustVisit.length) {
+      // Fallback to simple string must-visit items
+      activities.push({
+        time: "10:30",
+        title: mustVisit[dayIndex],
+        location: city.name,
+        notes: "Must-visit location from your list",
+        durationMins: 120,
+        tags: ["must-visit", "priority"],
+      });
+    }
+    
+    // Lunch (if not already added via restaurant must-visit)
+    const hasRestaurant = activities.some(a => a.tags?.includes("food") && a.time === "12:30");
+    if (activityCount >= 2 && !hasRestaurant) {
       activities.push({
         time: "12:30",
         title: "Local lunch experience",
@@ -78,18 +127,6 @@ export function generateFallbackPlan(context: TripContext): PlanOutput {
         notes: "Enjoy the evening atmosphere",
         durationMins: 180,
         tags: ["evening", "leisure"],
-      });
-    }
-    
-    // Add must-visit items
-    if (mustVisit.length > 0 && dayIndex < mustVisit.length) {
-      activities.push({
-        time: "10:30",
-        title: mustVisit[dayIndex],
-        location: city.name,
-        notes: "Must-visit location from your list",
-        durationMins: 120,
-        tags: ["must-visit", "priority"],
       });
     }
     
@@ -140,9 +177,10 @@ export function generateFallbackPlan(context: TripContext): PlanOutput {
   }
   
   const cityNames = destinations.map(d => d.name).join(", ");
+  const locationCount = sortedLocations.length || mustVisit.length;
   
   return {
-    summary: `${days.length}-day trip to ${cityNames} with a ${pace} pace${interests.length > 0 ? `, focusing on ${interests.slice(0, 3).join(", ")}` : ""}.`,
+    summary: `${days.length}-day trip to ${cityNames} with a ${pace} pace${interests.length > 0 ? `, focusing on ${interests.slice(0, 3).join(", ")}` : ""}${locationCount > 0 ? `. Includes ${locationCount} must-visit location(s).` : "."}`,
     days,
   };
 }

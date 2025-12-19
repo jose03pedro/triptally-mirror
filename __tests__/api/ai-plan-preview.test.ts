@@ -115,5 +115,74 @@ describe("AI Plan Preview Fallback", () => {
     expect(validatePlanOutput(relaxedPlan)).toBe(true);
     expect(validatePlanOutput(fastPlan)).toBe(true);
   });
-});
 
+  it("includes must-visit locations from Google Places in the plan", () => {
+    const context = {
+      trip: {
+        title: "Paris Trip",
+        destinations: [{ name: "Paris", country: "France" }],
+        startDate: "2025-01-01",
+        endDate: "2025-01-03",
+      },
+      preferences: { pace: "moderate" as const, interests: [], mustVisit: [] },
+      mustVisitLocations: [
+        {
+          name: "Eiffel Tower",
+          category: "attraction" as const,
+          address: "Champ de Mars, 5 Av. Anatole France, 75007 Paris",
+          placeId: "ChIJLU7jZClu5kcR4PcOOO6p3I0",
+          notes: "Must see at sunset",
+          priority: 1 as const,
+        },
+        {
+          name: "Le Jules Verne",
+          category: "restaurant" as const,
+          address: "Eiffel Tower, Avenue Gustave Eiffel, Paris",
+          placeId: "ChIJe9XMwiBu5kcRLs8qAuPhFFg",
+          priority: 2 as const,
+        },
+      ],
+    };
+
+    const result = generateFallbackPlan(context);
+
+    // Should include the must-visit locations
+    const allActivities = result.days.flatMap(d => d.activities);
+    const eiffelActivity = allActivities.find(a => a.title === "Eiffel Tower");
+    const restaurantActivity = allActivities.find(a => a.title === "Le Jules Verne");
+
+    expect(eiffelActivity).toBeDefined();
+    expect(eiffelActivity?.location).toContain("Champ de Mars");
+    expect(eiffelActivity?.notes).toContain("Must-see");
+    expect(eiffelActivity?.tags).toContain("must-visit");
+    expect(eiffelActivity?.tags).toContain("attraction");
+
+    expect(restaurantActivity).toBeDefined();
+    expect(restaurantActivity?.time).toBe("12:30"); // Restaurants scheduled at lunch
+    expect(restaurantActivity?.tags).toContain("food");
+  });
+
+  it("prioritizes must-visit locations by priority level", () => {
+    const context = {
+      trip: {
+        title: "Short Trip",
+        destinations: [{ name: "Paris", country: "France" }],
+        startDate: "2025-01-01",
+        endDate: "2025-01-01", // Only 1 day
+      },
+      mustVisitLocations: [
+        { name: "Low Priority Place", priority: 3 as const },
+        { name: "High Priority Place", priority: 1 as const },
+        { name: "Medium Priority Place", priority: 2 as const },
+      ],
+    };
+
+    const result = generateFallbackPlan(context);
+
+    // With only 1 day, should include the highest priority location first
+    const allActivities = result.days.flatMap(d => d.activities);
+    const highPriorityActivity = allActivities.find(a => a.title === "High Priority Place");
+
+    expect(highPriorityActivity).toBeDefined();
+  });
+});

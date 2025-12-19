@@ -33,7 +33,13 @@ Guidelines:
 - Include meal breaks
 - Account for travel time between locations
 - Respect the pace preference (relaxed = fewer activities, fast = more activities)
-- Include must-visit locations on appropriate days
+- **MUST-VISIT LOCATIONS**: If mustVisitLocations are provided, you MUST include ALL of them in the itinerary:
+  - Priority 1 (must-see): Schedule these at optimal times on the most appropriate days
+  - Priority 2 (want to see): Include these if they fit well with the itinerary
+  - Priority 3 (if time): Add these when there's available time
+  - Use the exact location name and address from the Google Places data
+  - Consider the category (restaurant, attraction, museum, etc.) when scheduling
+  - Add any user notes about the location to the activity notes
 - Be culturally aware and suggest authentic experiences
 - Activities should be sorted by time within each day
 

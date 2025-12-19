@@ -81,7 +81,7 @@ export async function POST(
     const latestPlan = latestPlanDoc && !Array.isArray(latestPlanDoc) ? latestPlanDoc as any : null;
     const nextVersion = latestPlan ? ((latestPlan.version || 0) + 1) : 1;
 
-    // Build trip context for AI
+    // Build trip context for AI - include mustVisitLocations from trip
     const tripContext = await buildTripContext(
       {
         _id: trip._id,
@@ -90,10 +90,12 @@ export async function POST(
         startDate: new Date(tripStartDate),
         endDate: new Date(tripEndDate),
         user: trip.user,
+        mustVisitLocations: trip.mustVisitLocations || [],
       },
       currentUser.id,
       preferences,
-      mustVisit
+      mustVisit,
+      trip.mustVisitLocations // Pass rich locations from Google Places
     );
 
     // Generate plan using Gemini (with fallback)

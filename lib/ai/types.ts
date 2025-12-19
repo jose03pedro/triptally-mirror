@@ -1,5 +1,16 @@
 // AI Plan types and interfaces
 
+// Rich must-visit location from Google Places
+export interface MustVisitLocationInput {
+  name: string;
+  category?: "restaurant" | "attraction" | "museum" | "hotel" | "shopping" | "nightlife" | "custom";
+  address?: string;
+  coordinates?: { lat: number; lng: number };
+  placeId?: string;
+  notes?: string;
+  priority?: 1 | 2 | 3; // 1 = must-see, 2 = want to see, 3 = if time
+}
+
 export interface TripContext {
   trip: {
     title: string;
@@ -21,8 +32,10 @@ export interface TripContext {
   preferences?: {
     pace?: "relaxed" | "moderate" | "fast";
     interests?: string[];
-    mustVisit?: string[];
+    mustVisit?: string[]; // Simple string array for backward compatibility
   };
+  // Rich must-visit locations from Google Places
+  mustVisitLocations?: MustVisitLocationInput[];
   acceptedPlan?: PlanOutput;
   updateReason?: "flight" | "weather";
   updateDelta?: Record<string, any>;

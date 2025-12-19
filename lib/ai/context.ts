@@ -1,4 +1,4 @@
-import { TripContext } from "./types";
+import { TripContext, MustVisitLocationInput } from "./types";
 import { TravelerProfile } from "@/app/models/TravelerProfile";
 import connectionToDB from "@/lib/mongoose";
 
@@ -9,6 +9,15 @@ interface TripData {
   startDate: Date;
   endDate: Date;
   user: any;
+  mustVisitLocations?: Array<{
+    name: string;
+    category?: string;
+    address?: string;
+    coordinates?: { lat: number; lng: number };
+    placeId?: string;
+    notes?: string;
+    priority?: number;
+  }>;
 }
 
 interface Preferences {
@@ -24,7 +33,8 @@ export async function buildTripContext(
   trip: TripData,
   userId: string,
   preferences?: Preferences,
-  mustVisit?: string[]
+  mustVisit?: string[],
+  mustVisitLocations?: MustVisitLocationInput[]
 ): Promise<TripContext> {
   await connectionToDB();
 
@@ -73,6 +83,21 @@ export async function buildTripContext(
       interests: preferences?.interests || travelerProfile?.interests,
       mustVisit: mustVisit || preferences?.mustVisit,
     };
+  }
+
+  // Add rich must-visit locations from Google Places
+  // Priority: explicitly passed locations > trip's stored locations
+  const richLocations = mustVisitLocations || trip.mustVisitLocations;
+  if (richLocations && richLocations.length > 0) {
+    context.mustVisitLocations = richLocations.map((loc) => ({
+      name: loc.name,
+      category: loc.category as MustVisitLocationInput["category"],
+      address: loc.address,
+      coordinates: loc.coordinates,
+      placeId: loc.placeId,
+      notes: loc.notes,
+      priority: loc.priority as MustVisitLocationInput["priority"],
+    }));
   }
 
   return context;
