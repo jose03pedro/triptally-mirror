@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   mirror:
+    if: github.repository == 'MESW-LES-2025/A'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout full history
@@ -51,3 +52,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           git push --tags --force mirror
+
