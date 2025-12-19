@@ -54,6 +54,7 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
   // Recompute state
   const [showRecompute, setShowRecompute] = useState(false);
   const [recomputeReason, setRecomputeReason] = useState<"flight" | "weather">("flight");
+  const [recomputeDelta, setRecomputeDelta] = useState("");
   const [recomputing, setRecomputing] = useState(false);
   
   // Edit state
@@ -187,10 +188,21 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
     setRecomputing(true);
     setError(null);
     try {
+      // Parse delta JSON if provided
+      let parsedDelta = {};
+      if (recomputeDelta.trim()) {
+        try {
+          parsedDelta = JSON.parse(recomputeDelta);
+        } catch {
+          setError("Invalid JSON in delta field");
+          setRecomputing(false);
+          return;
+        }
+      }
       const res = await fetch(`/api/trips/${tripId}/plan/recompute`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: recomputeReason, delta: {} }),
+        body: JSON.stringify({ reason: recomputeReason, delta: parsedDelta }),
       });
       if (res.ok) {
         setSuccess("Plan recomputed! A new draft version was created.");
@@ -441,6 +453,17 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
             >
               🌧️ Weather Change
             </button>
+          </div>
+          <div className="mb-3">
+            <label className="form-label text-xs text-muted mb-1">Change Details (optional JSON)</label>
+            <textarea
+              className="form-control form-control-sm font-monospace"
+              rows={2}
+              placeholder='{"newArrival": "14:00", "delay": "2h"}'
+              value={recomputeDelta}
+              onChange={(e) => setRecomputeDelta(e.target.value)}
+              style={{ fontSize: "11px" }}
+            />
           </div>
           <div className="d-flex gap-2">
             <button

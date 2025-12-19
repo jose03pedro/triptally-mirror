@@ -1,7 +1,7 @@
 import { createTrip } from "@/app/actions/trip/createTrip";
 import TripDateRangePicker from "@/app/components/trip/tripDateRangePicker";
 import TripCitiesInput from "@/app/components/trip/tripCitiesInput";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import FieldErrors from "@/app/components/ui/fieldErrors";
 import FormModal from "@/app/components/ui/formModal";
@@ -104,16 +104,17 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCitiesChange = (cities: { id?: string; name: string; country: string }[]) => {
+  const handleCitiesChange = useCallback((cities: { id?: string; name: string; country: string }[]) => {
+    console.log("handleCitiesChange called with:", cities);
     setSelectedCities(cities);
     // Clear preview when cities change
-    if (aiPreview) {
-      setAiPreview(null);
-      setShowPreview(false);
-    }
-  };
+    setAiPreview(null);
+    setShowPreview(false);
+  }, []);
 
   const generateAiPreview = async () => {
+    console.log("generateAiPreview called", { formValues, selectedCities });
+    
     if (!formValues.startDate || !formValues.endDate || selectedCities.length === 0) {
       setAiError("Please fill in dates and add at least one destination");
       return;
@@ -123,6 +124,14 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
     setAiError(null);
 
     try {
+      console.log("Calling API with:", {
+        title: formValues.title || "Trip Preview",
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        destinations: selectedCities,
+        preferences: { pace },
+      });
+      
       const response = await fetch("/api/ai/plan/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,15 +144,20 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
         }),
       });
 
+      console.log("API response status:", response.status);
+
       if (!response.ok) {
         const data = await response.json();
+        console.error("API error:", data);
         throw new Error(data.error || "Failed to generate plan");
       }
 
       const data = await response.json();
+      console.log("API success:", data);
       setAiPreview(data.plan);
       setShowPreview(true);
     } catch (err: any) {
+      console.error("generateAiPreview error:", err);
       setAiError(err.message || "Failed to generate plan preview");
     } finally {
       setAiLoading(false);
@@ -261,6 +275,7 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
           onClick={generateAiPreview}
           disabled={!canGeneratePreview || aiLoading}
           className="btn btn-outline-primary btn-sm w-100 mb-2"
+          title={!canGeneratePreview ? "Fill in dates and select at least one destination first" : "Generate AI plan preview"}
         >
           {aiLoading ? (
             <>
@@ -271,6 +286,13 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
             <>✨ Generate AI Plan Preview</>
           )}
         </button>
+        
+        {/* Help text when button is disabled */}
+        {!canGeneratePreview && !aiLoading && (
+          <p className="text-muted text-center mb-2" style={{ fontSize: "11px" }}>
+            Fill in dates and add a destination to enable AI preview
+          </p>
+        )}
 
         {/* Error */}
         {aiError && (
