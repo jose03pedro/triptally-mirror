@@ -73,6 +73,7 @@ export async function GET(
       owner: tripDoc.user,
       lastWeatherSnapshot: tripDoc.lastWeatherSnapshot as WeatherDisplayData[] || [],
       flights: tripDoc.flights,
+      mustVisitLocations: tripDoc.mustVisitLocations || [],
     };
 
     return NextResponse.json(trip, { status: 200 });
