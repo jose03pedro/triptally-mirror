@@ -60,8 +60,13 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
   const [editingActivity, setEditingActivity] = useState<{ dayIdx: number; actIdx: number } | null>(null);
   const [editForm, setEditForm] = useState({ time: "", title: "", location: "", notes: "" });
   
+  // Add activity state
+  const [addingToDay, setAddingToDay] = useState<number | null>(null);
+  const [addForm, setAddForm] = useState({ time: "", title: "", location: "", notes: "" });
+  
   // Version history
   const [showVersions, setShowVersions] = useState(false);
+  const [viewingVersion, setViewingVersion] = useState<Plan | null>(null);
 
   async function loadPlan() {
     setLoading(true);
@@ -290,6 +295,57 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
     }
   }
 
+  async function addActivity(dayIdx: number) {
+    if (!currentPlan || !isOwner || !addForm.time || !addForm.title) return;
+    setError(null);
+    try {
+      const dayDate = currentPlan.days[dayIdx].date;
+      const res = await fetch(`/api/trips/${tripId}/plan/${currentPlan._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          addActivity: {
+            dayDate,
+            activity: {
+              time: addForm.time,
+              title: addForm.title,
+              location: addForm.location,
+              notes: addForm.notes,
+            },
+          },
+        }),
+      });
+      if (res.ok) {
+        setAddingToDay(null);
+        setAddForm({ time: "", title: "", location: "", notes: "" });
+        await loadPlan();
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to add activity");
+      }
+    } catch (err) {
+      console.error("Error adding activity:", err);
+      setError("Failed to add activity");
+    }
+  }
+
+  async function viewVersion(planId: string) {
+    setError(null);
+    try {
+      const res = await fetch(`/api/trips/${tripId}/plan/${planId}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        setViewingVersion(data.plan);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to load version");
+      }
+    } catch (err) {
+      console.error("Error loading version:", err);
+      setError("Failed to load version");
+    }
+  }
+
   // Clear success message after 3s
   useEffect(() => {
     if (success) {
@@ -426,18 +482,63 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
                       {new Date(v.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  {isOwner && !v.isCurrent && (
+                  <div className="d-flex gap-1">
                     <button
-                      onClick={() => handleMakeCurrent(v._id)}
-                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => viewVersion(v._id)}
+                      className="btn btn-sm btn-outline-secondary"
                     >
-                      Restore
+                      View
                     </button>
-                  )}
+                    {isOwner && !v.isCurrent && (
+                      <button
+                        onClick={() => handleMakeCurrent(v._id)}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        Restore
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Viewing Version Panel */}
+      {viewingVersion && (
+        <div className="card card-body bg-info bg-opacity-10 border-info mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <p className="text-sm fw-medium mb-0">
+              Viewing Version {viewingVersion.version} ({viewingVersion.status})
+            </p>
+            <button
+              onClick={() => setViewingVersion(null)}
+              className="btn btn-sm btn-outline-secondary"
+            >
+              Close
+            </button>
+          </div>
+          <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+            {viewingVersion.days.map((day, dayIdx) => (
+              <div key={dayIdx} className="mb-3">
+                <p className="text-xs fw-semibold text-slate-600 mb-1">
+                  {new Date(day.date).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                {day.activities.map((act, actIdx) => (
+                  <div key={actIdx} className="d-flex gap-2 mb-1" style={{ fontSize: "12px" }}>
+                    <span className="text-muted">{act.time}</span>
+                    <span>{act.title}</span>
+                    {act.location && <span className="text-muted">📍 {act.location}</span>}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -564,6 +665,64 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
                     ))}
                   </ul>
                 )}
+
+                {/* Add Activity Form */}
+                {isOwner && addingToDay === dayIdx ? (
+                  <div className="mt-3 p-2 bg-light rounded">
+                    <p className="text-xs fw-medium mb-2">Add New Activity</p>
+                    <div className="row g-2 mb-2">
+                      <div className="col-3">
+                        <input
+                          type="time"
+                          className="form-control form-control-sm"
+                          value={addForm.time}
+                          onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                        />
+                      </div>
+                      <div className="col-9">
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          placeholder="Activity title"
+                          value={addForm.title}
+                          onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm mb-2"
+                      placeholder="Location (optional)"
+                      value={addForm.location}
+                      onChange={(e) => setAddForm({ ...addForm, location: e.target.value })}
+                    />
+                    <div className="d-flex gap-2">
+                      <button
+                        onClick={() => addActivity(dayIdx)}
+                        disabled={!addForm.time || !addForm.title}
+                        className="btn btn-sm btn-primary"
+                      >
+                        Add
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAddingToDay(null);
+                          setAddForm({ time: "", title: "", location: "", notes: "" });
+                        }}
+                        className="btn btn-sm btn-outline-secondary"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : isOwner ? (
+                  <button
+                    onClick={() => setAddingToDay(dayIdx)}
+                    className="btn btn-sm btn-outline-primary mt-2"
+                  >
+                    + Add Activity
+                  </button>
+                ) : null}
               </div>
             ))}
           </div>
