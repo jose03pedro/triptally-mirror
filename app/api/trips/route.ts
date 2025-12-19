@@ -2,9 +2,172 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
-import {User} from "@/types/user/types";
+import { User } from "@/types/user/types";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 
 type StatusFilter = "all" | "upcoming" | "past" | "ongoing";
+
+// Helper to compute trip status from dates
+function computeTripStatus(startDate: Date, endDate: Date): "upcoming" | "ongoing" | "past" {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  if (today < start) return "upcoming";
+  if (today > end) return "past";
+  return "ongoing";
+}
+
+// POST - Create a new trip
+export async function POST(req: NextRequest) {
+  try {
+    await connectionToDB();
+
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const body = await req.json();
+    const { title, currency, startDate, endDate, cities, destinations } = body;
+
+    // Validate required fields
+    if (!title || typeof title !== "string" || !title.trim()) {
+      return NextResponse.json(
+        { error: "Title is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!currency) {
+      return NextResponse.json(
+        { error: "Currency is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!startDate) {
+      return NextResponse.json(
+        { error: "Start date is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!endDate) {
+      return NextResponse.json(
+        { error: "End date is required" },
+        { status: 400 }
+      );
+    }
+
+    const parsedStartDate = new Date(startDate);
+    const parsedEndDate = new Date(endDate);
+
+    if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+      return NextResponse.json(
+        { error: "Invalid date format" },
+        { status: 400 }
+      );
+    }
+
+    if (parsedStartDate > parsedEndDate) {
+      return NextResponse.json(
+        { error: "Start date must be before end date" },
+        { status: 400 }
+      );
+    }
+
+    // Accept either cities or destinations array
+    const rawCities = cities || destinations || [];
+    if (!Array.isArray(rawCities) || rawCities.length === 0) {
+      return NextResponse.json(
+        { error: "At least one destination is required" },
+        { status: 400 }
+      );
+    }
+
+    // Normalize cities/destinations to consistent structure
+    const normalizedCities = rawCities.map((c: any) => {
+      if (typeof c === "string") {
+        // Plain string city name
+        return { name: c, country: "Unknown" };
+      }
+      return {
+        name: c.name || c.city || "Unknown",
+        country: c.country || "Unknown",
+        lat: c.lat,
+        lon: c.lon,
+      };
+    });
+
+    // Validate each city has a name
+    for (const city of normalizedCities) {
+      if (!city.name || city.name === "Unknown") {
+        return NextResponse.json(
+          { error: "Each destination must have a valid city name" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Create trip
+    const newTrip = await Trip.create({
+      title: title.trim(),
+      currency,
+      startDate: parsedStartDate,
+      endDate: parsedEndDate,
+      cities: normalizedCities,
+      user: currentUser.id,
+      isPublic: false,
+      currentPlanId: null,
+      participants: [{ user: currentUser.id, role: "owner" }],
+    });
+
+    // Populate for response
+    const populatedTrip = await Trip.findById(newTrip._id)
+      .populate("user", "first_name last_name avatar email")
+      .populate("currency")
+      .lean();
+
+    if (!populatedTrip || Array.isArray(populatedTrip)) {
+      return NextResponse.json(
+        { error: "Failed to create trip" },
+        { status: 500 }
+      );
+    }
+
+    const trip = populatedTrip as any;
+    const status = computeTripStatus(trip.startDate, trip.endDate);
+
+    return NextResponse.json(
+      {
+        _id: trip._id,
+        title: trip.title,
+        startDate: trip.startDate,
+        endDate: trip.endDate,
+        cities: trip.cities,
+        currency: trip.currency,
+        owner: trip.user,
+        participants: trip.participants,
+        isPublic: trip.isPublic,
+        currentPlanId: trip.currentPlanId || null,
+        status,
+        createdAt: trip.createdAt,
+      },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.error("Error creating trip:", error);
+    return NextResponse.json(
+      { error: "Failed to create trip", details: error.message },
+      { status: 500 }
+    );
+  }
+}
 
 export async function GET(req: NextRequest) {
   await connectionToDB();

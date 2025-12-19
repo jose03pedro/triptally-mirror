@@ -16,6 +16,8 @@ import { LocationList } from "@/app/components/trip/locationList";
 import { PackingListSection } from "@/app/components/trip/packingList";
 
 import { MustVisitLocation } from "@/types/location/types";
+import { TripPlannerSection } from "@/app/components/trip/tripPlanner";
+import { TripSettingsSection } from "@/app/components/trip/tripSettings";
 import { ExpenseSection } from "@/app/components/expenses/expenseSection";
 import { WeatherSection } from "@/app/components/weather/weatherSection";
 
@@ -138,6 +140,7 @@ export default function TripPage() {
 
     const fetchWeatherPerCity = async () => {
       try {
+        if (!trip.cities || trip.cities.length === 0) return;
         const results = await Promise.all(
           (trip.cities || []).map(async (city) => {
             const res = await fetch(
@@ -381,45 +384,29 @@ export default function TripPage() {
             )}
 
             {/* Packing List section (reintroduzido do feature/packinglist) */}
+            {/* Trip Planner section */}
             {showItinerary && (
               <div className="fade-up fade-up-delay-4">
+                <TripPlannerSection tripId={tripId as string} isOwner={isOwner} />
+              </div>
+            )}
+
+            {/* Packing List section (reintroduzido do feature/packinglist) */}
+            {showItinerary && (
+              <div className="fade-up fade-up-delay-5">
                 <PackingListSection tripId={tripId as string} isOwner={isOwner} />
               </div>
             )}
           </section>
 
           <aside className="space-y-4 fade-up fade-up-delay-4">
-            <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5">
-              <h3 className="text-sm md:text-base font-semibold text-slate-900 mb-2">
-                Trip visibility
-              </h3>
-              <p className="text-xs md:text-sm text-slate-600">
-                This is a {trip.isPublic ? "public" : "private"} trip created by{" "}
-                <span className="font-medium">{creatorName}</span>.
-              </p>
-
-              {isOwner ? (
-                <>
-                  <p className="mt-2 text-[11px] text-slate-500">
-                    You can edit this trip&apos;s details, cover image and privacy settings using
-                    the <span className="font-semibold">Edit trip</span> button above.
-                  </p>
-                  <div className="mt-3">
-                    <Link
-                      href={`/trips/${trip._id}/edit`}
-                      className="text-xs md:text-sm inline-flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-                    >
-                      Edit details
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <p className="mt-2 text-[11px] text-slate-500">
-                  You are viewing a shared version of this trip. Some details may be hidden based
-                  on the creator&apos;s privacy settings.
-                </p>
-              )}
-            </div>
+            <TripSettingsSection
+              tripId={tripId as string}
+              isPublic={trip.isPublic ?? false}
+              publicSlug={(trip as any).publicSlug}
+              isOwner={isOwner}
+              creatorName={creatorName}
+            />
           </aside>
         </div>
       </div>
