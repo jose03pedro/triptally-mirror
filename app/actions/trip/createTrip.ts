@@ -81,6 +81,9 @@ export async function createTrip(prevState: any, formData: FormData) {
       endDate: validatedFields.data.endDate,
       cities: validatedFields.data.cities,
       user: currentUser.id,
+      isPublic: false,
+      currentPlanId: null,
+      participants: [{ user: currentUser.id, role: "owner" }],
     });
 
     return {

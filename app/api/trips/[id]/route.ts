@@ -43,7 +43,17 @@ export async function GET(
 
     const isOwner = !!(currentUser && ownerId && currentUser.id === ownerId);
 
-    if (!tripDoc.isPublic && !isOwner) {
+    // Check if user is a collaborator (US401)
+    const isCollaborator = currentUser
+      ? tripDoc.participants?.some(
+          (p: any) =>
+            (p.user?._id?.toString() === currentUser.id ||
+              p.user?.toString() === currentUser.id) &&
+            p.role !== "owner"
+        )
+      : false;
+
+    if (!tripDoc.isPublic && !isOwner && !isCollaborator) {
       return NextResponse.json(
         { error: "This trip is private" },
         { status: 403 }

@@ -2,8 +2,10 @@ import {
   BASE_ITEMS,
   weatherBasedItems,
   getDurationBasedItems,
+  profileBasedItems,
   PackingPresetItem,
   WeatherSummary,
+  TravelerProfileData,
 } from "./presets";
 
 export interface WeatherDay {
@@ -47,7 +49,8 @@ export function calculateTripDays(startDate: string, endDate: string): number {
 export function generatePackingItems(
   weatherDays: WeatherDay[],
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  travelerProfile?: TravelerProfileData
 ): GeneratedPackingItem[] {
   const summary = summarizeWeather(weatherDays);
 
@@ -69,7 +72,16 @@ export function generatePackingItems(
     }));
   }
 
-  const allItems = [...baseItems, ...weatherItems, ...durationItems];
+  // US318: Add profile-based items
+  let profileItems: GeneratedPackingItem[] = [];
+  if (travelerProfile) {
+    profileItems = profileBasedItems(travelerProfile).map((item) => ({
+      ...item,
+      source: "profile" as const,
+    }));
+  }
+
+  const allItems = [...baseItems, ...weatherItems, ...durationItems, ...profileItems];
   const seen = new Set<string>();
   const uniqueItems: GeneratedPackingItem[] = [];
 

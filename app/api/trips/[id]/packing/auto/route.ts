@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import connectionToDB from "@/lib/mongoose";
 import Trip from "@/app/models/Trip";
 import PackingItem from "@/app/models/PackingItem";
+import { TravelerProfile } from "@/app/models/TravelerProfile";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { generatePackingItems, WeatherDay } from "@/lib/packing/generatePacking";
+import { TravelerProfileData } from "@/lib/packing/presets";
 
 export async function POST(
   request: Request,
@@ -59,10 +61,33 @@ export async function POST(
       }
     }
 
+    // US318: Fetch traveler profile for personalized recommendations
+    let travelerProfile: TravelerProfileData | undefined;
+    try {
+      const profileDoc = await TravelerProfile.findById(currentUser.id).lean();
+      if (profileDoc && !Array.isArray(profileDoc)) {
+        const profile = profileDoc as any;
+        travelerProfile = {
+          travelFrequency: profile.travelFrequency,
+          preferredTransport: profile.preferredTransport,
+          accommodationType: profile.accommodationType,
+          budgetRange: profile.budgetRange,
+          dietaryRestrictions: profile.dietaryRestrictions,
+          mobilityNeeds: profile.mobilityNeeds,
+          interests: profile.interests,
+          languagesSpoken: profile.languagesSpoken,
+          tripStyle: profile.tripStyle,
+        };
+      }
+    } catch (profileErr) {
+      console.warn("Failed to fetch traveler profile:", profileErr);
+    }
+
     const itemsToCreate = generatePackingItems(
       weatherDays,
       startDate || undefined,
-      endDate || undefined
+      endDate || undefined,
+      travelerProfile
     );
 
     const existingItems = await PackingItem.find({ trip: id }).lean();

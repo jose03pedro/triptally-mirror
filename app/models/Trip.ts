@@ -31,12 +31,14 @@ const tripSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       country: { type: String, required: true },
+      lat: { type: Number },
+      lon: { type: Number },
     },
   ],
   // Owner of the trip
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   // Whether the trip is discoverable by other users
-  isPublic: { type: Boolean, required: true, default: true },
+  isPublic: { type: Boolean, required: true, default: false },
   // Optional Base64 cover image
   coverImage: { type: String, required: false },
   // Simple collaborative structure for future expansion
@@ -63,6 +65,18 @@ const tripSchema = new mongoose.Schema({
   privacy: {
     type: privacySchema,
     default: {},
+  },
+  // Public sharing slug for US306
+  publicSlug: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true,
+  },
+  // Current active plan for US311
+  currentPlanId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Plan",
   },
 });
 

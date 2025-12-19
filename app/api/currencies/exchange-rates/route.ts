@@ -1,9 +1,8 @@
 // app/api/exchange-rates/route.ts
 import { NextResponse } from "next/server";
 
-const apiKey = process.env.FREE_CURRENCY_API_KEY;
-
 export async function GET(request: Request) {
+  const apiKey = process.env.FREE_CURRENCY_API_KEY;
   const { searchParams } = new URL(request.url);
 
   const toCurrency = searchParams.get("toCurrency") || "";
