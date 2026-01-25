@@ -83,8 +83,8 @@ export function formatTripDateRange(start : string, end : string) {
 
     const sameYear = s.getFullYear() === e.getFullYear()
 
-    const sDay = String(s.getDate()).padStart(2, "0")
-    const eDay = String(e.getDate()).padStart(2, "0")
+    const sDay = s.getDate()
+    const eDay = e.getDate()
 
     const sMonth = EN_MONTHS[s.getMonth()]
     const eMonth = EN_MONTHS[e.getMonth()]

@@ -32,6 +32,7 @@ import {
   WeatherResponse,
 } from "@/types/weather/types";
 import {formatTripDateRange} from "@/lib/utils";
+import IconText from "@/app/components/ui/icon-text";
 
 export default function TripPage() {
   const params = useParams();
@@ -271,28 +272,28 @@ export default function TripPage() {
                   <strong className="font-medium text-slate-600">{creatorName}</strong>
                 </Link>
               </span>
+
+              <div>
+                  {/* Edit Link */}
+                  {isOwner && (
+                      <Link
+                          className="btn d-flex gap-2 align-items-center px-0 mt-3"
+                          style={{ textDecoration: "none", width: "fit-content" }}
+                          href={`/trips/${tripId}/edit`}
+                      >
+                          <span
+                              className="material-icons md-dark rounded-circle border border-dark p-1 border-2"
+                              style={{ fontSize: "19px"}}
+                          >
+                              edit
+                          </span>
+                          <span className="fw-medium">Edit trip details</span>
+                      </Link>
+                  )}
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                  trip.isPublic
-                    ? "bg-green-50 text-green-700 border border-green-100"
-                    : "bg-slate-100 text-slate-700 border border-slate-200"
-                }`}
-              >
-                {trip.isPublic ? "Public" : "Private"}
-              </span>
-
-              {currentUser && (
-                <Link
-                  href="/trips"
-                  className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-                >
-                  Back to my trips
-                </Link>
-              )}
-
               {isOwner && (
                 <Link
                   href={`/trips/${trip._id}/edit`}

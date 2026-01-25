@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import {UserIcon} from "@/app/components/user/userIcon";
+import {formatTripDateRange} from "@/lib/utils";
 
 interface TripCardProps {
   loggedUserId?: string;
@@ -142,13 +143,19 @@ export default function TripCard({
             </Tooltip>
           )}
         </div>
-        <p className="card-text mb-1 text-muted small">
-          {trip.cities?.map((c) => `${c.name}, ${c.country}`).join(" · ") ||
-            "—"}
-        </p>
-        <p className="card-text mb-2 text-muted small">
-          {new Date(trip.startDate).toLocaleDateString()} –{" "}
-          {new Date(trip.endDate).toLocaleDateString()}
+          <p className="card-text mb-1 text-muted small">
+              {trip.cities?.length
+                  ? trip.cities
+                      .map((c) =>
+                          c.country && c.country !== "Unknown"
+                              ? `${c.name}, ${c.country}`
+                              : c.name
+                      )
+                      .join(" · ")
+                  : "—"}
+          </p>
+          <p className="card-text mb-2 text-muted small">
+              {formatTripDateRange(trip.startDate, trip.endDate)}
         </p>
         <div className="mt-auto d-flex justify-content-between align-items-center pt-2">
           <span className="text-muted small">

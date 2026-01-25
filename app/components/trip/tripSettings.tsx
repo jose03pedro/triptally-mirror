@@ -331,18 +331,6 @@ export function TripSettingsSection({
           on the creator&apos;s privacy settings.
         </p>
       )}
-
-      {/* Edit Link */}
-      {isOwner && (
-        <div className="pt-3 border-top">
-          <Link
-            href={`/trips/${tripId}/edit`}
-            className="text-xs md:text-sm inline-flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-          >
-            Edit trip details
-          </Link>
-        </div>
-      )}
     </div>
   );
 }
