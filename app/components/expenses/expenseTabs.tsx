@@ -9,9 +9,11 @@ import Box from "@mui/material/Box";
 import { Currency } from "@/types/currency/types";
 import { ExpenseType, ExpenseWithConverted } from "@/types/expense/types";
 import {ExpenseCategory} from "@/types/expensecategory/types";
+import {User} from "@/types/user/types";
 
 interface ExpenseTabsProps {
   tripCurrency: Currency | undefined;
+  tripOwner: User | undefined;
   expenses: Array<ExpenseWithConverted>;
   currencies: Currency[];
   categories: ExpenseCategory[];
@@ -21,6 +23,7 @@ interface ExpenseTabsProps {
 
 export default function ExpenseTabs({
   tripCurrency,
+  tripOwner,
   expenses,
   currencies,
   categories,
@@ -44,6 +47,7 @@ export default function ExpenseTabs({
       <TabPanel value="1">
         <Expenses
           tripCurrency={tripCurrency}
+          tripOwner={tripOwner}
           expenses={expenses}
           setExpenses={setExpenses}
           currencies={currencies}

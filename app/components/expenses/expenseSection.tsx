@@ -36,6 +36,7 @@ export function ExpenseSection({ trip, expenses, setExpenses, currencies, catego
         >
             <ExpenseTabs
                 tripCurrency={trip.currency}
+                tripOwner={trip.owner}
                 expenses={expenses}
                 setExpenses={setExpenses}
                 currencies={currencies}

@@ -1,9 +1,11 @@
 import { Currency } from "@/types/currency/types";
 import { SingleExpense } from "./singleExpense";
 import { ExpenseType, ExpenseWithConverted } from "@/types/expense/types";
+import {User} from "@/types/user/types";
 
 interface ExpensesProps {
   tripCurrency: Currency | undefined;
+  tripOwner: User | undefined;
   expenses: Array<ExpenseWithConverted>;
   currencies: Array<any>;
   categories: Array<any>;
@@ -13,6 +15,7 @@ interface ExpensesProps {
 
 export function Expenses({
   tripCurrency,
+  tripOwner,
   expenses,
   currencies,
   categories,
@@ -33,6 +36,7 @@ export function Expenses({
                 <SingleExpense
                   expense={expense}
                   tripCurrency={tripCurrency}
+                  tripOwner={tripOwner}
                   currencies={currencies}
                   categories={categories}
                   onExpensesUpdated={onExpensesUpdated}
