@@ -309,7 +309,7 @@ export function PackingListSection({ tripId, isOwner }: PackingListProps) {
           <div className="text-slate-300 mb-3" style={{ fontSize: "3rem" }}>
             🧳
           </div>
-          <p className="text-sm text-slate-500 mb-2">No items in your packing list yet.</p>
+          <p className="small text-slate-500 text-muted mb-2">No items in this packing list yet.</p>
           {isOwner && (
             <p className="text-xs text-slate-400">
               Click &quot;Generate smart list&quot; to get personalized suggestions based on your trip.

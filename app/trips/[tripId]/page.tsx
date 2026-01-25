@@ -31,6 +31,7 @@ import {
   WeatherIconType,
   WeatherResponse,
 } from "@/types/weather/types";
+import {formatTripDateRange} from "@/lib/utils";
 
 export default function TripPage() {
   const params = useParams();
@@ -232,22 +233,39 @@ export default function TripPage() {
 
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 fade-up fade-up-delay-1">
             <div>
-              <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-1">
-                {trip.title}
-              </h1>
-              <p className="text-sm text-slate-600">
-                {new Date(trip.startDate).toLocaleDateString()} –{" "}
-                {new Date(trip.endDate).toLocaleDateString()}
-              </p>
+                <div className="d-flex justify-content-between align-items-center">
+                    <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-1">
+                        {trip.title}
+                    </h1>
+                    <div className="d-flex align-items-center badge bg-light text-dark fs-6">
+                        {trip.currency?.code === "EUR" && <div>🇪🇺</div>}
+                        {trip.currency?.code === "USD" && <div>🇺🇸</div>}
 
-              {showCities && (
-                <p className="text-xs text-slate-500 mt-1">
-                  {trip.cities?.map((c) => `${c.name}, ${c.country ?? ""}`).join(" · ") ||
-                    "No cities added yet"}
+                        <p className="mb-0 p-2 fw-normal">{trip.currency?.code}</p>
+                    </div>
+
+                </div>
+
+                {showCities && (
+                    <p className="text-xs text-slate-500 mt-1">
+                        {trip.cities?.length
+                            ? trip.cities
+                                .map((c) =>
+                                    c.country && c.country !== "Unknown"
+                                        ? `${c.name}, ${c.country}`
+                                        : c.name
+                                )
+                                .join(" · ")
+                            : "No cities added yet"}
+                    </p>
+                )}
+
+                <p className="text-sm text-slate-600">
+                    {formatTripDateRange(trip.startDate, trip.endDate)}
                 </p>
-              )}
 
-              <span className="text-[11px] text-slate-400 mt-1">
+
+                <span className="text-[11px] text-slate-400 mt-1">
                 Created by{" "}
                 <Link href={"/profile/" + trip.owner._id}>
                   <strong className="font-medium text-slate-600">{creatorName}</strong>
@@ -290,8 +308,6 @@ export default function TripPage() {
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <section className="lg:col-span-2 space-y-4">
-            <TripOverview trip={trip} />
-
             <WeatherSection
               isPastTrip={isPastTrip}
               weatherSnapshot={trip.lastWeatherSnapshot ?? {}}

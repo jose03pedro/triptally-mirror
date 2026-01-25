@@ -569,7 +569,7 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
       {!currentPlan ? (
         <div className="text-center py-5">
           <div className="text-slate-300 mb-3" style={{ fontSize: "3rem" }}>📅</div>
-          <p className="text-sm text-slate-500 mb-2">No plan generated yet.</p>
+          <p className="small text-slate-500 text-muted mb-2">No plan generated yet.</p>
           {isOwner && (
             <p className="text-xs text-slate-400">
               Click &quot;Generate Plan&quot; to create an AI-powered itinerary.
