@@ -5,6 +5,7 @@ export enum WeatherIconType {
     CLOUDY = 'cloudy',
     SNOW = 'snow',
     FOG = 'fog',
+    WIND = 'wind',
 }
 
 export interface DayWeather {

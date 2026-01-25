@@ -94,7 +94,7 @@ export function WeatherSection({isPastTrip, weatherSnapshot, weatherDisplay}: We
                     <p className="small text-muted m-0">
                         {isPastTrip
                             ? "This was the weather during the trip."
-                            : "This is the weather forecast for your trip."}
+                            : "This is the weather forecast for the trip."}
                     </p>
 
                     <WeatherCard weatherData={unifiedWeatherDisplay} />

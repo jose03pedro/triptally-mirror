@@ -15,8 +15,10 @@ export function WeatherIcon({ icon, size = 35 }: WeatherIconProps) {
             case WeatherIconType.CLOUDY: return "cloudy.png"
             case WeatherIconType.SNOW: return "snow.png"
             case WeatherIconType.FOG: return "fog.png"
+            case WeatherIconType.WIND: return "wind.png"
         }
     }
+    console.log(icon)
     const iconPath = getIconPath(icon);
 
     if (!iconPath) return;
