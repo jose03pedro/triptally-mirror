@@ -175,6 +175,8 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
+    const currentUser = await getCurrentUser();
+
     const q = (searchParams.get("q") || "").trim();
     const userId = searchParams.get("userId");
     const rawStatus = (searchParams.get("status") || "all") as StatusFilter;
@@ -211,6 +213,7 @@ export async function GET(req: NextRequest) {
     const query: any = {};
 
     if (userId) {
+      if (currentUser?.id !== userId) query.isPublic = true;
       query.user = userId;
     } else {
       query.isPublic = true;

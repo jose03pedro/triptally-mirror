@@ -30,9 +30,13 @@ export default function UserProfile({ user, travelerProfile, updateUser, setTrav
                 if (!user) return;
 
                 // 1. Fetch Trips
-                const tripsRes = await fetch(`/api/trips?userId=${user._id}&upcoming=1`, {
-                    cache: "no-store",
-                });
+                const tripsRes = await fetch(
+                    `/api/trips?${new URLSearchParams({
+                        userId: user._id,
+                        status: "upcoming",
+                    })}`,
+                    { cache: "no-store" }
+                );
 
                 if (tripsRes.ok) {
                     const tripsData = await tripsRes.json();

@@ -237,6 +237,7 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
         endDateErrors={state?.errors?.endDate}
         onChange={handleChange}
       />
+      <div className="mt-4 pt-3 border-top"></div>
       <TripCitiesInput
         cityErrors={state?.errors?.cities}
         onChangeCities={handleCitiesChange}
@@ -247,7 +248,7 @@ export default function CreateTripModal({ onClose }: CreateTripModalProps) {
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div>
             <p className="fw-medium text-dark mb-0" style={{ fontSize: "14px" }}>AI Trip Planner</p>
-            <p className="text-muted" style={{ fontSize: "11px" }}>Generate a suggested itinerary before creating</p>
+            <p className="text-muted" style={{ fontSize: "13px" }}>Generate a suggested itinerary before creating</p>
           </div>
         </div>
 

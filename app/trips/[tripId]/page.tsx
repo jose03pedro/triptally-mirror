@@ -31,6 +31,9 @@ import {
   WeatherIconType,
   WeatherResponse,
 } from "@/types/weather/types";
+import {formatTripDateRange} from "@/lib/utils";
+import IconText from "@/app/components/ui/icon-text";
+import {router} from "next/client";
 
 export default function TripPage() {
   const params = useParams();
@@ -204,212 +207,218 @@ export default function TripPage() {
   const showItinerary = isOwner || privacy.showItinerary !== false;
   const showCover = isOwner || privacy.showCover !== false;
 
-  return (
-    <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* HEADER */}
-        <header className="space-y-3">
-          {showCover && trip.coverImage && (
-            <div
-              className="position-relative mb-4"
-              style={{
-                left: "50%",
-                right: "50%",
-                marginLeft: "-50vw",
-                marginRight: "-50vw",
-                width: "100vw",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={trip.coverImage}
-                alt={trip.title}
-                className="w-100 object-fit-cover"
-                style={{ height: "23rem" }}
-              />
-            </div>
-          )}
+    return (
+        <div className="min-vh-100 pt-5 pb-4 px-3">
+            <div className="container-fluid" style={{ maxWidth: "1140px" }}>
 
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 fade-up fade-up-delay-1">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-semibold text-slate-900 mb-1">
-                {trip.title}
-              </h1>
-              <p className="text-sm text-slate-600">
-                {new Date(trip.startDate).toLocaleDateString()} –{" "}
-                {new Date(trip.endDate).toLocaleDateString()}
-              </p>
+                {/* HEADER */}
+                <header className="mb-4">
+                    {showCover && trip.coverImage && (
+                        <div
+                            className="position-relative mb-4"
+                            style={{
+                                left: "50%",
+                                right: "50%",
+                                marginLeft: "-50vw",
+                                marginRight: "-50vw",
+                                width: "100vw",
+                            }}
+                        >
+                            <img
+                                src={trip.coverImage}
+                                alt={trip.title}
+                                className="w-100 object-fit-cover"
+                                style={{ height: "23rem" }}
+                            />
+                        </div>
+                    )}
 
-              {showCities && (
-                <p className="text-xs text-slate-500 mt-1">
-                  {trip.cities?.map((c) => `${c.name}, ${c.country ?? ""}`).join(" · ") ||
-                    "No cities added yet"}
-                </p>
-              )}
+                    <div className="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
+                        <div className="w-100">
+                            <div className="d-flex justify-content-between align-items-center mb-1">
+                                <h1 className="fs-4 fs-md-3 fw-semibold text-dark mb-0">
+                                    {trip.title}
+                                </h1>
 
-              <span className="text-[11px] text-slate-400 mt-1">
-                Created by{" "}
-                <Link href={"/profile/" + trip.owner._id}>
-                  <strong className="font-medium text-slate-600">{creatorName}</strong>
-                </Link>
-              </span>
-            </div>
+                                <div
+                                    className="d-flex align-items-center badge bg-light text-dark fw-normal"
+                                    style={{ fontSize: "15px" }}
+                                >
+                                    {trip.currency?.code === "EUR" && <span className="me-1">🇪🇺</span>}
+                                    {trip.currency?.code === "USD" && <span className="me-1">🇺🇸</span>}
+                                    {trip.currency?.code}
+                                </div>
+                            </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                  trip.isPublic
-                    ? "bg-green-50 text-green-700 border border-green-100"
-                    : "bg-slate-100 text-slate-700 border border-slate-200"
-                }`}
-              >
-                {trip.isPublic ? "Public" : "Private"}
-              </span>
+                            {showCities && (
+                                <p className="text-muted small mb-1">
+                                    {trip.cities?.length
+                                        ? trip.cities
+                                            .map((c) =>
+                                                c.country && c.country !== "Unknown"
+                                                    ? `${c.name}, ${c.country}`
+                                                    : c.name
+                                            )
+                                            .join(" · ")
+                                        : "No cities added yet"}
+                                </p>
+                            )}
 
-              {currentUser && (
-                <Link
-                  href="/trips"
-                  className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-                >
-                  Back to my trips
-                </Link>
-              )}
+                            <p className="text-secondary small mb-1">
+                                {formatTripDateRange(trip.startDate, trip.endDate)}
+                            </p>
 
-              {isOwner && (
-                <Link
-                  href={`/trips/${trip._id}/edit`}
-                  className="text-xs md:text-sm inline-flex items-center rounded-full bg-blue-600 px-3 py-1.5 font-medium text-white hover:bg-blue-500 transition"
-                >
-                  Edit trip
-                </Link>
-              )}
-            </div>
-          </div>
-        </header>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <span className="d-block text-muted small">
+                                    Created by{" "}
+                                    <Link href={"/profile/" + trip.owner._id}>
+                                        <strong className="fw-medium text-secondary">
+                                            {creatorName}
+                                        </strong>
+                                    </Link>
+                                </span>
+                                {isOwner && (
+                                    <Link
+                                        href={`/trips/${trip._id}/edit`}
+                                        className="btn btn-primary btn-sm rounded-pill"
+                                    >
+                                        Edit trip
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <section className="lg:col-span-2 space-y-4">
-            <TripOverview trip={trip} />
+                {/* MAIN GRID */}
+                <div className="row g-4">
 
-            <WeatherSection
-              isPastTrip={isPastTrip}
-              weatherSnapshot={trip.lastWeatherSnapshot ?? {}}
-              weatherDisplay={weatherDisplay}
-            />
+                    {/* MAIN CONTENT */}
+                    <section className="col-lg-8">
 
-            {showExpenses && (
-              <ExpenseSection
-                trip={trip}
-                expenses={expenses}
-                setExpenses={setExpenses}
-                currencies={currencies}
-                categories={categories}
-              />
-            )}
+                        <WeatherSection
+                            isPastTrip={isPastTrip}
+                            weatherSnapshot={trip.lastWeatherSnapshot ?? {}}
+                            weatherDisplay={weatherDisplay}
+                        />
 
-            {showItinerary && (
-              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
-                <div className="mb-2">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                      Flights
-                    </h2>
-                    <AddFlight
-                      tripId={tripId as string}
-                      userId={trip.owner._id as string}
-                      onFlightAdded={(newFlight) => {
-                        setFlights((prev) =>
-                          prev.some((f) => f._id === newFlight._id)
-                            ? prev
-                            : [...prev, newFlight]
-                        );
-                      }}
-                    />
-                  </div>
-                  <span className="text-[11px] text-slate-400">
-                    {flights.length} flight(s)
-                  </span>
+                        {showExpenses && (
+                            <ExpenseSection
+                                trip={trip}
+                                expenses={expenses}
+                                setExpenses={setExpenses}
+                                currencies={currencies}
+                                categories={categories}
+                            />
+                        )}
+
+                        {showItinerary && (
+                            <div className="card shadow-sm border mb-4">
+                                <div className="card-body p-3 p-md-4">
+                                    <div className="d-flex justify-content-between align-items-center mb-1">
+                                        <h2 className="fs-5 fs-md-3 fw-semibold text-dark mb-0">Flights</h2>
+                                        <AddFlight
+                                            tripId={tripId as string}
+                                            userId={trip.owner._id as string}
+                                            onFlightAdded={(newFlight) => {
+                                                setFlights((prev) =>
+                                                    prev.some((f) => f._id === newFlight._id)
+                                                        ? prev
+                                                        : [...prev, newFlight]
+                                                );
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="text-muted small">
+                  {flights.length} flight(s)
+                </span>
+
+                                    <FlightList
+                                        flights={flights}
+                                        tripId={tripId as string}
+                                        isOwner={isOwner}
+                                        onFlightDeleted={(flightId) => {
+                                            setFlights((prev) =>
+                                                prev.filter((f) => f._id !== flightId)
+                                            );
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {showItinerary && (
+                            <div className="card shadow-sm border mb-4">
+                                <div className="card-body p-3 p-md-4">
+                                    <div className="d-flex justify-content-between align-items-center mb-1">
+                                        <h2 className="fs-5 fs-md-3 fw-semibold text-dark mb-0">
+                                            Must-Visit Locations
+                                        </h2>
+                                        <AddLocation
+                                            tripId={tripId as string}
+                                            userId={trip.owner._id as string}
+                                            onLocationAdded={(newLocation) => {
+                                                setLocations((prev) =>
+                                                    prev.some((l) => l._id === newLocation._id)
+                                                        ? prev
+                                                        : [...prev, newLocation]
+                                                );
+                                            }}
+                                        />
+                                    </div>
+
+                                    <span className="text-muted small my-4">
+                  {locations.length} location(s)
+                </span>
+
+                                    <LocationList
+                                        locations={locations}
+                                        tripId={tripId as string}
+                                        isOwner={isOwner}
+                                        onLocationDeleted={(locationId) => {
+                                            setLocations((prev) =>
+                                                prev.filter((l) => l._id !== locationId)
+                                            );
+                                        }}
+                                        onLocationUpdated={(updatedLocation) => {
+                                            setLocations((prev) =>
+                                                prev.map((l) =>
+                                                    l._id === updatedLocation._id ? updatedLocation : l
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {showItinerary && (
+                            <TripPlannerSection
+                                tripId={tripId as string}
+                                isOwner={isOwner}
+                            />
+                        )}
+
+                        {showItinerary && (
+                            <PackingListSection
+                                tripId={tripId as string}
+                                isOwner={isOwner}
+                            />
+                        )}
+                    </section>
+
+                    {/* SIDEBAR */}
+                    <aside className="col-lg-4">
+                        <TripSettingsSection
+                            tripId={tripId as string}
+                            isPublic={trip.isPublic ?? false}
+                            publicSlug={(trip as any).publicSlug}
+                            isOwner={isOwner}
+                            creatorName={creatorName}
+                        />
+                    </aside>
                 </div>
-
-                <FlightList
-                  flights={flights}
-                  tripId={tripId as string}
-                  isOwner={isOwner}
-                  onFlightDeleted={(flightId) => {
-                    setFlights((prev) => prev.filter((f) => f._id !== flightId));
-                  }}
-                />
-              </div>
-            )}
-
-            {showItinerary && (
-              <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5 fade-up fade-up-delay-3">
-                <div className="mb-2">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h2 className="text-sm md:text-base font-semibold text-slate-900">
-                      Must-Visit Locations
-                    </h2>
-                    <AddLocation
-                      tripId={tripId as string}
-                      userId={trip.owner._id as string}
-                      onLocationAdded={(newLocation) => {
-                        setLocations((prev) =>
-                          prev.some((l) => l._id === newLocation._id)
-                            ? prev
-                            : [...prev, newLocation]
-                        );
-                      }}
-                    />
-                  </div>
-                  <span className="text-[11px] text-slate-400">
-                    {locations.length} location(s)
-                  </span>
-                </div>
-
-                <LocationList
-                  locations={locations}
-                  tripId={tripId as string}
-                  isOwner={isOwner}
-                  onLocationDeleted={(locationId) => {
-                    setLocations((prev) => prev.filter((l) => l._id !== locationId));
-                  }}
-                  onLocationUpdated={(updatedLocation) => {
-                    setLocations((prev) =>
-                      prev.map((l) => (l._id === updatedLocation._id ? updatedLocation : l))
-                    );
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Packing List section (reintroduzido do feature/packinglist) */}
-            {/* Trip Planner section */}
-            {showItinerary && (
-              <div className="fade-up fade-up-delay-4">
-                <TripPlannerSection tripId={tripId as string} isOwner={isOwner} />
-              </div>
-            )}
-
-            {/* Packing List section (reintroduzido do feature/packinglist) */}
-            {showItinerary && (
-              <div className="fade-up fade-up-delay-5">
-                <PackingListSection tripId={tripId as string} isOwner={isOwner} />
-              </div>
-            )}
-          </section>
-
-          <aside className="space-y-4 fade-up fade-up-delay-4">
-            <TripSettingsSection
-              tripId={tripId as string}
-              isPublic={trip.isPublic ?? false}
-              publicSlug={(trip as any).publicSlug}
-              isOwner={isOwner}
-              creatorName={creatorName}
-            />
-          </aside>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
