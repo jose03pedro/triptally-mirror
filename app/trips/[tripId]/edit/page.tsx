@@ -130,201 +130,205 @@ export default function EditTripPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-4">
-      <div className="mx-auto max-w-3xl space-y-5">
-        <header className="flex items-center justify-between gap-2 mb-2">
-          <h1 className="text-xl md:text-2xl font-semibold text-slate-900">
-            Edit trip
-          </h1>
-          <button
-            type="button"
-            onClick={() => router.push(`/trips/${trip._id}`)}
-            className="text-xs md:text-sm rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50 transition"
-          >
-            Back
-          </button>
-        </header>
+      <div className="min-vh-100 pt-5 pb-4 px-3">
+          <div className="container" style={{ maxWidth: "768px" }}>
+              <header className="d-flex align-items-center justify-content-between gap-2 mb-3">
+                  <h1 className="fs-4 fs-md-3 fw-semibold text-dark mb-0">
+                      Edit trip
+                  </h1>
 
-        <div className="rounded-2xl bg-white shadow-sm border border-slate-100 p-4 md:p-5">
-          {state.errors?._form && state.errors._form.length > 0 && (
-            <div className="mb-3 rounded-lg bg-red-50 border border-red-100 px-3 py-2 text-xs text-red-700">
-              {state.errors._form.map((e, idx) => (
-                <div key={idx}>{e}</div>
-              ))}
-            </div>
-          )}
+                  <button
+                      type="button"
+                      onClick={() => router.push(`/trips/${trip._id}`)}
+                      className="btn btn-outline-secondary btn-sm rounded-pill"
+                  >
+                      Back
+                  </button>
+              </header>
 
-          <form action={formAction} className="space-y-3 text-xs md:text-sm">
-            <input type="hidden" name="tripId" value={trip._id} />
-            <input type="hidden" name="coverImage" value={coverData} />
+              <div className="card shadow-sm border">
+                  <div className="card-body p-3 p-md-4">
 
-            <div>
-              <label className="block mb-1 font-medium">Title</label>
-              <input
-                name="title"
-                type="text"
-                defaultValue={trip.title}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                required
-              />
-            </div>
+                      {state.errors?._form?.length > 0 && (
+                          <div className="alert alert-danger py-2 small">
+                              {state.errors._form.map((e, idx) => (
+                                  <div key={idx}>{e}</div>
+                              ))}
+                          </div>
+                      )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block mb-1 font-medium">Start date</label>
-                <input
-                  name="startDate"
-                  type="date"
-                  defaultValue={trip.startDate?.slice(0, 10)}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                  required
-                />
+                      <form action={formAction} className="small">
+                          <input type="hidden" name="tripId" value={trip._id} />
+                          <input type="hidden" name="coverImage" value={coverData} />
+
+                          {/* Title */}
+                          <div className="mb-3">
+                              <label className="form-label fw-medium">Title</label>
+                              <input
+                                  name="title"
+                                  type="text"
+                                  defaultValue={trip.title}
+                                  className="form-control"
+                                  required
+                              />
+                          </div>
+
+                          {/* Dates + Currency */}
+                          <div className="row g-3 mb-3">
+                              <div className="col-sm-6">
+                                  <label className="form-label fw-medium">Start date</label>
+                                  <input
+                                      name="startDate"
+                                      type="date"
+                                      defaultValue={trip.startDate?.slice(0, 10)}
+                                      className="form-control"
+                                      required
+                                  />
+                              </div>
+
+                              <div className="col-sm-6">
+                                  <label className="form-label fw-medium">End date</label>
+                                  <input
+                                      name="endDate"
+                                      type="date"
+                                      defaultValue={trip.endDate?.slice(0, 10)}
+                                      className="form-control"
+                                      required
+                                  />
+                              </div>
+
+                              <div className="col-sm-6">
+                                  <label htmlFor="currency" className="form-label text-secondary mb-0">
+                                      Currency
+                                  </label>
+                                  <select
+                                      id="currency"
+                                      name="currency"
+                                      className={`form-select ${
+                                          state?.errors?.currency?.length ? "is-invalid" : ""
+                                      }`}
+                                      defaultValue={trip.currency?._id}
+                                  >
+                                      <option value="">Select a currency...</option>
+                                      {currencies?.map((currency: any) => (
+                                          <option key={currency._id} value={currency._id}>
+                                              {currency?.symbol}
+                                          </option>
+                                      ))}
+                                  </select>
+                              </div>
+                          </div>
+
+                          {/* Trip Cities */}
+                          <TripCitiesInput
+                              initialCities={trip.cities?.map((c: any) => ({
+                                  id: c._id || c.name,
+                                  name: c.name,
+                                  country: c.country || "Unknown",
+                              }))}
+                              cityErrors={state.errors?.cities}
+                          />
+
+                          {/* Cover image */}
+                          <div className="mb-3">
+                              <label className="form-label fw-medium">Cover image</label>
+                              <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="form-control form-control-sm"
+                                  onChange={handleFileChange}
+                              />
+
+                              {coverPreview && (
+                                  <div
+                                      className="mt-2 rounded overflow-hidden border d-flex align-items-center justify-content-center"
+                                       style={{ maxHeight: "160px" }}
+                                  >
+                                      <img
+                                          src={coverPreview}
+                                          alt="Preview"
+                                          className="w-100 h-100 object-fit-cover"
+                                      />
+                                  </div>
+                              )}
+
+                              <div className="form-text">
+                                  Optional. A nice photo will be shown on the trip header and cards.
+                              </div>
+                          </div>
+
+                          {/* Privacy section */}
+                          <div className="pt-3 border-top">
+                              <p className="fw-medium mb-2">
+                                  What is public when this trip is shared?
+                              </p>
+
+                              <div className="form-check mb-1">
+                                  <input
+                                      id="privacy_showCities"
+                                      name="privacy_showCities"
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      defaultChecked={showCities}
+                                  />
+                                  <label className="form-check-label" htmlFor="privacy_showCities">
+                                      Show cities and countries
+                                  </label>
+                              </div>
+
+                              <div className="form-check mb-1">
+                                  <input
+                                      id="privacy_showExpenses"
+                                      name="privacy_showExpenses"
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      defaultChecked={showExpenses}
+                                  />
+                                  <label className="form-check-label" htmlFor="privacy_showExpenses">
+                                      Show expenses summary
+                                  </label>
+                              </div>
+
+                              <div className="form-check mb-1">
+                                  <input
+                                      id="privacy_showItinerary"
+                                      name="privacy_showItinerary"
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      defaultChecked={showItinerary}
+                                  />
+                                  <label className="form-check-label" htmlFor="privacy_showItinerary">
+                                      Show itinerary and notes
+                                  </label>
+                              </div>
+
+                              <div className="form-check">
+                                  <input
+                                      id="privacy_showCover"
+                                      name="privacy_showCover"
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      defaultChecked={showCover}
+                                  />
+                                  <label className="form-check-label" htmlFor="privacy_showCover">
+                                      Show cover image
+                                  </label>
+                              </div>
+                          </div>
+
+                          {/* Submit */}
+                          <button
+                              type="submit"
+                              disabled={isPending}
+                              className="btn btn-primary w-100 rounded-pill mt-4"
+                          >
+                              {isPending ? "Saving..." : "Save changes"}
+                          </button>
+                      </form>
+                  </div>
               </div>
-              <div>
-                <label className="block mb-1 font-medium">End date</label>
-                <input
-                  name="endDate"
-                  type="date"
-                  defaultValue={trip.endDate?.slice(0, 10)}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="currency"
-                  className="form-label text-secondary mb-0"
-                >
-                  Currency
-                </label>
-
-                <select
-                  id="currency"
-                  name="currency"
-                  className={`form-control fs-6 ${
-                    state?.errors?.currency?.length ? "is-invalid" : ""
-                  }`}
-                  defaultValue={trip.currency?._id}
-                >
-                  <option value="">Select a currency...</option>
-                  {currencies?.map((currency: any) => (
-                    <option key={currency._id} value={currency._id}>
-                      {currency?.symbol}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Trip Cities Input */}
-            <TripCitiesInput
-              initialCities={trip.cities?.map((c: any) => ({
-                id: c._id || c.name,
-                name: c.name,
-                country: c.country || "Unknown",
-              }))}
-              cityErrors={state.errors?.cities}
-            />
-
-            <div className="flex items-center gap-2">
-              <input
-                id="isPublic"
-                name="isPublic"
-                type="checkbox"
-                className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                defaultChecked={trip.isPublic ?? true}
-              />
-              <label
-                htmlFor="isPublic"
-                className="text-xs md:text-sm text-slate-700"
-              >
-                Make trip public
-              </label>
-            </div>
-
-            <div>
-              <label className="block mb-1 font-medium">Cover image</label>
-              <input
-                type="file"
-                accept="image/*"
-                className="block w-full text-xs text-slate-500 file:mr-3 file:rounded-full file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-blue-700 hover:file:bg-blue-100"
-                onChange={handleFileChange}
-              />
-              {coverPreview && (
-                <div className="mt-2 rounded-xl overflow-hidden border border-slate-100 max-h-40">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={coverPreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <p className="mt-1 text-[11px] text-slate-500">
-                Optional. A nice photo will be shown on the trip header and
-                cards.
-              </p>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100">
-              <p className="text-[11px] font-medium text-slate-700 mb-1">
-                What is public when this trip is shared?
-              </p>
-              <div className="space-y-1">
-                <label className="flex items-center gap-2 text-[11px] text-slate-700">
-                  <input
-                    id="privacy_showCities"
-                    name="privacy_showCities"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                    defaultChecked={showCities}
-                  />
-                  Show cities and countries
-                </label>
-                <label className="flex items-center gap-2 text-[11px] text-slate-700">
-                  <input
-                    id="privacy_showExpenses"
-                    name="privacy_showExpenses"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                    defaultChecked={showExpenses}
-                  />
-                  Show expenses summary
-                </label>
-                <label className="flex items-center gap-2 text-[11px] text-slate-700">
-                  <input
-                    id="privacy_showItinerary"
-                    name="privacy_showItinerary"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                    defaultChecked={showItinerary}
-                  />
-                  Show itinerary and notes
-                </label>
-                <label className="flex items-center gap-2 text-[11px] text-slate-700">
-                  <input
-                    id="privacy_showCover"
-                    name="privacy_showCover"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600"
-                    defaultChecked={showCover}
-                  />
-                  Show cover image
-                </label>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full mt-3 inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-blue-500/30 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed transition"
-            >
-              {isPending ? "Saving..." : "Save changes"}
-            </button>
-          </form>
-        </div>
+          </div>
       </div>
-    </div>
+
   );
 }

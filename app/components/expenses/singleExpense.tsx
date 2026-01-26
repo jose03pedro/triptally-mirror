@@ -8,10 +8,13 @@ import { CreateExpenseModal } from "../trip/createExpenseModal";
 import { Currency } from "@/types/currency/types";
 import { formatMoney } from "@/lib/utils/helperFunctions";
 import { ExpenseWithConverted } from "@/types/expense/types";
+import {useAuth} from "@/lib/hook/useAuth";
+import {User} from "@/types/user/types";
 
 interface ExpenseProps {
   expense: ExpenseWithConverted;
   tripCurrency: Currency | undefined;
+  tripOwner: User | undefined;
   categories: any[];
   currencies: Currency[];
   onDeleted?: (id: string) => void;
@@ -21,11 +24,15 @@ interface ExpenseProps {
 export function SingleExpense({
   expense,
   tripCurrency,
+  tripOwner,
   currencies,
   categories,
   onDeleted,
   onExpensesUpdated,
 }: ExpenseProps): JSX.Element {
+  const session = useAuth();
+  const loggedUser = session?.user;
+
   const [showModal, setShowModal] = useState(false);
   const [convertedAmount, setConvertedAmount] = useState<string | null>(null);
 
@@ -88,18 +95,18 @@ export function SingleExpense({
 
           <div className="d-flex align-items-center gap-1 mt-2 mt-md-0">
             <div>{displayAmount()}</div>
-            <div className="expense-actions d-flex gap-0">
+              {loggedUser?.id === tripOwner?._id && <div className="expense-actions d-flex gap-0">
               <span
-                className="expense-btn"
-                data-bs-toggle="modal"
-                data-bs-target={`#createExpense-${expense._id}Modal`}
+                  className="expense-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target={`#createExpense-${expense._id}Modal`}
               >
-                <ActionBtn action="edit" size={15} color="#909090" />
+                <ActionBtn action="edit" size={15} color="#909090"/>
               </span>
-              <span className="expense-btn" onClick={onDelete}>
-                <ActionBtn action="delete" size={15} color="#909090" />
+                  <span className="expense-btn" onClick={onDelete}>
+                <ActionBtn action="delete" size={15} color="#909090"/>
               </span>
-            </div>
+              </div>}
           </div>
         </div>
       </article>

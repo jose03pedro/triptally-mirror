@@ -381,10 +381,10 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
 
   return (
     <div className="rounded-2xl bg-white border border-slate-100 p-4 md:p-5 shadow-sm">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+      <div className="d-flex flex-column justify-content-between align-items-start gap-3 mb-4">
         <div>
-          <h2 className="text-base md:text-lg font-semibold text-slate-900 mb-1">Trip Planner</h2>
-          <p className="text-xs text-slate-500 mb-0">
+          <h2 className="fs-5 fs-md-3 fw-semibold text-dark mb-0">Trip Planner</h2>
+          <p className="text-muted small">
             AI-powered itinerary planning for your trip.
           </p>
         </div>
@@ -569,7 +569,7 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
       {!currentPlan ? (
         <div className="text-center py-5">
           <div className="text-slate-300 mb-3" style={{ fontSize: "3rem" }}>📅</div>
-          <p className="text-sm text-slate-500 mb-2">No plan generated yet.</p>
+          <p className="small text-slate-500 text-muted mb-2">No plan generated yet.</p>
           {isOwner && (
             <p className="text-xs text-slate-400">
               Click &quot;Generate Plan&quot; to create an AI-powered itinerary.
@@ -596,7 +596,7 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
           <div className="space-y-4">
             {currentPlan.days.map((day, dayIdx) => (
               <div key={dayIdx} className="border rounded p-3 mb-3">
-                <h3 className="text-sm fw-semibold text-slate-800 mb-2">
+                <h3 className="fs-5 fs-md-3 fw-semibold text-dark ">
                   {new Date(day.date).toLocaleDateString("en-US", {
                     weekday: "long",
                     month: "long",
@@ -658,7 +658,7 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
                             <div className="flex-grow-1">
                               <p className="text-sm fw-medium text-slate-800 mb-0">{act.title}</p>
                               {act.location && (
-                                <p className="text-xs text-slate-500 mb-0">📍 {act.location}</p>
+                                <p className="text-xs text-slate-500 text-muted small mb-0">📍 {act.location}</p>
                               )}
                               {act.notes && (
                                 <p className="text-xs text-slate-400 mb-0">{act.notes}</p>
@@ -668,14 +668,14 @@ export function TripPlannerSection({ tripId, isOwner }: TripPlannerProps) {
                               <div className="d-flex gap-1">
                                 <button
                                   onClick={() => startEditActivity(dayIdx, actIdx)}
-                                  className="btn btn-sm btn-link text-primary p-0"
+                                  className="btn btn-sm text-primary p-0"
                                   title="Edit"
                                 >
                                   ✏️
                                 </button>
                                 <button
                                   onClick={() => removeActivity(dayIdx, actIdx)}
-                                  className="btn btn-sm btn-link text-danger p-0"
+                                  className="btn btn-sm text-danger p-0"
                                   title="Remove"
                                 >
                                   ✕

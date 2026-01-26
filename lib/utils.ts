@@ -71,3 +71,25 @@ export function transformFlightData(apiData: any): Flight {
     },
   };
 }
+
+const EN_MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+]
+
+export function formatTripDateRange(start : string, end : string) {
+    const s = new Date(start)
+    const e = new Date(end)
+
+    const sameYear = s.getFullYear() === e.getFullYear()
+
+    const sDay = s.getDate()
+    const eDay = e.getDate()
+
+    const sMonth = EN_MONTHS[s.getMonth()]
+    const eMonth = EN_MONTHS[e.getMonth()]
+
+    return sameYear
+        ? `${sMonth} ${sDay} - ${eMonth} ${eDay}, ${e.getFullYear()}`
+        : `${sMonth} ${sDay}, ${s.getFullYear()} - ${eMonth} ${eDay}, ${e.getFullYear()}`
+}

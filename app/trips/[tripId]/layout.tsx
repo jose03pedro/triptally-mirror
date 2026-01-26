@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar } from "@/app/components/navigation/navbar";
 
 export const metadata = {
-    title: "Trip",
+    title: "TripTally: Trip",
 };
 
 export default function TripLayout({

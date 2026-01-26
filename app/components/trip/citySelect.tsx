@@ -162,7 +162,7 @@ export function CitySelect({
                       <input
                         type="text"
                         className="form-control mb-2"
-                        placeholder="Country (optional - defaults to Unknown)"
+                        placeholder="Country (optional)"
                         value={customCountry}
                         onChange={(e) => setCustomCountry(e.target.value)}
                       />
