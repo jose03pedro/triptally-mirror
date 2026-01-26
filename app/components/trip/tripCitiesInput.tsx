@@ -64,12 +64,12 @@ export default function TripCitiesInput({
 
   return (
     <div className="mb-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="d-flex items-center justify-content-between">
         <div>
-          <p className="block font-medium text-slate-900 text-sm mb-0">
+          <p className="fw-medium mb-1" style={{fontSize: "14px"}}>
             Destinations
           </p>
-          <p className="text-[11px] text-slate-500">
+          <p className="text-muted" style={{ fontSize: "13px" }}>
             Select the cities you are visiting.
           </p>
         </div>
@@ -83,14 +83,14 @@ export default function TripCitiesInput({
       </div>
 
       <div
-        className={`space-y-2 ${
+        className={`d-flex flex-column gap-2 ${
           cityErrors?.length
             ? "p-2 border border-red-200 rounded bg-red-50"
             : ""
         }`}
       >
         {cities.map((cityObj, idx) => (
-          <div key={idx} className="flex items-center gap-2">
+          <div key={idx} className="d-flex align-items-center">
             <CitySelect
               selectedCity={cityObj}
               search={cityObj.search}

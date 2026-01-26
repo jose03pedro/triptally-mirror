@@ -7,10 +7,10 @@ interface SectionProps {
 
 export function TripSection({ title, count, action, children }: SectionProps) {
     return (
-        <div className="shadow-sm border p-3">
+        <div className="card shadow-sm border p-3 mb-4">
             <div className="mb-2">
                 <div className="d-flex justify-content-between align-items-center">
-                    <h2 className="fw-semibold text-dark mb-0">
+                    <h2 className="fs-5 fs-md-3 fw-semibold text-dark mb-0">
                         {title}
                     </h2>
 

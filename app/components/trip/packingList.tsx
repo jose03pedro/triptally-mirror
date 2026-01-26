@@ -191,220 +191,255 @@ export function PackingListSection({ tripId, isOwner }: PackingListProps) {
   }
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 p-4 md:p-5 shadow-sm">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-        <div>
-          <h2 className="text-base md:text-lg font-semibold text-slate-900 mb-1">Packing List</h2>
-          <p className="text-xs text-slate-500 mb-0">
-            Smart suggestions based on your trip destination and weather forecast.
-          </p>
-        </div>
+      <div className="card shadow-sm border p-3 p-md-4">
 
-        {isOwner && (
-          <div className="d-flex gap-2">
-            <button onClick={() => setShowAddForm(!showAddForm)} className="btn btn-sm btn-outline-secondary">
-              <span className="me-1">+</span>
-              Add item
-            </button>
-            <button onClick={handleGenerate} disabled={generating} className="btn btn-sm btn-primary">
-              {generating ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-1" role="status" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <span className="me-1">✨</span>
-                  Generate smart list
-                </>
-              )}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {error && (
-        <div className="alert alert-danger py-2 mb-3" role="alert">
-          <small>{error}</small>
-          <button type="button" className="btn-close btn-close-sm float-end" onClick={() => setError(null)} />
-        </div>
-      )}
-
-      {showAddForm && isOwner && (
-        <form onSubmit={handleAddItem} className="card card-body bg-light mb-4">
-          <div className="row g-2 align-items-end">
-            <div className="col-12 col-md-5">
-              <label className="form-label small mb-1">Item name</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                placeholder="e.g., Camera tripod"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col-12 col-md-4">
-              <label className="form-label small mb-1">Category</label>
-              <select
-                className="form-select form-select-sm"
-                value={newItemCategory}
-                onChange={(e) => setNewItemCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-12 col-md-3">
-              <div className="d-flex gap-2">
-                <button
-                  type="submit"
-                  className="btn btn-sm btn-primary flex-grow-1"
-                  disabled={addingItem || !newItemName.trim()}
-                >
-                  {addingItem ? "Adding..." : "Add"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setNewItemName("");
-                  }}
-                >
-                  Cancel
-                </button>
+          {/* Header */}
+          <div className="d-flex flex-column justify-content-between align-items-start gap-3 mb-4">
+              <div>
+                  <h2 className="fs-5 fs-md-5 fw-semibold text-dark mb-1">
+                      Packing List
+                  </h2>
+                  <p className="small text-muted mb-0">
+                      Smart suggestions based on your trip destination and weather forecast.
+                  </p>
               </div>
-            </div>
-          </div>
-        </form>
-      )}
 
-      {totalCount > 0 && (
-        <div className="mb-4">
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <span className="text-xs text-slate-500">
-              {checkedCount} of {totalCount} items packed
-            </span>
-            <span className="text-xs fw-medium text-slate-700">{progressPercent}%</span>
-          </div>
-          <div className="progress" style={{ height: "6px" }}>
-            <div
-              className="progress-bar bg-success"
-              role="progressbar"
-              style={{ width: `${progressPercent}%` }}
-              aria-valuenow={progressPercent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            />
-          </div>
-        </div>
-      )}
+              {isOwner && (
+                  <div className="d-flex gap-2">
+                      <button
+                          onClick={() => setShowAddForm(!showAddForm)}
+                          className="btn btn-sm btn-outline-secondary"
+                      >
+                          <span className="me-1">+</span>
+                          Add item
+                      </button>
 
-      {items.length === 0 ? (
-        <div className="text-center py-5">
-          <div className="text-slate-300 mb-3" style={{ fontSize: "3rem" }}>
-            🧳
-          </div>
-          <p className="small text-slate-500 text-muted mb-2">No items in this packing list yet.</p>
-          {isOwner && (
-            <p className="text-xs text-slate-400">
-              Click &quot;Generate smart list&quot; to get personalized suggestions based on your trip.
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {Object.entries(itemsByCategory)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([category, categoryItems]) => (
-              <div key={category} className="mb-4">
-                <h3 className="text-xs fw-semibold text-slate-500 text-uppercase mb-2 d-flex align-items-center gap-2">
-                  <span>{category}</span>
-                  <span className="badge bg-secondary rounded-pill">
-                    {categoryItems.filter((i) => i.checked).length}/{categoryItems.length}
-                  </span>
-                </h3>
-                <ul className="list-unstyled mb-0">
-                  {categoryItems.map((item) => (
-                    <li
-                      key={item._id}
-                      className={`d-flex align-items-center justify-content-between py-2 px-2 rounded ${
-                        item.checked ? "bg-light" : ""
-                      }`}
-                      style={{ transition: "background-color 0.2s" }}
-                    >
-                      <label className="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={item.checked}
-                          onChange={() => toggleChecked(item)}
-                          disabled={!isOwner}
-                          style={{ cursor: isOwner ? "pointer" : "default" }}
-                        />
-                        <span
-                          className={`text-sm ${
-                            item.checked
-                              ? "text-decoration-line-through text-slate-400"
-                              : item.required
-                              ? "fw-medium text-slate-800"
-                              : "text-slate-700"
-                          }`}
-                        >
-                          {item.name}
-                          {item.quantity > 1 && (
-                            <span className="text-slate-400 ms-1">×{item.quantity}</span>
+                      <button
+                          onClick={handleGenerate}
+                          disabled={generating}
+                          className="btn btn-sm btn-primary"
+                      >
+                          {generating ? (
+                              <>
+                                  <span className="spinner-border spinner-border-sm me-1" />
+                                  Generating...
+                              </>
+                          ) : (
+                              <>
+                                  <span className="me-1">✨</span>
+                                  Generate smart list
+                              </>
                           )}
-                        </span>
-                        {item.required && (
-                          <span className="badge bg-warning text-dark rounded-pill px-2 py-0">
-                            <small>required</small>
-                          </span>
-                        )}
-                        {item.source !== "base" && (
-                          <span className={`badge rounded-pill px-2 py-0 ${getSourceBadgeClass(item.source)}`}>
-                            <small>{item.source}</small>
-                          </span>
-                        )}
-                      </label>
-                      {isOwner && (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-link text-slate-400 p-0 ms-2"
-                          onClick={() => handleDeleteItem(item._id)}
-                          title="Remove item"
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-        </div>
-      )}
-
-      {items.length > 0 && (
-        <div className="mt-4 pt-3 border-top">
-          <p className="text-xs text-slate-400 mb-2">Legend:</p>
-          <div className="d-flex flex-wrap gap-2">
-            <span className="badge bg-light text-dark rounded-pill px-2 py-1">
-              <small>base = essential items</small>
-            </span>
-            <span className="badge bg-info text-dark rounded-pill px-2 py-1">
-              <small>weather = based on forecast</small>
-            </span>
-            <span className="badge bg-warning text-dark rounded-pill px-2 py-1">
-              <small>required = don&apos;t forget!</small>
-            </span>
+                      </button>
+                  </div>
+              )}
           </div>
-        </div>
-      )}
-    </div>
+
+          {/* Error */}
+          {error && (
+              <div className="alert alert-danger py-2 mb-3">
+                  <small>{error}</small>
+                  <button
+                      type="button"
+                      className="btn-close btn-close-sm float-end"
+                      onClick={() => setError(null)}
+                  />
+              </div>
+          )}
+
+          {/* Add Item Form */}
+          {showAddForm && isOwner && (
+              <form onSubmit={handleAddItem} className="card card-body bg-light mb-4">
+                  <div className="row g-2 align-items-end">
+                      <div className="col-12 col-md-5">
+                          <label className="form-label small mb-1">Item name</label>
+                          <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              placeholder="e.g., Camera tripod"
+                              value={newItemName}
+                              onChange={(e) => setNewItemName(e.target.value)}
+                              required
+                          />
+                      </div>
+
+                      <div className="col-12 col-md-4">
+                          <label className="form-label small mb-1">Category</label>
+                          <select
+                              className="form-select form-select-sm"
+                              value={newItemCategory}
+                              onChange={(e) => setNewItemCategory(e.target.value)}
+                          >
+                              {categories.map((cat) => (
+                                  <option key={cat} value={cat}>
+                                      {cat}
+                                  </option>
+                              ))}
+                          </select>
+                      </div>
+
+                      <div className="col-12 col-md-3">
+                          <div className="d-flex gap-2">
+                              <button
+                                  type="submit"
+                                  className="btn btn-sm btn-primary flex-grow-1"
+                                  disabled={addingItem || !newItemName.trim()}
+                              >
+                                  {addingItem ? "Adding..." : "Add"}
+                              </button>
+                              <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-secondary"
+                                  onClick={() => {
+                                      setShowAddForm(false);
+                                      setNewItemName("");
+                                  }}
+                              >
+                                  Cancel
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </form>
+          )}
+
+          {/* Progress */}
+          {totalCount > 0 && (
+              <div className="mb-4">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+        <span className="small text-muted">
+          {checkedCount} of {totalCount} items packed
+        </span>
+                      <span className="small fw-medium text-secondary">
+          {progressPercent}%
+        </span>
+                  </div>
+
+                  <div className="progress" style={{ height: "6px" }}>
+                      <div
+                          className="progress-bar bg-success"
+                          role="progressbar"
+                          style={{ width: `${progressPercent}%` }}
+                      />
+                  </div>
+              </div>
+          )}
+
+          {/* Empty State */}
+          {items.length === 0 ? (
+              <div className="text-center py-5">
+                  <div className="text-muted mb-3" style={{ fontSize: "3rem" }}>
+                      🧳
+                  </div>
+                  <p className="small text-muted mb-2">
+                      No items in this packing list yet.
+                  </p>
+                  {isOwner && (
+                      <p className="small text-muted">
+                          Click “Generate smart list” to get personalized suggestions based on your trip.
+                      </p>
+                  )}
+              </div>
+          ) : (
+              <div>
+                  {Object.entries(itemsByCategory)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([category, categoryItems]) => (
+                          <div key={category} className="mb-4">
+                              <h3 className="small fw-semibold text-muted text-uppercase mb-2 d-flex align-items-center gap-2">
+                                  <span>{category}</span>
+                                  <span className="badge bg-secondary rounded-pill">
+                {categoryItems.filter((i) => i.checked).length}/{categoryItems.length}
+              </span>
+                              </h3>
+
+                              <ul className="list-unstyled mb-0">
+                                  {categoryItems.map((item) => (
+                                      <li
+                                          key={item._id}
+                                          className={`d-flex align-items-center justify-content-between py-2 px-2 rounded ${
+                                              item.checked ? "bg-light" : ""
+                                          }`}
+                                          style={{ transition: "background-color 0.2s" }}
+                                      >
+                                          <label className="d-flex align-items-center gap-2 mb-0 flex-grow-1">
+                                              <input
+                                                  type="checkbox"
+                                                  className="form-check-input"
+                                                  checked={item.checked}
+                                                  onChange={() => toggleChecked(item)}
+                                                  disabled={!isOwner}
+                                              />
+
+                                              <span
+                                                  className={`small ${
+                                                      item.checked
+                                                          ? "text-decoration-line-through text-muted"
+                                                          : item.required
+                                                              ? "fw-medium text-dark"
+                                                              : "text-secondary"
+                                                  }`}
+                                              >
+                      {item.name}
+                                                  {item.quantity > 1 && (
+                                                      <span className="text-muted ms-1">
+                          ×{item.quantity}
+                        </span>
+                                                  )}
+                    </span>
+
+                                              {item.required && (
+                                                  <span className="badge bg-warning text-dark rounded-pill px-2 py-0">
+                        <small>required</small>
+                      </span>
+                                              )}
+
+                                              {item.source !== "base" && (
+                                                  <span
+                                                      className={`badge rounded-pill px-2 py-0 ${getSourceBadgeClass(
+                                                          item.source
+                                                      )}`}
+                                                  >
+                        <small>{item.source}</small>
+                      </span>
+                                              )}
+                                          </label>
+
+                                          {isOwner && (
+                                              <button
+                                                  type="button"
+                                                  className="btn btn-sm text-muted p-0 ms-2"
+                                                  onClick={() => handleDeleteItem(item._id)}
+                                                  title="Remove item"
+                                              >
+                                                  ✕
+                                              </button>
+                                          )}
+                                      </li>
+                                  ))}
+                              </ul>
+                          </div>
+                      ))}
+              </div>
+          )}
+
+          {/* Legend */}
+          {items.length > 0 && (
+              <div className="mt-4 pt-3 border-top">
+                  <p className="small text-muted mb-2">Legend:</p>
+                  <div className="d-flex flex-wrap gap-2">
+        <span className="badge bg-light text-dark rounded-pill px-2 py-1">
+          <small>base = essential items</small>
+        </span>
+                      <span className="badge bg-info text-dark rounded-pill px-2 py-1">
+          <small>weather = based on forecast</small>
+        </span>
+                      <span className="badge bg-warning text-dark rounded-pill px-2 py-1">
+          <small>required = don&apos;t forget!</small>
+        </span>
+                  </div>
+              </div>
+          )}
+      </div>
   );
 }
